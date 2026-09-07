@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "mentat": {
+      "type": "http",
+      "url": "https://mcp.mentat.business/mcp",
+      "oauth": {
+        "clientId": "mentat-public-client",
+        "callbackPort": 8125
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "mentat": {
+      "httpUrl": "https://mcp.mentat.business/mcp"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "mcp": {
+    "mentat": {
+      "type": "remote",
+      "url": "https://mcp.mentat.business/mcp",
+      "enabled": true
+    }
+  }
+}

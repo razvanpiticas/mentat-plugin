@@ -1,0 +1,16 @@
+{
+  "name": "mentat",
+  "version": "0.1.0",
+  "description": "Installs the Mentat skill and MCP server into a project, for harnesses with no plugin system.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "bin": {
+    "mentat": "./cli/bin/mentat.mjs"
+  },
+  "files": [
+    "cli",
+    "providers"
+  ]
+}

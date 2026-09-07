@@ -1,0 +1,15 @@
+{
+  "name": "mentat",
+  "version": "0.1.0",
+  "description": "Drives the Mentat MCP server — project data, tenant-scoped, under the caller's own permissions.",
+  "author": {
+    "name": "Mentat"
+  },
+  "skills": "./skills-codex/",
+  "interface": {
+    "displayName": "Mentat",
+    "shortDescription": "Project data from the Mentat MCP server.",
+    "category": "Productivity",
+    "defaultPrompt": "Use the mentat skill to work with Mentat project data."
+  }
+}

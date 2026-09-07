@@ -1,0 +1,11 @@
+{
+  "mcp": {
+    "servers": {
+      "mentat": {
+        "url": "https://mcp.mentat.business/mcp",
+        "transport": "streamable-http",
+        "auth": "oauth"
+      }
+    }
+  }
+}

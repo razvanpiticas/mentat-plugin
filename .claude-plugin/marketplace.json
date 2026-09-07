@@ -1,0 +1,15 @@
+{
+  "name": "mentat-plugins",
+  "description": "The Mentat agent plugin: skills and the Mentat MCP server.",
+  "owner": {
+    "name": "Mentat"
+  },
+  "plugins": [
+    {
+      "name": "mentat",
+      "description": "Drives the Mentat MCP server — project data, tenant-scoped, under the caller's own permissions.",
+      "source": "./plugins/mentat",
+      "category": "productivity"
+    }
+  ]
+}

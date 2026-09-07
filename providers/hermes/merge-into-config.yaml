@@ -1,0 +1,4 @@
+mcp_servers:
+  mentat:
+    url: https://mcp.mentat.business/mcp
+    transport: streamable-http

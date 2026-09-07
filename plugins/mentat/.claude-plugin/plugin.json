@@ -1,0 +1,13 @@
+{
+  "name": "mentat",
+  "version": "0.1.0",
+  "description": "Drives the Mentat MCP server — project data, tenant-scoped, under the caller's own permissions.",
+  "author": {
+    "name": "Mentat"
+  },
+  "keywords": [
+    "mentat",
+    "mcp",
+    "project-management"
+  ]
+}
