@@ -3,7 +3,8 @@
   "displayName": "OpenClaw",
   "skillPaths": [
     ".agents/skills/mentat",
-    ".agents/skills/mentat-canvas"
+    ".agents/skills/mentat-canvas",
+    ".agents/skills/mentat-update"
   ],
   "mcp": {
     "sourcePath": "merge-into-openclaw.json",

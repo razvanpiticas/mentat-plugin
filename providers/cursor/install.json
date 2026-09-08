@@ -3,7 +3,8 @@
   "displayName": "Cursor",
   "skillPaths": [
     ".cursor/skills/mentat",
-    ".cursor/skills/mentat-canvas"
+    ".cursor/skills/mentat-canvas",
+    ".cursor/skills/mentat-update"
   ],
   "mcp": {
     "sourcePath": ".cursor/mcp.json",

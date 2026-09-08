@@ -3,7 +3,8 @@
   "displayName": "Gemini CLI",
   "skillPaths": [
     ".gemini/skills/mentat",
-    ".gemini/skills/mentat-canvas"
+    ".gemini/skills/mentat-canvas",
+    ".gemini/skills/mentat-update"
   ],
   "mcp": {
     "sourcePath": ".gemini/settings.json",

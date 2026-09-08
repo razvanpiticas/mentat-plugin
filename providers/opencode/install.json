@@ -3,7 +3,8 @@
   "displayName": "OpenCode",
   "skillPaths": [
     ".opencode/skills/mentat",
-    ".opencode/skills/mentat-canvas"
+    ".opencode/skills/mentat-canvas",
+    ".opencode/skills/mentat-update"
   ],
   "mcp": {
     "sourcePath": "opencode.json",

@@ -3,7 +3,8 @@
   "displayName": "Hermes",
   "skillPaths": [
     ".hermes/skills/mentat",
-    ".hermes/skills/mentat-canvas"
+    ".hermes/skills/mentat-canvas",
+    ".hermes/skills/mentat-update"
   ],
   "mcp": {
     "sourcePath": "merge-into-config.yaml",
