@@ -49,10 +49,43 @@ claude plugin update mentat@mentat-plugins
 Then tell the user to run `/reload-plugins`. Claude cannot reload the plugin it is
 running inside; the harness reloads it, and until it does the old skills are still the loaded ones.
 
-**Offer to switch auto-update on** if the user has just been surprised by a stale plugin. It is
-`/plugin`, then Marketplaces, then `mentat-plugins`, then Enable auto-update. From
-then on Claude Code refreshes the marketplace after each session starts and says when to reload, and
-step 2 stops being something anybody has to remember. It is a menu, so the user does it, not you.
+### 2.1 Offer to make this the last time
+
+One key in the user's own `~/.claude/settings.json` makes Claude Code refresh the marketplace after
+each session starts and say when to reload, so nobody has to run this again. Anthropic's own
+marketplaces have it on by default; every other marketplace, this one included, has it off, which is
+why nothing happened on its own.
+
+Read the file first and check whether `mentat-plugins` under `extraKnownMarketplaces` already has
+`"autoUpdate": true`. **If it does, say nothing about this and go to step 3** — offering a setting
+somebody already has is noise.
+
+Otherwise ask, and say plainly that it means editing their settings file.
+STOP and call the AskUserQuestion tool to clarify. On yes, edit the file yourself:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "mentat-plugins": {
+      "source": { "source": "github", "repo": "razvanpiticas/mentat-plugin" },
+      "autoUpdate": true
+    }
+  }
+}
+```
+
+**This is the user's own configuration, and everything else in it must survive.** Read it, add only
+what is missing, write it back, and read it once more to confirm it is still valid JSON. Three
+things go wrong here:
+
+- **`extraKnownMarketplaces` already exists** with other marketplaces in it. Add the `mentat-plugins`
+  entry beside them. Never replace the object.
+- **`mentat-plugins` is already there** without `autoUpdate`. Add the one key; leave its `source`
+  exactly as it is, because that is what the user installed from.
+- **The file does not parse, or does not exist.** Stop and tell them. Do not create or repair a
+  settings file to add a convenience setting — a broken `settings.json` breaks every session.
+
+On no, drop it and do not raise it again this session.
 
 ## 3. Say what actually happened
 

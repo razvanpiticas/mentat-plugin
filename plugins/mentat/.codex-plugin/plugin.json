@@ -1,6 +1,6 @@
 {
   "name": "mentat",
-  "version": "0.3.0+4abc14bb7f3b",
+  "version": "0.4.0+b55a206d3090",
   "description": "Drives the Mentat MCP server — project data, tenant-scoped, under the caller's own permissions.",
   "author": {
     "name": "Mentat"
