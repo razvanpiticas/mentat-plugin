@@ -44,21 +44,14 @@ Every call is also tenant-scoped from the caller's token. A caller who belongs t
 
 ## The tools
 
-| Tool | One line |
-| --- | --- |
-| `server_info` | What this deployment is and what it can reach. Touches nothing else |
-| `list_items` | Reads the item list |
-| `create_item` | Adds one item |
-| `business_intelligence_health` | Proves this server can reach BusinessIntelligence and be accepted by it |
+Fifty tools, all over BusinessIntelligence: ten reads (portfolios, projects, the canvas, one block by
+code, one claim, one run, the method cards) and forty writes (entries, claims, runs, evidence,
+questions, risks, ideas, contradictions, project insights). The full table with permissions and
+which tools take a canvas version is in [reference/tools.md](reference/tools.md). **How to use them
+— which kind, which fields, what order BusinessIntelligence enforces — is the `mentat-canvas`
+skill; load it for any read or write on a canvas.**
 
-Read [reference/tools.md](reference/tools.md) before the first call in a session — it carries the
-argument shapes and which tools change state.
-
-> **These are the tools the server was generated with, not Mentat's product surface.** They are
-> scaffolding, they are being replaced as the product's real capabilities are wired up, and
-> `list_items` in particular reads an in-memory list that empties whenever the pod restarts. If the
-> table above disagrees with what `server_info` reports, `server_info` is right and this file is
-> stale — say so rather than working around it.
+`server_info` reports the tool list; when it disagrees with this file or any document, it is right.
 
 ## Reading a refusal
 
@@ -69,14 +62,15 @@ rather than resending the same call.
 - **The refusal is a 403** — a permission or tenant problem. Retrying cannot fix it. Tell the user
   which permission is missing.
 - **The refusal is a 401** — the token expired or was never minted. Sign in again.
-- **The refusal says a downstream holds nothing at that address** — the server reached the
-  downstream and got a 404. That is a server-side routing fault, not a bad argument.
+- **The refusal is a CONFLICT naming a canvas version** — the canvas moved under you. Re-read
+  and resend with the version it names; the `mentat-canvas` skill explains the version rule.
+- **The refusal is a CONFLICT quoting a rule of the business model** — the call is not allowed in the
+  canvas's current state. Change what you asked for; do not resend.
+- **The refusal says a downstream holds nothing at that address** — an id or a code named nothing.
+  Read what exists and address it by what the read answered.
 
 A refusal that fits none of these is worth a question rather than a second attempt.
 STOP and use Codex's structured user-input tool when available; if it is unavailable, ask directly in chat to clarify.
-
-`demonstrate_refusal` fails on purpose and changes nothing, so it is safe to call when you want to
-see the refusal shape before relying on it.
 
 For symptoms that survive a retry, read
 [reference/troubleshooting.md](reference/troubleshooting.md).
@@ -86,9 +80,10 @@ For symptoms that survive a retry, read
 **Never invent a tenant.** No tool takes a tenant argument, and none should — the tenant comes from
 the token. A call that appears to need one is a sign the wrong tool was chosen.
 
-**Do not cache what `list_items` returns across turns.** It reads live state that another person in
-the same tenant can change between calls.
+**Do not cache what a read returns across turns.** It is live state that another person in the
+same tenant can change between calls, and every write is checked against the canvas version you
+last read.
 
-**A write is not confirmed until the tool says so.** `create_item` returns the created item; if the
-call refused, nothing was written, and reporting otherwise to the user is worse than reporting the
-failure.
+**A write is not confirmed until the tool says so.** Every write returns the row it wrote; if the
+call refused, nothing was written unless the message says otherwise, and reporting otherwise to
+the user is worse than reporting the failure.

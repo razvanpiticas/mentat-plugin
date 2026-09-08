@@ -6,8 +6,8 @@ Run the checks in order. The first two are cheap and settle most cases.
 | --- | --- | --- |
 | 1 | Call `server_info` | Separates "unreachable or not signed in" from "signed in, call refused" |
 | 2 | Open `https://mcp.mentat.business/health` in a browser | The deployment is up. It answers `{"status":"ok"}` anonymously |
-| 3 | Call `business_intelligence_health` | This server can reach BusinessIntelligence and be accepted by it |
-| 4 | Call `demonstrate_refusal` with `forbidden` | The refusal path renders correctly in this harness |
+| 3 | Call `list_portfolios` | This server can reach BusinessIntelligence as you, and you may read there |
+| 4 | Call `record_project_insight` on a project you own | Writes are allowed for your organisation and your role |
 
 ## Symptom index
 
@@ -17,10 +17,11 @@ Run the checks in order. The first two are cheap and settle most cases.
 | Sign-in never opens a browser, or fails naming client registration | The harness is trying dynamic client registration, which this realm refuses | The harness must be told to use client id `mentat-public-client`. A harness with no field for it cannot sign in to this server |
 | Every tool answers 401 | No token, or an expired one | Sign in again. If it recurs immediately, the token's audience does not name this server |
 | Every tool answers 403 | The account belongs to no tenant, or has neither permission | Grant a role carrying `mcp:tools.read` on the roles screen, then sign in again |
-| Reads work, `create_item` answers 403 | The account has `mcp:tools.read` but not `mcp:tools.write` | Grant the write permission, then sign in again — the old token does not gain it |
+| Reads work, every write answers 403 | The account has `mcp:tools.read` but not `mcp:tools.write`, or the organisation is read-only | Grant the write permission, then sign in again — the old token does not gain it. A read-only organisation is a billing state, fixed on the billing screen |
 | A permission was granted but the call still answers 403 | The token was minted before the grant | Sign out fully and back in. Refreshing is not enough |
-| `list_items` returns an empty list | The pod restarted. The sample list lives in memory | Working as designed. It is scaffolding, not a catalogue |
-| `business_intelligence_health` refuses, naming an address | BusinessIntelligence holds nothing at that path | A server-side routing fault. Report the address it named |
+| `SERVER_MISCONFIGURED` saying BusinessIntelligence would not accept this server's credentials | The token has `mcp:tools.*` but not the BusinessIntelligence permission the call needs | Grant `business-intelligence:canvas.write` (or the read one) on the same role, then sign in again |
+| `CONFLICT` naming a canvas version on every write | The write is sent with a version older than the canvas | Read the block again and send the version it answers; carry each answered version into the next write |
+| `NOT_FOUND` on `get_block` listing codes | The code is not on this canvas | Use one of the codes listed; custom blocks have codes of their own |
 | `server_info` answers but names a different deployment | The harness is pointed at another host | Check the URL in this harness's MCP config |
 | Tools are missing entirely from the session | The MCP server is configured but not loaded | Reload the harness. Most do not pick up a new server mid-session |
 

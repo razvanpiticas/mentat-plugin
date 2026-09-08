@@ -1,39 +1,45 @@
 # The tools, in full
 
-Every tool publishes its own input schema. Read it there rather than guessing at field names —
-this file carries what the schema cannot say: which permission each tool demands, whether it
-changes anything, and what it costs to call.
+Every tool publishes its own input schema. Read it there rather than guessing at field names — this
+file carries what the schema cannot say: which permission each tool demands, whether it changes
+anything, and which take and answer a canvas version. How to use them well is the `mentat-canvas`
+skill's job.
 
-| Tool | Permission | Changes state | Reaches |
-| --- | --- | --- | --- |
-| `server_info` | `mcp:tools.read` | No | Nothing. Answers from the process itself |
-| `list_items` | `mcp:tools.read` | No | In-memory list in this pod |
-| `create_item` | `mcp:tools.write` | **Yes** | In-memory list in this pod |
-| `demonstrate_refusal` | `mcp:tools.read` | No | Nothing |
-| `business_intelligence_health` | `mcp:tools.read` | No | BusinessIntelligence, over HTTP |
+## Reads — `mcp:tools.read`
 
-None of them is anonymous. Every one requires a signed-in caller who belongs to a tenant, because
-the permission policy carries the tenant requirement with it.
+| Tool | Reaches | Answers |
+| --- | --- | --- |
+| `server_info` | Nothing. Answers from the process | Deployment name, route, the tool list |
+| `list_portfolios` | BusinessIntelligence | The caller's portfolios, first page |
+| `list_projects` | BusinessIntelligence | One page of a portfolio's projects |
+| `get_project` | BusinessIntelligence | The project and its overview, with the canvas version |
+| `get_canvas` | BusinessIntelligence | The whole canvas document and its version |
+| `get_block` | BusinessIntelligence | One block by code, its kinds, everything on it, the version |
+| `get_hypothesis` | BusinessIntelligence | One claim with its runs |
+| `get_experiment` | BusinessIntelligence | One run with metric and criterion ids, evidence |
+| `list_experiment_definitions` | BusinessIntelligence | The method cards, optionally for one concern |
+| `get_experiment_definition` | BusinessIntelligence | One card's full method text |
 
-## Arguments
+## Writes — `mcp:tools.write`
 
-**`server_info`** — none. Returns the deployment name, the route it serves and the tool names it
-publishes. When its tool list disagrees with a skill or a document, the tool list is right.
+Every write below but `create_project` and `record_project_insight` takes `canvasVersion` and answers
+the version it produced. Deletes answer only the version.
 
-**`list_items`** — `limit`, an integer between 1 and 100, defaulting to 20 when omitted. Returns
-the items ordered by name with the id, name and note of each.
+| Tool | Changes |
+| --- | --- |
+| `create_project` | Creates a project and opens its canvas |
+| `record_project_insight` | Adds a learning about the project |
+| `add_entry`, `update_entry`, `retire_entry`, `delete_entry` | Entries on a block |
+| `create_hypothesis`, `update_hypothesis`, `recommend_experiment_definition`, `withdraw_experiment_definition`, `park_hypothesis`, `unpark_hypothesis`, `retire_hypothesis`, `decide_hypothesis`, `delete_hypothesis` | Claims |
+| `design_experiment`, `add_metric`, `add_criterion`, `start_experiment`, `record_observation`, `judge_criterion`, `complete_experiment`, `abort_experiment`, `record_spend`, `delete_experiment` | Runs |
+| `record_evidence`, `update_evidence`, `add_data_point`, `delete_evidence` | Evidence bundles |
+| `add_question`, `update_question`, `resolve_question` | Questions |
+| `add_risk`, `update_risk`, `resolve_risk` | Risks |
+| `add_idea`, `update_idea`, `resolve_idea` | Ideas |
+| `record_contradiction`, `rule_contradiction` | Contradictions |
 
-**`create_item`** — `name`, 1 to 80 characters, and optional `note` free text. The name must be
-free across the whole list: calling twice with the same name fails the second time and names the
-argument at fault. Returns the created item.
-
-**`demonstrate_refusal`** — `mode`, one of `invalid_argument`, `not_found`, `conflict`,
-`forbidden`, `upstream_unavailable`, `misconfigured`. Returns the matching refusal. An unknown mode
-is itself refused as an invalid argument. Reads nothing, writes nothing, affects no other call.
-
-**`business_intelligence_health`** — none. Reports whether this server reached BusinessIntelligence and
-was accepted by it, and the address it used. A failure says whether the problem is reachability or
-credentials, which is worth knowing before blaming any other tool.
+`delete_entry`, `delete_hypothesis`, `delete_experiment` and `delete_evidence` are marked destructive;
+a harness may ask before running them.
 
 ## Where the two permissions come from
 
@@ -42,17 +48,16 @@ screen per tenant. They gate whether a tool may be *called*.
 
 ## The second enforcement point
 
-For any tool that reaches another service, that service then enforces **its own** permissions on
-the forwarded token when the call arrives. So a caller needs both, and being refused by the
-downstream rather than by this server is the ordinary, correct outcome for somebody who may use
-this server and may not use that data. A refusal that names a downstream is not a bug in this
-server.
+Every tool but `server_info` reaches BusinessIntelligence, which enforces **its own** permissions on
+the forwarded token when the call arrives: `business-intelligence:portfolios.read`,
+`projects.read`/`projects.manage`, `canvas.read`/`canvas.write`, `definitions.read`. So a caller needs
+both, and being refused by BusinessIntelligence rather than by this server is the ordinary, correct
+outcome for somebody who may use this server and may not use that data. A refusal that names
+BusinessIntelligence is not a bug in this server.
 
-## What is scaffolding
+## Composed writes
 
-`list_items`, `create_item` and `demonstrate_refusal` are the samples the server was generated
-with. `list_items` and `create_item` share one in-memory dictionary that empties whenever the pod
-restarts, so an empty list is the normal state after a deploy, not a data loss.
-
-They are being replaced by tools against the product's real surface. Until they are, do not build
-anything on the item list, and do not describe it to a user as Mentat data.
+Three tools make several BusinessIntelligence calls in one: `design_experiment` (the experiment, then
+each metric, then each criterion), `record_evidence` (the bundle, then its rating, axes and readings)
+and `complete_experiment` (the learning card, then the completion). A refusal part-way says what was
+already written; the row exists and is finished with the single-step tools.
