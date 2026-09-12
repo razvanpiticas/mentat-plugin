@@ -1,7 +1,7 @@
 ---
 name: mentat
 description: Connects to and drives the Mentat MCP server at mcp.mentat.business — the product's own data, tenant-scoped, under the caller's own permissions. Use when working with Mentat data, when a Mentat tool refuses a call, or when connecting a harness to the Mentat server.
-allowed-tools: mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project
+allowed-tools: mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_roadmap
 ---
 
 # Mentat
@@ -45,12 +45,16 @@ Every call is also tenant-scoped from the caller's token. A caller who belongs t
 
 ## The tools
 
-Fifty tools, all over BusinessIntelligence: ten reads (portfolios, projects, the canvas, one block by
-code, one claim, one run, the method cards) and forty writes (entries, claims, runs, evidence,
-questions, risks, ideas, contradictions, project insights). The full table with permissions and
-which tools take a canvas version is in [reference/tools.md](reference/tools.md). **How to use them
-— which kind, which fields, what order BusinessIntelligence enforces — is the `mentat-canvas`
-skill; load it for any read or write on a canvas.**
+Seventy-seven tools, all over BusinessIntelligence: nineteen reads (portfolios, projects, the canvas,
+one block by code, one claim, one experiment, the method cards, a project's plan and the runs of its
+operations) and fifty-eight writes (entries, claims, experiments, evidence, questions, risks, ideas,
+contradictions, project insights, the plan's rows, operation runs and method gates). The full table
+with permissions and which tools take which version is in [reference/tools.md](reference/tools.md).
+**How to use them — which kind, which fields, what order BusinessIntelligence enforces — is the
+`mentat-canvas` skill; load it for any read or write on a canvas or a plan.**
+
+`get_roadmap` is the one orientation call beyond the four above: it says where a project stands in the
+method, what it has already run and what is next.
 
 `server_info` reports the tool list; when it disagrees with this file or any document, it is right.
 
@@ -65,6 +69,9 @@ rather than resending the same call.
 - **The refusal is a 401** — the token expired or was never minted. Sign in again.
 - **The refusal is a CONFLICT naming a canvas version** — the canvas moved under you. Re-read
   and resend with the version it names; the `mentat-canvas` skill explains the version rule.
+- **The refusal is a CONFLICT naming a roadmap version** — somebody else changed the project's plan.
+  That is a different number from the canvas version: re-read with `get_roadmap` and resend with the
+  one it names.
 - **The refusal is a CONFLICT quoting a rule of the business model** — the call is not allowed in the
   canvas's current state. Change what you asked for; do not resend.
 - **The refusal says a downstream holds nothing at that address** — an id or a code named nothing.

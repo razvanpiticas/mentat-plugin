@@ -19,11 +19,26 @@ skill's job.
 | `get_experiment` | BusinessIntelligence | One run with metric and criterion ids, evidence |
 | `list_experiment_definitions` | BusinessIntelligence | The method cards, optionally for one concern |
 | `get_experiment_definition` | BusinessIntelligence | One card's full method text |
+| `get_roadmap` | BusinessIntelligence | A project's plan: thesis, rows in order, the gate line, the roadmap version |
+| `get_operation_package` | BusinessIntelligence | One row's method text, targets, prerequisites and any run to resume |
+| `get_gate_status` | BusinessIntelligence | What the method gate would answer now, recorded nowhere |
+| `list_gate_evaluations` | BusinessIntelligence | The gate evaluations a project has recorded |
+| `get_operation_run` | BusinessIntelligence | One run with its events |
+| `list_operation_runs` | BusinessIntelligence | One page of a project's runs |
+| `list_operation_definitions` | BusinessIntelligence | The operation definitions, shipped or as one project has them |
+| `get_operation_definition` | BusinessIntelligence | One operation definition in full |
+| `list_pivot_definitions` | BusinessIntelligence | The kinds of pivot a project may adopt |
 
 ## Writes — `mcp:tools.write`
 
-Every write below but `create_project` and `record_project_insight` takes `canvasVersion` and answers
-the version it produced. Deletes answer only the version.
+Every write below takes `canvasVersion` and answers the version it produced, except: `create_project`
+and `record_project_insight`, which take none; the ten changes to a plan, which take `roadmapVersion`
+instead and answer the whole plan; and the seven writes to an operation run and `evaluate_gate`, which
+take neither. Deletes answer only the version.
+
+**`canvasVersion` and `roadmapVersion` are different numbers.** A project's plan and its canvas are
+separate records that move independently, so a change to one carries its own version and a conflict
+names which of the two moved.
 
 | Tool | Changes |
 | --- | --- |
@@ -37,9 +52,16 @@ the version it produced. Deletes answer only the version.
 | `add_risk`, `update_risk`, `resolve_risk` | Risks |
 | `add_idea`, `update_idea`, `resolve_idea` | Ideas |
 | `record_contradiction`, `rule_contradiction` | Contradictions |
+| `set_roadmap_thesis`, `place_roadmap_item`, `skip_roadmap_item`, `include_roadmap_item`, `annotate_roadmap_item`, `append_roadmap_operation`, `add_roadmap_move`, `set_move_work_reference`, `remove_roadmap_move`, `apply_pivot` | A project's plan — these take `roadmapVersion` |
+| `start_operation_run`, `checkpoint_operation_run`, `observe_operation_run`, `pause_operation_run`, `complete_operation_run`, `fail_operation_run`, `cancel_operation_run` | Operation runs — no version |
+| `evaluate_gate` | Records what a method gate answered — no version |
 
-`delete_entry`, `delete_hypothesis`, `delete_experiment` and `delete_evidence` are marked destructive;
-a harness may ask before running them.
+`delete_entry`, `delete_hypothesis`, `delete_experiment`, `delete_evidence`, `remove_roadmap_move`,
+`cancel_operation_run` and `apply_pivot` are marked destructive; a harness may ask before running them.
+
+`evaluate_gate` and `apply_pivot` move a project's tier, so BusinessIntelligence asks for
+`projects.manage` on them rather than `canvas.write`. A caller who may edit a canvas and not move a
+project is refused there, correctly.
 
 ## Where the two permissions come from
 
@@ -61,3 +83,9 @@ Three tools make several BusinessIntelligence calls in one: `design_experiment` 
 each metric, then each criterion), `record_evidence` (the bundle, then its rating, axes and readings)
 and `complete_experiment` (the learning card, then the completion). A refusal part-way says what was
 already written; the row exists and is finished with the single-step tools.
+
+Two more compose on the other side of the wire rather than here. `start_operation_run` runs the
+prerequisite check before it starts anything: a refusal naming operations that have not run means
+nothing was started, and `forcePastPrerequisites: true` starts it anyway with that fact recorded on the
+run — a person's decision, never the model's. `apply_pivot` moves the project's tier and appends the
+operations the pivot revisits in one transaction; either both happen or neither does.
