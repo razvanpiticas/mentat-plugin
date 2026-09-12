@@ -100,7 +100,7 @@ belongs.
 Changing the plan: `set_roadmap_thesis`, `place_roadmap_item` (one row to one position and one tier, in
 one call — every row after it is renumbered), `skip_roadmap_item` with a reason and
 `include_roadmap_item` to undo it, `annotate_roadmap_item`, `append_roadmap_operation`,
-`add_roadmap_move` for an idea a person has adopted, `set_move_work_reference`, `remove_roadmap_move`.
+`add_roadmap_move` for an idea a person has adopted, `remove_roadmap_move`.
 Each answers the whole plan with the version it produced; carry that into the next change.
 
 **Running an operation** is the loop this skill exists for:

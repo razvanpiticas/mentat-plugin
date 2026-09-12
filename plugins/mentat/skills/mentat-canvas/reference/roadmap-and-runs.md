@@ -132,6 +132,5 @@ A run was paused mid-way yesterday.
 
 A move is an adopted idea given a place in the plan. Only an idea a person has adopted
 (`resolve_idea` with `Adopted`) may become one, and adopting is their decision rather than yours. A
-move has no run and no verdict: it is work to do, tracked wherever the team tracks work, which is what
-`set_move_work_reference` records. `remove_roadmap_move` takes the row off the plan and leaves the idea
-on the canvas.
+move has no run and no verdict: it is work to do. `remove_roadmap_move` takes the row off the plan and
+leaves the idea on the canvas.

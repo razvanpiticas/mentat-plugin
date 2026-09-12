@@ -52,7 +52,7 @@ names which of the two moved.
 | `add_risk`, `update_risk`, `resolve_risk` | Risks |
 | `add_idea`, `update_idea`, `resolve_idea` | Ideas |
 | `record_contradiction`, `rule_contradiction` | Contradictions |
-| `set_roadmap_thesis`, `place_roadmap_item`, `skip_roadmap_item`, `include_roadmap_item`, `annotate_roadmap_item`, `append_roadmap_operation`, `add_roadmap_move`, `set_move_work_reference`, `remove_roadmap_move`, `apply_pivot` | A project's plan — these take `roadmapVersion` |
+| `set_roadmap_thesis`, `place_roadmap_item`, `skip_roadmap_item`, `include_roadmap_item`, `annotate_roadmap_item`, `append_roadmap_operation`, `add_roadmap_move`, `remove_roadmap_move`, `apply_pivot` | A project's plan — these take `roadmapVersion` |
 | `start_operation_run`, `checkpoint_operation_run`, `observe_operation_run`, `pause_operation_run`, `complete_operation_run`, `fail_operation_run`, `cancel_operation_run` | Operation runs — no version |
 | `evaluate_gate` | Records what a method gate answered — no version |
 
