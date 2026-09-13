@@ -2,7 +2,7 @@
 name: mentat-canvas
 description: Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks, hypotheses (claims), experiments, evidence, questions, risks, ideas, contradictions and project insights. Use this whenever a task touches a project's canvas in any way, even if the user never says the word canvas — filling Customer Segments, writing a value proposition, proposing or scoring a hypothesis, designing or completing an experiment, recording interview evidence, logging a question or risk, or reading what a project already holds. It also drives a project's roadmap: reading the plan, ordering and skipping its rows, running an operation end to end, and the method gates and pivots above it. Every method skill writes through this one; the operation skill (mentat-operation, coming next) runs a roadmap operation end to end with the tools below.
 argument-hint: <project name or id> <what to read or write>
-allowed-tools: mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_canvas, mcp__mentat__get_block, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__create_project, mcp__mentat__record_project_insight, mcp__mentat__add_entry, mcp__mentat__update_entry, mcp__mentat__retire_entry, mcp__mentat__delete_entry, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__recommend_experiment_definition, mcp__mentat__withdraw_experiment_definition, mcp__mentat__park_hypothesis, mcp__mentat__unpark_hypothesis, mcp__mentat__retire_hypothesis, mcp__mentat__decide_hypothesis, mcp__mentat__delete_hypothesis, mcp__mentat__design_experiment, mcp__mentat__add_metric, mcp__mentat__add_criterion, mcp__mentat__start_experiment, mcp__mentat__record_observation, mcp__mentat__judge_criterion, mcp__mentat__complete_experiment, mcp__mentat__abort_experiment, mcp__mentat__record_spend, mcp__mentat__delete_experiment, mcp__mentat__record_evidence, mcp__mentat__update_evidence, mcp__mentat__add_data_point, mcp__mentat__delete_evidence, mcp__mentat__add_question, mcp__mentat__update_question, mcp__mentat__resolve_question, mcp__mentat__add_risk, mcp__mentat__update_risk, mcp__mentat__resolve_risk, mcp__mentat__add_idea, mcp__mentat__update_idea, mcp__mentat__resolve_idea, mcp__mentat__record_contradiction, mcp__mentat__rule_contradiction, mcp__mentat__get_roadmap, mcp__mentat__get_operation_package, mcp__mentat__get_gate_status, mcp__mentat__list_gate_evaluations, mcp__mentat__get_operation_run, mcp__mentat__list_operation_runs, mcp__mentat__list_operation_definitions, mcp__mentat__get_operation_definition, mcp__mentat__list_pivot_definitions, mcp__mentat__set_roadmap_thesis, mcp__mentat__place_roadmap_item, mcp__mentat__skip_roadmap_item, mcp__mentat__include_roadmap_item, mcp__mentat__annotate_roadmap_item, mcp__mentat__append_roadmap_operation, mcp__mentat__add_roadmap_move, mcp__mentat__remove_roadmap_move, mcp__mentat__apply_pivot, mcp__mentat__start_operation_run, mcp__mentat__checkpoint_operation_run, mcp__mentat__observe_operation_run, mcp__mentat__pause_operation_run, mcp__mentat__complete_operation_run, mcp__mentat__fail_operation_run, mcp__mentat__cancel_operation_run, mcp__mentat__evaluate_gate
+allowed-tools: mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_canvas, mcp__mentat__get_block, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__create_project, mcp__mentat__record_project_insight, mcp__mentat__add_entry, mcp__mentat__update_entry, mcp__mentat__retire_entry, mcp__mentat__delete_entry, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__recommend_experiment_definition, mcp__mentat__withdraw_experiment_definition, mcp__mentat__park_hypothesis, mcp__mentat__unpark_hypothesis, mcp__mentat__retire_hypothesis, mcp__mentat__decide_hypothesis, mcp__mentat__delete_hypothesis, mcp__mentat__design_experiment, mcp__mentat__add_metric, mcp__mentat__add_criterion, mcp__mentat__start_experiment, mcp__mentat__record_observation, mcp__mentat__judge_criterion, mcp__mentat__complete_experiment, mcp__mentat__abort_experiment, mcp__mentat__record_spend, mcp__mentat__delete_experiment, mcp__mentat__record_evidence, mcp__mentat__update_evidence, mcp__mentat__add_data_point, mcp__mentat__delete_evidence, mcp__mentat__add_question, mcp__mentat__update_question, mcp__mentat__resolve_question, mcp__mentat__add_risk, mcp__mentat__update_risk, mcp__mentat__resolve_risk, mcp__mentat__add_idea, mcp__mentat__update_idea, mcp__mentat__resolve_idea, mcp__mentat__record_contradiction, mcp__mentat__rule_contradiction, mcp__mentat__get_roadmap, mcp__mentat__get_operation_package, mcp__mentat__get_gate_status, mcp__mentat__list_gate_evaluations, mcp__mentat__get_run, mcp__mentat__list_runs, mcp__mentat__list_operation_definitions, mcp__mentat__get_operation_definition, mcp__mentat__list_pivot_definitions, mcp__mentat__set_roadmap_thesis, mcp__mentat__place_roadmap_item, mcp__mentat__skip_roadmap_item, mcp__mentat__include_roadmap_item, mcp__mentat__annotate_roadmap_item, mcp__mentat__append_roadmap_operation, mcp__mentat__add_roadmap_move, mcp__mentat__remove_roadmap_move, mcp__mentat__apply_pivot, mcp__mentat__start_run, mcp__mentat__checkpoint_run, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__end_run, mcp__mentat__cancel_run, mcp__mentat__evaluate_gate
 ---
 
 # Mentat canvas
@@ -27,6 +27,13 @@ skill is about what to write and how.
    old state, not a fault.
 4. **Report what the tool answered**, by reference code (`CS-04`, `H-CS-002`, `T-3`, `E-7`), never
    what you intended. A refusal changed nothing unless its message says otherwise.
+
+**`runId` on every write.** Every write tool on this server but `start_run` takes `runId`: the run
+the call is being made from inside. When you are working inside a run, send the id `start_run` answered
+on every write until that run ends, so the project's history records which session wrote each row. A
+person writing for themselves leaves it out. A write refused with a `CONFLICT` naming `runId` means the
+run was ended, paused or opened by somebody else — nothing was written, every other call carrying it
+will be refused the same way, and the fix is a new `start_run`, never a retry.
 
 ## Addressing
 
@@ -110,22 +117,29 @@ Each answers the whole plan with the version it produced; carry that into the ne
 1. `get_operation_package` with the row's id. It answers the method text as this project has it, the
    procedures in order with their ids, the places on the canvas the operation writes to, what it waits
    on, and any run left paused.
-2. `start_operation_run`. A refusal naming operations that have not run is the prerequisite check:
-   report which ones and ask whether to run them first or to force past them.
-   STOP and call the AskUserQuestion tool to clarify. Never set `forcePastPrerequisites` on your own judgement.
+2. `start_run` with `operationId` set to the row. A refusal naming operations that have not run is the
+   prerequisite check: report which ones and ask whether to run them first or to force past them.
+   STOP and call the AskUserQuestion tool to clarify. Never set `forcePastPrerequisites` on your own judgement. Keep the run id it
+   answered: every write for the rest of the run carries it as `runId`.
 3. Do the procedures. Write what they produce with the canvas tools above — `add_entry`,
-   `create_hypothesis`, `add_question` — and keep the ids those writes answered.
-4. `checkpoint_operation_run` after **each** procedure, naming the procedure and those ids. A run
-   interrupted between checkpoints resumes from the last one; an uncheckpointed procedure is one
-   somebody repeats. `observe_operation_run` records what belongs to no procedure.
-5. `complete_operation_run` with a summary written for whoever reads this project later, and a verdict
-   **only when the package says the validation level is `Checkpoint`** — an `Experiment` operation is
-   judged by its experiment and a `None` operation by nothing, and a verdict on either is refused.
-   `Invalidated` appends the revisit the operation names to the end of the plan; say so when you report
-   it. A run that could not be carried out at all is `fail_operation_run`, not an invalidated verdict.
+   `create_hypothesis`, `add_question` — each carrying `runId`, and keep the ids those writes answered.
+4. `checkpoint_run` after **each** procedure, naming the procedure and those ids. A run interrupted
+   between checkpoints resumes from the last one; an uncheckpointed procedure is one somebody repeats.
+   `observe_run` records what belongs to no procedure.
+5. `end_run` with `outcome: "Completed"` and a summary written for whoever reads this project later,
+   and a verdict **only when the package says the validation level is `Checkpoint`** — an `Experiment`
+   operation is judged by its experiment and a `None` operation by nothing, and a verdict on either is
+   refused. `Invalidated` appends the revisit the operation names to the end of the plan; say so when
+   you report it. A run that could not be carried out at all is `end_run` with `outcome: "Failed"` and
+   the reason, not an invalidated verdict.
 
-Pause with `pause_operation_run` and continue by starting the next run with `resumedFromRunId` set to
-the paused one. `get_operation_run` and `list_operation_runs` read what has been done.
+Pause with `pause_run` and continue by starting the next run with `resumedFromRunId` set to the paused
+one. `get_run` and `list_runs` read what has been done. `cancel_run` abandons a run nobody intends to
+finish and is a person's call, not yours.
+
+A run is opened on other subjects too — an experiment, a job off the board, or the project itself —
+by sending `experimentId`, `workItemId` or none of the three instead of `operationId`. Only an attempt
+at a row of the plan checkpoints; every other shape of run records its progress with `observe_run`.
 
 **Gates and pivots are a person's call, never yours.** `get_gate_status` answers what the gate would
 say now — the question, every block with the confidence it holds against the bar it must clear, and
@@ -149,6 +163,8 @@ the recovery says rather than resending.
 - `CONFLICT` naming a roadmap version — somebody else changed the plan: re-read it with `get_roadmap`,
   check that the row you meant is still where you thought, then resend with the version the refusal
   names. Row positions may have moved.
+- `CONFLICT` naming `runId` — the run you are working inside cannot be worked any more. Nothing was
+  written. Open a new one with `start_run` and send the write again; do not resend it unchanged.
 - `CONFLICT` quoting a rule of the business model — the call is not allowed in the canvas's current
   state (a run with no criterion cannot start, a scored claim cannot be reworded). Change what you
   asked for.
@@ -166,7 +182,9 @@ with `add_metric`, `add_criterion`, `update_evidence` or `add_data_point` rather
 - Retire what was once believed (`retire_entry`, `retire_hypothesis`); delete only what should never
   have existed. Deletes cascade to claims and contradictions about the entry.
 - One `update_*` call per changed thing; each takes the version the previous answered.
-- Changes to the plan take `roadmapVersion`; writes on the canvas take `canvasVersion`; writes to an
-  operation run take neither. Sending the wrong one is refused, not silently accepted.
+- Changes to the plan take `roadmapVersion`; writes on the canvas take `canvasVersion`; writes to a
+  run take neither. Sending the wrong one is refused, not silently accepted.
+- `runId` is not a version and is not one of those two: it says which run a write was made from
+  inside, and it is sent on every write of a run including the canvas ones.
 - Do not cache what a read answered across turns: another person in the same organisation may have
   written since.

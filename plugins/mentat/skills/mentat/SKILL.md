@@ -45,16 +45,20 @@ Every call is also tenant-scoped from the caller's token. A caller who belongs t
 
 ## The tools
 
-Seventy-seven tools, all over BusinessIntelligence: nineteen reads (portfolios, projects, the canvas,
-one block by code, one claim, one experiment, the method cards, a project's plan and the runs of its
-operations) and fifty-eight writes (entries, claims, experiments, evidence, questions, risks, ideas,
-contradictions, project insights, the plan's rows, operation runs and method gates). The full table
-with permissions and which tools take which version is in [reference/tools.md](reference/tools.md).
-**How to use them — which kind, which fields, what order BusinessIntelligence enforces — is the
-`mentat-canvas` skill; load it for any read or write on a canvas or a plan.**
+One hundred and eleven tools, all over BusinessIntelligence: thirty-three reads (portfolios, projects,
+where a project stands, the canvas, one block by code, one claim, one experiment, the method cards, a
+project's plan, its runs, its agents and goals, its learnings, its board, its change log and its
+decision ledger) and seventy-eight writes (entries, claims, experiments, evidence, questions, risks,
+ideas, contradictions, insights, the plan's rows, runs, method gates, agents and goals, the board's
+jobs, escalations and decisions). The full table with permissions and which tools take which version
+is in [reference/tools.md](reference/tools.md). **How to use them — which kind, which fields, what
+order BusinessIntelligence enforces — is the `mentat-canvas` skill; load it for any read or write on a
+canvas or a plan.** Being one of the organisation's agents and working its board is the `mentat-agent`
+skill.
 
-`get_roadmap` is the one orientation call beyond the four above: it says where a project stands in the
-method, what it has already run and what is next.
+`get_project_state` is the one orientation call beyond the four above: in one read it says where a
+project stands, what it has decided, what work is open and what changed since the caller last stopped.
+`get_roadmap` narrows that to the plan alone.
 
 `server_info` reports the tool list; when it disagrees with this file or any document, it is right.
 
@@ -72,6 +76,9 @@ rather than resending the same call.
 - **The refusal is a CONFLICT naming a roadmap version** — somebody else changed the project's plan.
   That is a different number from the canvas version: re-read with `get_roadmap` and resend with the
   one it names.
+- **The refusal is a CONFLICT naming `runId`** — the run you are working inside was ended, paused or
+  opened by somebody else, so nothing was changed. Every other call carrying that run is refused the
+  same way. Stop working it, say so, and `start_run` a new one before writing anything else.
 - **The refusal is a CONFLICT quoting a rule of the business model** — the call is not allowed in the
   canvas's current state. Change what you asked for; do not resend.
 - **The refusal says a downstream holds nothing at that address** — an id or a code named nothing.

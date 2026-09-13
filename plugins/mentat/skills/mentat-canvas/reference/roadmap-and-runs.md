@@ -49,7 +49,7 @@ Each operation definition carries one, and `get_operation_package` answers it be
 **Exactly one of the three levels takes a verdict**, and sending one where it does not belong is
 refused as firmly as omitting one where it does:
 
-| Validation level | What `complete_operation_run` takes |
+| Validation level | What `end_run` takes on a completed run |
 | --- | --- |
 | `Checkpoint` | **A verdict is required**: `Validated` or `Invalidated`, judged against what the definition's "validated when" says |
 | `Experiment` | **Send no verdict.** The claim is tested by a real experiment, and the verdict lives on that experiment (`complete_experiment`), not on the run |
@@ -64,13 +64,13 @@ missing verdict on a `Checkpoint` operation comes back "A checkpoint operation e
 `Invalidated` is a real conclusion: the thing the operation set out to establish did not hold.
 BusinessIntelligence appends the revisit that operation names to the end of the plan, so report the new
 row. A run that could not be carried out — no interviews could be booked, the tool was down — concluded
-nothing and is `fail_operation_run` instead, at any level.
+nothing and is `end_run` with `outcome: "Failed"` and the reason instead, at any level.
 
 ## Prerequisites
 
 An operation may wait on others, `Mandatory` or `Recommended`. `get_roadmap` and
 `get_operation_package` answer each prerequisite with a state: whether it has run on this plan.
-`start_operation_run` refuses when a mandatory one has not. The refusal names them.
+`start_run` refuses when a mandatory one has not. The refusal names them.
 
 That refusal is not an error to work around. Report which operations it names and ask whether to run
 them first or to start anyway; `forcePastPrerequisites: true` is recorded on the run for whoever reads
@@ -78,7 +78,7 @@ it later, which is why it is never yours to set.
 
 ## The checkpoint payload
 
-`checkpoint_operation_run` and `observe_operation_run` take an optional `payload`: any JSON object. The
+`checkpoint_run` and `observe_run` take an optional `payload`: any JSON object. The
 service stores it as sent and never reads it. Use it for what has no column — the interview's question
 list, the search terms that worked, a count. Keep it small and keep it the same shape across a run, so
 the person reading the run's events can follow it.
@@ -95,16 +95,16 @@ The plan's row `customer-jobs-pains-gains` is `NotStarted` at `T2`, and the proj
    `Experiment`**, three procedures (`P1.6` customer jobs, `P1.7` customer pains, `P1.8` customer
    gains), three target slots on `CS` (`CS.JOBS`, `CS.PAINS`, `CS.GAINS`), one mandatory prerequisite
    `persona` in state `Met`, no resumable run.
-2. `start_operation_run(projectId, operationId, forcePastPrerequisites: false)` → a run, status
+2. `start_run(projectId, operationId, forcePastPrerequisites: false)` → a run, status
    `Running`.
 3. Do `P1.6`: `add_entry` on `CS` with the `CustomerJob` kind for each job, carrying the segment's id.
-   `checkpoint_operation_run(runId, completedProcedureId: <the id of P1.6>, writtenEntryIds: [those
+   `checkpoint_run(runId, completedProcedureId: <the id of P1.6>, writtenEntryIds: [those
    ids], producedHypothesisIds: [], note: "Four jobs from the five transcripts.")`.
-4. Do `P1.7`, the pains, from five interviews. `observe_operation_run(runId, payload: { "interviews":
+4. Do `P1.7`, the pains, from five interviews. `observe_run(runId, payload: { "interviews":
    5 }, note: "Two people said the opposite of the third.")`, then `add_entry` with the `CustomerPain`
-   kind and `checkpoint_operation_run(runId, completedProcedureId: <the id of P1.7>, …)`.
+   kind and `checkpoint_run(runId, completedProcedureId: <the id of P1.7>, …)`.
 5. Do `P1.8`, the gains, the same way with the `CustomerGain` kind.
-6. `complete_operation_run(runId, summary: "Five interviews with gym-goers. …")` — **no `verdict`**.
+6. `end_run(runId, outcome: "Completed", summary: "Five interviews with gym-goers. …")` — **no `verdict`**.
    The level is `Experiment`, so the run only records what was written; whether the top three pains
    hold is settled by an experiment, and sending a verdict here is refused.
 7. Report the row's new status — `Completed` — and the reference codes the entries answered, then
@@ -112,7 +112,7 @@ The plan's row `customer-jobs-pains-gains` is `NotStarted` at `T2`, and the proj
    test it.
 
 On a `Checkpoint` row the same loop ends differently: `persona` is one, so its last call is
-`complete_operation_run(runId, verdict: "Validated", summary: "…")`, judged against its "validated
+`end_run(runId, outcome: "Completed", verdict: "Validated", summary: "…")`, judged against its "validated
 when" sentence, and `"Invalidated"` there appends its revisit to the plan.
 
 ## A worked resume
@@ -120,10 +120,11 @@ when" sentence, and `"Invalidated"` there appends its revisit to the plan.
 A run was paused mid-way yesterday.
 
 1. `get_roadmap(projectId)` → the row's status is `Paused` and its `latestRun` names the run.
-2. `get_operation_run(projectId, runId)` → the procedures already checkpointed and what they wrote.
+2. `get_run(projectId, runId)` → the run, and in its `attempt` block the procedures already
+   checkpointed and what they wrote.
 3. `get_operation_package(projectId, operationId)` → the same package, with `resumableRun` naming that
    run.
-4. `start_operation_run(projectId, operationId, forcePastPrerequisites: false, resumedFromRunId:
+4. `start_run(projectId, operationId, forcePastPrerequisites: false, resumedFromRunId:
    runId)` → a new run that continues the old one.
 5. Carry on from the first procedure the old run did **not** checkpoint. Do not repeat the ones it did;
    repeating a write is how a canvas ends up with duplicate entries.

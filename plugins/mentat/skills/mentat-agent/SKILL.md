@@ -2,7 +2,7 @@
 name: mentat-agent
 description: Boots one of the organisation's agents on one project and works as it — reads the charter, the mission and its objectives, the team, the person it works for and its own instructions, then works on what the person asks for or on what a routine says, proposes work from the goals it owns, records what it learned, and records the numbers it measured. Use when the person says "boot the CEO", names one of the organisation's agents, asks what an agent should do next, or asks for work to be done and recorded as an agent rather than as themselves.
 argument-hint: <agent name> <project name or id> [routine name]
-allowed-tools: mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__list_agents, mcp__mentat__get_agent, mcp__mentat__boot_agent, mcp__mentat__list_routines, mcp__mentat__list_charter_documents, mcp__mentat__record_charter_insight, mcp__mentat__revise_charter_document, mcp__mentat__record_operation_insight, mcp__mentat__record_block_entry_definition_insight, mcp__mentat__record_experiment_definition_insight, mcp__mentat__list_insights, mcp__mentat__get_insight, mcp__mentat__supersede_insight, mcp__mentat__contradict_insight, mcp__mentat__list_goals, mcp__mentat__record_goal_measurement, mcp__mentat__link_to_goal, mcp__mentat__unlink_from_goal, mcp__mentat__record_project_insight
+allowed-tools: mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_project_state, mcp__mentat__list_agents, mcp__mentat__get_agent, mcp__mentat__boot_agent, mcp__mentat__list_routines, mcp__mentat__list_charter_documents, mcp__mentat__record_charter_insight, mcp__mentat__revise_charter_document, mcp__mentat__record_operation_insight, mcp__mentat__record_block_entry_definition_insight, mcp__mentat__record_experiment_definition_insight, mcp__mentat__list_insights, mcp__mentat__get_insight, mcp__mentat__supersede_insight, mcp__mentat__contradict_insight, mcp__mentat__list_goals, mcp__mentat__record_goal_measurement, mcp__mentat__link_to_goal, mcp__mentat__unlink_from_goal, mcp__mentat__record_project_insight, mcp__mentat__start_run, mcp__mentat__checkpoint_run, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__end_run, mcp__mentat__get_run, mcp__mentat__list_work_items, mcp__mentat__get_work_item, mcp__mentat__create_work_item, mcp__mentat__update_work_item, mcp__mentat__transition_work_item, mcp__mentat__comment_on_work_item, mcp__mentat__raise_escalation, mcp__mentat__list_decisions, mcp__mentat__record_decision, mcp__mentat__list_activity
 ---
 
 # Mentat agent
@@ -21,9 +21,12 @@ agent.
 1. **Find the agent.** `list_agents` for the project. Match the name the person used. Refuse to go on
    if it is `Paused` or `Archived`, or if it belongs to a sibling venture — say which and stop.
    **Never invent an agent.** The list answers what exists.
-2. **Boot.** `boot_agent(agent_id, project_id)`. One call, one answer, read in its order.
-3. **Confirm in one line**, then work.
-4. **Record what you learned**, before the session ends.
+2. **Boot.** `boot_agent(agentId, projectId)`. One call, one answer, read in its order.
+3. **Confirm in one line.**
+4. **Open a run** before you change anything — see [The run](#the-run) below. Everything you write
+   from then on carries its id.
+5. **Work**, recording progress on the run as you go.
+6. **Record what you learned**, then **end the run** with its summary.
 
 ## What `boot_agent` answers, in the order to read it
 
@@ -33,6 +36,7 @@ agent.
 | `mission` | The one `Mission` goal: its code, its metric, its target, its deadline, its latest measurement with the as-of date and the source | The one number the work is judged against. |
 | `objectives` | The tree under the mission, each marked whether **you** own it | Your goals are the ones you plan from. Somebody else's are context. |
 | `team` | Every `Human` and `Agent` entry of the Key Resources block: reference code, role, responsibilities, who it reports to, and which entry is you | Whom to ask about what. The chart is the answer to "who knows this". |
+| `project` | Where the venture stands: the canvas in summary, the row of the plan last finished and the one to pick up next, the decisions it is working to, the work open on the board, what a person answered while you were away, and what changed since your last run ended | This is the state you plan from. `changesTruncated` true means the log held more than the brief carries — read `list_activity` for the rest. Do not call `get_project_state` as well at a boot; this is the same section. |
 | `person` | The `MemberProfile` of whoever is signed in, when they wrote one | How to work with them. When the response says there is none, **ask** rather than assume. |
 | `agent` and `agentDocuments` | Your own row and your instructions, `AgentInstructions` first, then `Custom` by title | Your name, your voice, what you own, your standing orders and your hard boundaries. Follow them over your own defaults. |
 
@@ -47,8 +51,54 @@ when you need the history behind a fact.
 
 Agent name, project, the mission code with its latest number against its target, and how many goals
 are yours. One line, not a summary of the brief. Then either ask what to attack, or — when the person
-named a routine — read that routine's instructions with `list_routines` and execute them.
+named a routine — read that routine's instructions with `list_routines` and execute them. Either way,
+`start_run` before the first write, naming the routine when there is one.
 STOP and call the AskUserQuestion tool to clarify.
+
+## The run
+
+A **run** is the session itself, written down. Everything you change is recorded against it, so the
+person reading the project later can see which session did what and why. Open one before the first
+write and end it before you stop.
+
+1. **Open it.** `start_run(projectId, …)` with the routine id when the person named a routine, and
+   with the subject when the routine's instructions name one — at most one of `operationId`,
+   `experimentId` and `workItemId`, or none of the three for a run on the project itself. The
+   answer carries the run id and, for a row of the plan, everything that row's work needs. Continue a
+   paused run by naming it in `resumedFromRunId` rather than opening a fresh one.
+2. **Carry the id.** Every write from here takes `runId`. A write refused with a `CONFLICT` naming
+   `runId` means the run was ended or paused by a person: nothing was written, and every other call
+   carrying it is refused the same way. **Open a new run and send the write again — never retry
+   without one, and never carry on writing outside a run.**
+3. **Say what is happening.** `observe_run(runId, note)` for anything worth a line: what you tried,
+   what you found, why something is taking longer. `checkpoint_run` belongs to an attempt at a row of
+   the plan and names the procedure it finished; on every other shape of run it is refused, and
+   `observe_run` is what to call. `pause_run` when the session has to stop before the work is done.
+4. **End it.** `end_run(runId, outcome: "Completed", summary)` — the summary is the one paragraph
+   the next run reads first, so write it for whoever picks this up, not as a note to yourself. Add
+   the verdict only on a completed attempt at an operation whose validation level is `Checkpoint`.
+   Work that could not be carried out at all is `end_run` with `outcome: "Failed"` and the reason.
+   Send `usage` when the harness knows what the session cost.
+
+**Working an item off the board inside a run:**
+
+- `list_work_items` narrowed to your own agent id answers what is waiting for you; `get_work_item`
+  reads one whole, with its thread, so you do not repeat what somebody already tried.
+- `transition_work_item` to `InProgress` **before** you touch anything.
+- `comment_on_work_item` as you go: what you tried, what you found, what did not work.
+- `InReview` when the item is finished. **You never move it to `Done`** — that is the person's
+  judgement on work they have read.
+- Stuck on something a person must supply? `Blocked` with the reason, which raises the escalation
+  itself, then `pause_run`. Do not raise a second escalation for the same block. Something you cannot
+  decide that is not about one item is `raise_escalation`, which does not stop the run on its own.
+- A decision of the business taken on the way is `record_decision`; from inside a run it is a
+  proposal a person takes. `list_decisions` first — a decision that cuts across one the venture has
+  already taken belongs in the same sentence as that one's code.
+
+`get_project_state` re-reads where the project stands mid-session — the plan position, your open
+items, what a person answered while you were away, and what changed since your last run ended. Send
+`runId` on it, or you are handed the signed-in person's open work rather than your own. `boot_agent`
+already carries the same section, so do not call both at a boot.
 
 ## The goal loop
 
@@ -61,11 +111,31 @@ For each goal marked yours, in order:
    — the source is required, and "the founder said so" is a source. Never record a number you inferred.
 3. **Nothing moving it is the second.** Read the goal's serving items in `list_goals`. When nothing
    serves a goal, research what would: the goal itself, the charter, the canvas, what was decided
-   before. Propose one piece of work in conversation, and only when the person agrees, do it.
+   before and `list_decisions`. Then write the proposal down — see below.
 4. **One proposal per goal per session.** More is noise.
 
 A hypothesis or an experiment is put behind a goal with `link_to_goal`, and taken out from behind it
-with `unlink_from_goal`. One piece of work may serve several goals; send it once per goal.
+with `unlink_from_goal`. One piece of work may serve several goals; send it once per goal. A job off
+the board is not put behind a goal that way — the product accepts only claims and experiments there —
+so a job names the goal it serves in its brief and rates what finishing it buys in `goalValue`.
+
+## Proposing work
+
+A proposal is a row on the board, not a paragraph in the conversation. `create_work_item` from inside
+your run: it lands `Proposed` with an approval request raised beside it, and nobody works it until a
+person says yes. That is the supervision working, so do not ask for approval in conversation as well.
+
+**Every proposal carries all three ratings** — `priority` (how much the venture wants it), `effort`
+(how big it looks) and `goalValue` (what finishing it buys) — each `VeryLow` to `VeryHigh`. A job
+rated `Medium` on all three tells the board nothing; rate it against the other work, not against
+itself. The brief says what is to be done, why now, which goal it serves and everything it touches,
+because it is what whoever picks it up reads instead of asking you.
+
+**A job of several days is proposed as one parent with its sub-items, in the same run.** Write the
+parent first, then each chunk with `parentWorkItemId` set to it — a chunk of a job already agreed
+to is agreed as it is written. Work goes one level deep, so a chunk of a chunk is refused. The goal
+the whole job serves is named on the parent's brief; each later run picks up one sub-item, takes it to
+`InProgress`, and leaves it at `InReview`.
 
 ## Learning
 
@@ -101,6 +171,12 @@ The `mentat` skill's table, plus:
 - `FORBIDDEN` on `boot_agent` — the person's role cannot boot agents. Tell them; it is a permission
   their administrator ticks, not something you can work around.
 - `NOT_FOUND` on an agent — it belongs to another venture, or the name was wrong. `list_agents` again.
+- `CONFLICT` naming `runId` (`run-not-usable`) — the run you are working inside was ended, paused or
+  opened by somebody else. Nothing was written, and every other call carrying that run is refused the
+  same way. Stop working it, say so in one line, and `start_run` a new one before writing anything
+  else. **Never retry the write without a run.**
+- `CONFLICT` on `transition_work_item` naming `Done`, `Cancelled` or `Proposed` — those three are a
+  person's. Leave the item at `InReview` and say it is ready.
 
 ## Rules that are easy to get wrong
 
@@ -116,4 +192,9 @@ The `mentat` skill's table, plus:
 - **The org chart is the Key Resources block**, so changing it is a canvas write and belongs to
   `mentat-canvas` and to the person. You read it; you do not redraw it.
 - Creating agents, creating goals and changing a goal's status are a person's work on the screens.
-  They are not in your tool list on purpose.
+  They are not in your tool list on purpose. So are approving a proposal, resolving an inbox row,
+  closing an item as `Done` or `Cancelled`, accepting a decision, and cancelling somebody's run.
+- **Nothing is written outside a run.** A write with no `runId` is recorded as the signed-in person's
+  own, under their name and not yours, and the project's history then says they did what you did.
+- **End the run before you stop.** A run left open is a session nobody can tell is finished, and the
+  next one measures its delta from the last run that ended.
