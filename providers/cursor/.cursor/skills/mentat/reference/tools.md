@@ -55,6 +55,28 @@ names which of the two moved.
 | `set_roadmap_thesis`, `place_roadmap_item`, `skip_roadmap_item`, `include_roadmap_item`, `annotate_roadmap_item`, `append_roadmap_operation`, `add_roadmap_move`, `remove_roadmap_move`, `apply_pivot` | A project's plan — these take `roadmapVersion` |
 | `start_operation_run`, `checkpoint_operation_run`, `observe_operation_run`, `pause_operation_run`, `complete_operation_run`, `fail_operation_run`, `cancel_operation_run` | Operation runs — no version |
 | `evaluate_gate` | Records what a method gate answered — no version |
+| `create_agent` | Adds an agent to a project, or to the portfolio when no project is named |
+| `update_agent` | Renames and retitles an agent, and shares a project's agent with the whole portfolio |
+| `set_agent_status` | Pauses, resumes or archives an agent |
+| `record_charter_insight` | Records a learning about one charter document, with the full text it proposes instead |
+| `revise_charter_document` | Replaces a charter document's body — for an agent, only on a Living document and only with the insight it applies |
+| `create_goal` | Sets the project's mission, or adds an objective under a goal |
+| `update_goal` | Changes a goal's title, description, metric, deadline or owner |
+| `set_goal_status` | Activates, achieves, misses or abandons a goal |
+| `record_goal_measurement` | Appends a measurement: the value, the date it was true and the source it came from |
+| `record_operation_insight` | Records a learning about one operation, with the instructions it proposes for one of its procedures |
+| `record_block_entry_definition_insight` | Records a learning about one entry kind |
+| `record_experiment_definition_insight` | Records a learning about one method card |
+| `supersede_insight` | Marks an older insight replaced by a newer one that says it better |
+| `contradict_insight` | Marks a confirmed insight as no longer holding |
+| `link_to_goal` | Puts a hypothesis or an experiment behind a goal it serves |
+| `unlink_from_goal` | Takes one out from behind a goal |
+
+The organisation's writes take no version either: an agent, a routine, a goal and a measurement belong
+to the organisation or to the project rather than to the canvas or the plan. A charter document is the
+exception and carries a version of its own, sent as `expectedVersion` on `revise_charter_document` and
+answered by every read of it, so a proposal written against text somebody has since edited is refused
+rather than applied silently over their words.
 
 `delete_entry`, `delete_hypothesis`, `delete_experiment`, `delete_evidence`, `remove_roadmap_move`,
 `cancel_operation_run` and `apply_pivot` are marked destructive; a harness may ask before running them.

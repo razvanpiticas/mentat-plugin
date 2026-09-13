@@ -3,6 +3,7 @@
   "displayName": "OpenCode",
   "skillPaths": [
     ".opencode/skills/mentat",
+    ".opencode/skills/mentat-agent",
     ".opencode/skills/mentat-canvas",
     ".opencode/skills/mentat-update"
   ],

@@ -3,6 +3,7 @@
   "displayName": "Cursor",
   "skillPaths": [
     ".cursor/skills/mentat",
+    ".cursor/skills/mentat-agent",
     ".cursor/skills/mentat-canvas",
     ".cursor/skills/mentat-update"
   ],

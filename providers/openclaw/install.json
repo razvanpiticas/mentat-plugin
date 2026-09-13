@@ -3,6 +3,7 @@
   "displayName": "OpenClaw",
   "skillPaths": [
     ".agents/skills/mentat",
+    ".agents/skills/mentat-agent",
     ".agents/skills/mentat-canvas",
     ".agents/skills/mentat-update"
   ],
