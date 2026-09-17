@@ -69,6 +69,6 @@ the same call, against the version the text change produced.
 
 `retire_entry` keeps the entry with a reason and, when another entry took its place,
 `supersededByEntryId`; the canvas shows it struck through and gates stop counting it. It is refused
-while a claim about the entry is under test. `delete_entry` removes the entry, every claim about it
-and every contradiction it is a side of, and is refused once one of those claims has a started
-experiment. Anything a person once believed is retired, not deleted.
+while a hypothesis about the entry is under test. `delete_entry` removes the entry, every hypothesis
+about it and every contradiction it is a side of, and is refused once one of those hypotheses has a
+started experiment. Anything a person once believed is retired, not deleted.

@@ -116,8 +116,8 @@ For each goal marked yours, in order:
 
 A hypothesis or an experiment is put behind a goal with `link_to_goal`, and taken out from behind it
 with `unlink_from_goal`. One piece of work may serve several goals; send it once per goal. A job off
-the board is not put behind a goal that way — the product accepts only claims and experiments there —
-so a job names the goal it serves in its brief and rates what finishing it buys in `goalValue`.
+the board is not put behind a goal that way — the product accepts only hypotheses and experiments
+there — so a job names the goal it serves in its brief and rates what finishing it buys in `goalValue`.
 
 ## Proposing work
 

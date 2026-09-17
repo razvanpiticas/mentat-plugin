@@ -18,7 +18,7 @@ One hundred and eleven tools: thirty-three reads and seventy-eight writes.
 | `get_project_state` | BusinessIntelligence | Where a project stands: the canvas in summary, the plan position, the decisions, your open jobs, what a person answered while you were away, and what changed since your last run ended |
 | `get_canvas` | BusinessIntelligence | The whole canvas document and its version |
 | `get_block` | BusinessIntelligence | One block by code, its kinds, everything on it, the version |
-| `get_hypothesis` | BusinessIntelligence | One claim with its runs |
+| `get_hypothesis` | BusinessIntelligence | One hypothesis with its runs |
 | `get_experiment` | BusinessIntelligence | One run with metric and criterion ids, evidence |
 | `list_experiment_definitions` | BusinessIntelligence | The method cards, optionally for one concern |
 | `get_experiment_definition` | BusinessIntelligence | One card's full method text |
@@ -62,7 +62,7 @@ names which of the two moved.
 | `create_project` | Creates a project and opens its canvas |
 | `record_project_insight` | Adds a learning about the project |
 | `add_entry`, `update_entry`, `retire_entry`, `delete_entry` | Entries on a block |
-| `create_hypothesis`, `update_hypothesis`, `recommend_experiment_definition`, `withdraw_experiment_definition`, `park_hypothesis`, `unpark_hypothesis`, `retire_hypothesis`, `decide_hypothesis`, `delete_hypothesis` | Claims |
+| `create_hypothesis`, `update_hypothesis`, `recommend_experiment_definition`, `withdraw_experiment_definition`, `park_hypothesis`, `unpark_hypothesis`, `retire_hypothesis`, `decide_hypothesis`, `delete_hypothesis` | Hypotheses |
 | `design_experiment`, `add_metric`, `add_criterion`, `start_experiment`, `record_observation`, `judge_criterion`, `complete_experiment`, `abort_experiment`, `record_spend`, `delete_experiment` | Runs |
 | `record_evidence`, `update_evidence`, `add_data_point`, `delete_evidence` | Evidence bundles |
 | `add_question`, `update_question`, `resolve_question` | Questions |

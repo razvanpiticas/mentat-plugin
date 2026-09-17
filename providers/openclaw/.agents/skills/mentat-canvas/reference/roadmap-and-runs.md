@@ -12,7 +12,7 @@ exact — send the member name, not the label:
 | Name | What it is called | What the project is doing there |
 | --- | --- | --- |
 | `T0` | Ideation | An idea, nothing tested |
-| `T1` | Hypothesis | The claims are written down |
+| `T1` | Hypothesis | The hypotheses are written down |
 | `T2` | Discovery | Talking to people: segmentation, beachhead, persona, jobs, pains, gains, market size |
 | `T3` | Design | Shaping the offer: value proposition, competitive position |
 | `T4` | Go to market | Life cycle, decision-making unit, channels, revenue, unit economics; the first real spend |
@@ -52,7 +52,7 @@ refused as firmly as omitting one where it does:
 | Validation level | What `end_run` takes on a completed run |
 | --- | --- |
 | `Checkpoint` | **A verdict is required**: `Validated` or `Invalidated`, judged against what the definition's "validated when" says |
-| `Experiment` | **Send no verdict.** The claim is tested by a real experiment, and the verdict lives on that experiment (`complete_experiment`), not on the run |
+| `Experiment` | **Send no verdict.** The hypothesis is tested by a real experiment, and the verdict lives on that experiment (`complete_experiment`), not on the run |
 | `None` | **Send no verdict.** The operation produces work rather than a conclusion |
 
 Of the forty-six operations the method ships, twenty-eight are `Checkpoint`, seven are `Experiment`
@@ -108,8 +108,8 @@ The plan's row `customer-jobs-pains-gains` is `NotStarted` at `T2`, and the proj
    The level is `Experiment`, so the run only records what was written; whether the top three pains
    hold is settled by an experiment, and sending a verdict here is refused.
 7. Report the row's new status — `Completed` — and the reference codes the entries answered, then
-   offer the claim the level asks for: `create_hypothesis` on the strongest pain and an experiment to
-   test it.
+   offer the hypothesis the level asks for: `create_hypothesis` on the strongest pain and an experiment
+   to test it.
 
 On a `Checkpoint` row the same loop ends differently: `persona` is one, so its last call is
 `end_run(runId, outcome: "Completed", verdict: "Validated", summary: "…")`, judged against its "validated

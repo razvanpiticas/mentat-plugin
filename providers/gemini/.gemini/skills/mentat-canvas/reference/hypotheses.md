@@ -1,6 +1,6 @@
 # Hypotheses: writing, scoring, shortlisting, deciding
 
-A hypothesis is a claim about the business model that an experiment can settle. It lives on one
+A hypothesis is a sentence about the business model that an experiment can settle. It lives on one
 block, may be about one entry of that block, and carries a polarity and a business concern. The
 reference code is `H-<block code>-<n>`, such as `H-CS-002`.
 
@@ -9,12 +9,12 @@ reference code is `H-<block code>-<n>`, such as `H-CS-002`.
 `create_hypothesis` takes `weBelieve`, `polarity`, `businessConcern` and optionally `aboutEntryId`.
 
 - **One sentence, "We believe that …".** Testable (an experiment can show it false), precise (who,
-  what, how much), discrete (one claim, not two joined by "and").
+  what, how much), discrete (one hypothesis, not two joined by "and").
 - **Polarity** — `Positive` when the experiment tries to prove it, `Negative` when it tries to
   disprove it.
 - **Business concern** — `Desirability` (do they want it), `Feasibility` (can we do it),
-  `Viability` (does the money work). It is a hard filter on which method cards can test the claim,
-  so choose it by what the claim is really about.
+  `Viability` (does the money work). It is a hard filter on which method cards can test the
+  hypothesis, so choose it by what the hypothesis is really about.
 
 Example: on CS, about the pain `CS-04`, Desirability, Positive: "We believe that freelance designers
 who bill by the hour lose at least two billable hours a week to tracking their time by hand."
@@ -25,7 +25,7 @@ who bill by the hour lose at least two billable hours a week to tracking their t
 
 | Group | Arguments | What BusinessIntelligence enforces |
 | --- | --- | --- |
-| Wording | `weBelieve`, `polarity`, `businessConcern` | Refused once the claim is scored: rewrite before scoring. |
+| Wording | `weBelieve`, `polarity`, `businessConcern` | Refused once the hypothesis is scored: rewrite before scoring. |
 | Quality | `isTestable`, `isPrecise`, `isDiscrete` | All three true is what allows scoring. |
 | Scores | `importance`, `evidence` | Refused while a quality check fails. Both −5 to 5. |
 
@@ -36,12 +36,13 @@ one call when you have them all; the tool applies them in the order above.
 
 ## Shortlist a method
 
-`list_experiment_definitions` with the claim's `businessConcern` answers the cards that can test it,
-each with its evidence strength, cost, setup time and run time on a 1 to 5 scale. Rank by fit to the
-claim's wording (`get_experiment_definition` shows `bestFor`), evidence strength against importance
-(a fatal claim deserves strong evidence), and cost against what the person can spend.
-`recommend_experiment_definition` puts a card on the claim's shortlist; `withdraw_experiment_definition`
-takes it off. A card whose concerns do not include the claim's is refused.
+`list_experiment_definitions` with the hypothesis's `businessConcern` answers the cards that can
+test it, each with its evidence strength, cost, setup time and run time on a 1 to 5 scale. Rank by
+fit to the hypothesis's wording (`get_experiment_definition` shows `bestFor`), evidence strength
+against importance (a fatal hypothesis deserves strong evidence), and cost against what the person
+can spend. `recommend_experiment_definition` puts a card on the hypothesis's shortlist;
+`withdraw_experiment_definition` takes it off. A card whose concerns do not include the
+hypothesis's is refused.
 
 ## Statuses and the calls that move them
 
@@ -52,11 +53,11 @@ takes it off. A card whose concerns do not include the claim's is refused.
 | `Testing` | `start_experiment` on a run designed against it |
 | `Validated` / `Invalidated` | completed experiments and the confidence they roll up |
 | `Parked` | `park_hypothesis` (refused while a run is in flight) |
-| `Retired` | `retire_hypothesis` with a reason (refused for a claim under test) |
+| `Retired` | `retire_hypothesis` with a reason (refused for a hypothesis under test) |
 
-Confidence is computed from the claim's completed, non-inconclusive experiments: a weighted average
-of evidence strength by data-point count, plus a small bonus per extra experiment, on a 1 to 5
-scale. It is never written directly.
+Confidence is computed from the hypothesis's completed, non-inconclusive experiments: a weighted
+average of evidence strength by data-point count, plus a small bonus per extra experiment, on a 1 to
+5 scale. It is never written directly.
 
 ## The decision is the founder's
 

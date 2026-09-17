@@ -1,13 +1,13 @@
 ---
 name: mentat-canvas
-description: Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks, hypotheses (claims), experiments, evidence, questions, risks, ideas, contradictions and project insights. Use this whenever a task touches a project's canvas in any way, even if the user never says the word canvas — filling Customer Segments, writing a value proposition, proposing or scoring a hypothesis, designing or completing an experiment, recording interview evidence, logging a question or risk, or reading what a project already holds. It also drives a project's roadmap: reading the plan, ordering and skipping its rows, running an operation end to end, and the method gates and pivots above it. Every method skill writes through this one; the operation skill (mentat-operation, coming next) runs a roadmap operation end to end with the tools below.
+description: Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights. Use this whenever a task touches a project's canvas in any way, even if the user never says the word canvas — filling Customer Segments, writing a value proposition, proposing or scoring a hypothesis, designing or completing an experiment, recording interview evidence, logging a question or risk, or reading what a project already holds. It also drives a project's roadmap: reading the plan, ordering and skipping its rows, running an operation end to end, and the method gates and pivots above it. Every method skill writes through this one; the operation skill (mentat-operation, coming next) runs a roadmap operation end to end with the tools below.
 ---
 
 # Mentat canvas
 
 The canvas is a project's business model: twelve blocks, each holding entries of the kinds it
-accepts, plus the claims made about it, the experiments that test those claims, the evidence they
-produce, and the questions, risks and ideas pinned alongside. Every tool call is made as the signed-in
+accepts, plus the hypotheses made about it, the experiments that test those hypotheses, the evidence
+they produce, and the questions, risks and ideas pinned alongside. Every tool call is made as the signed-in
 person inside their own organisation — the connection and sign-in are the `mentat` skill's job; this
 skill is about what to write and how.
 
@@ -69,10 +69,10 @@ slot is acknowledged and empty. An entry written from your own reasoning is `Inf
 `Confirmed`; a gate later reads these statuses, so an inflated one misleads the person who
 relies on the canvas.
 
-## Claims, experiments, evidence
+## Hypotheses, experiments, evidence
 
-A claim is one testable sentence, "We believe that …", on a block, optionally about one entry, with a
-polarity and the business concern it belongs to (Desirability, Feasibility or Viability). Score it
+A hypothesis is one testable sentence, "We believe that …", on a block, optionally about one entry,
+with a polarity and the business concern it belongs to (Desirability, Feasibility or Viability). Score it
 (importance and evidence, −5 to 5) and mark its quality checks with `update_hypothesis`; then
 `list_experiment_definitions` narrowed by its concern shows the method cards that can test it, and
 `recommend_experiment_definition` puts one on its shortlist. `design_experiment` plans a run in one
@@ -164,7 +164,7 @@ the recovery says rather than resending.
 - `CONFLICT` naming `runId` — the run you are working inside cannot be worked any more. Nothing was
   written. Open a new one with `start_run` and send the write again; do not resend it unchanged.
 - `CONFLICT` quoting a rule of the business model — the call is not allowed in the canvas's current
-  state (a run with no criterion cannot start, a scored claim cannot be reworded). Change what you
+  state (a run with no criterion cannot start, a scored hypothesis cannot be reworded). Change what you
   asked for.
 - `SERVER_MISCONFIGURED` or `UPSTREAM_UNAVAILABLE` — not about your call; follow the `mentat` skill's
   troubleshooting.
@@ -178,7 +178,7 @@ with `add_metric`, `add_criterion`, `update_evidence` or `add_data_point` rather
 - Never invent a tenant, a portfolio or a project. Lists answer what exists.
 - `get_canvas` is the whole model and large; reach for `get_block` unless the task spans blocks.
 - Retire what was once believed (`retire_entry`, `retire_hypothesis`); delete only what should never
-  have existed. Deletes cascade to claims and contradictions about the entry.
+  have existed. Deletes cascade to hypotheses and contradictions about the entry.
 - One `update_*` call per changed thing; each takes the version the previous answered.
 - Changes to the plan take `roadmapVersion`; writes on the canvas take `canvasVersion`; writes to a
   run take neither. Sending the wrong one is refused, not silently accepted.

@@ -1,6 +1,6 @@
 ---
 name: mentat-canvas
-description: Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks, hypotheses (claims), experiments, evidence, questions, risks, ideas, contradictions and project insights. Use this whenever a task touches a project's canvas in any way, even if the user never says the word canvas — filling Customer Segments, writing a value proposition, proposing or scoring a hypothesis, designing or completing an experiment, recording interview evidence, logging a question or risk, or reading what a project already holds. It also drives a project's roadmap: reading the plan, ordering and skipping its rows, running an operation end to end, and the method gates and pivots above it. Every method skill writes through this one; the operation skill (mentat-operation, coming next) runs a roadmap operation end to end with the tools below.
+description: Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights. Use this whenever a task touches a project's canvas in any way, even if the user never says the word canvas — filling Customer Segments, writing a value proposition, proposing or scoring a hypothesis, designing or completing an experiment, recording interview evidence, logging a question or risk, or reading what a project already holds. It also drives a project's roadmap: reading the plan, ordering and skipping its rows, running an operation end to end, and the method gates and pivots above it. Every method skill writes through this one; the operation skill (mentat-operation, coming next) runs a roadmap operation end to end with the tools below.
 argument-hint: <project name or id> <what to read or write>
 allowed-tools: mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_canvas, mcp__mentat__get_block, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__create_project, mcp__mentat__record_project_insight, mcp__mentat__add_entry, mcp__mentat__update_entry, mcp__mentat__retire_entry, mcp__mentat__delete_entry, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__recommend_experiment_definition, mcp__mentat__withdraw_experiment_definition, mcp__mentat__park_hypothesis, mcp__mentat__unpark_hypothesis, mcp__mentat__retire_hypothesis, mcp__mentat__decide_hypothesis, mcp__mentat__delete_hypothesis, mcp__mentat__design_experiment, mcp__mentat__add_metric, mcp__mentat__add_criterion, mcp__mentat__start_experiment, mcp__mentat__record_observation, mcp__mentat__judge_criterion, mcp__mentat__complete_experiment, mcp__mentat__abort_experiment, mcp__mentat__record_spend, mcp__mentat__delete_experiment, mcp__mentat__record_evidence, mcp__mentat__update_evidence, mcp__mentat__add_data_point, mcp__mentat__delete_evidence, mcp__mentat__add_question, mcp__mentat__update_question, mcp__mentat__resolve_question, mcp__mentat__add_risk, mcp__mentat__update_risk, mcp__mentat__resolve_risk, mcp__mentat__add_idea, mcp__mentat__update_idea, mcp__mentat__resolve_idea, mcp__mentat__record_contradiction, mcp__mentat__rule_contradiction, mcp__mentat__get_roadmap, mcp__mentat__get_operation_package, mcp__mentat__get_gate_status, mcp__mentat__list_gate_evaluations, mcp__mentat__get_run, mcp__mentat__list_runs, mcp__mentat__list_operation_definitions, mcp__mentat__get_operation_definition, mcp__mentat__list_pivot_definitions, mcp__mentat__set_roadmap_thesis, mcp__mentat__place_roadmap_item, mcp__mentat__skip_roadmap_item, mcp__mentat__include_roadmap_item, mcp__mentat__annotate_roadmap_item, mcp__mentat__append_roadmap_operation, mcp__mentat__add_roadmap_move, mcp__mentat__remove_roadmap_move, mcp__mentat__apply_pivot, mcp__mentat__start_run, mcp__mentat__checkpoint_run, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__end_run, mcp__mentat__cancel_run, mcp__mentat__evaluate_gate
 ---
@@ -8,8 +8,8 @@ allowed-tools: mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__ment
 # Mentat canvas
 
 The canvas is a project's business model: twelve blocks, each holding entries of the kinds it
-accepts, plus the claims made about it, the experiments that test those claims, the evidence they
-produce, and the questions, risks and ideas pinned alongside. Every tool call is made as the signed-in
+accepts, plus the hypotheses made about it, the experiments that test those hypotheses, the evidence
+they produce, and the questions, risks and ideas pinned alongside. Every tool call is made as the signed-in
 person inside their own organisation — the connection and sign-in are the `mentat` skill's job; this
 skill is about what to write and how.
 
@@ -71,10 +71,10 @@ slot is acknowledged and empty. An entry written from your own reasoning is `Inf
 `Confirmed`; a gate later reads these statuses, so an inflated one misleads the person who
 relies on the canvas.
 
-## Claims, experiments, evidence
+## Hypotheses, experiments, evidence
 
-A claim is one testable sentence, "We believe that …", on a block, optionally about one entry, with a
-polarity and the business concern it belongs to (Desirability, Feasibility or Viability). Score it
+A hypothesis is one testable sentence, "We believe that …", on a block, optionally about one entry,
+with a polarity and the business concern it belongs to (Desirability, Feasibility or Viability). Score it
 (importance and evidence, −5 to 5) and mark its quality checks with `update_hypothesis`; then
 `list_experiment_definitions` narrowed by its concern shows the method cards that can test it, and
 `recommend_experiment_definition` puts one on its shortlist. `design_experiment` plans a run in one
@@ -166,7 +166,7 @@ the recovery says rather than resending.
 - `CONFLICT` naming `runId` — the run you are working inside cannot be worked any more. Nothing was
   written. Open a new one with `start_run` and send the write again; do not resend it unchanged.
 - `CONFLICT` quoting a rule of the business model — the call is not allowed in the canvas's current
-  state (a run with no criterion cannot start, a scored claim cannot be reworded). Change what you
+  state (a run with no criterion cannot start, a scored hypothesis cannot be reworded). Change what you
   asked for.
 - `SERVER_MISCONFIGURED` or `UPSTREAM_UNAVAILABLE` — not about your call; follow the `mentat` skill's
   troubleshooting.
@@ -180,7 +180,7 @@ with `add_metric`, `add_criterion`, `update_evidence` or `add_data_point` rather
 - Never invent a tenant, a portfolio or a project. Lists answer what exists.
 - `get_canvas` is the whole model and large; reach for `get_block` unless the task spans blocks.
 - Retire what was once believed (`retire_entry`, `retire_hypothesis`); delete only what should never
-  have existed. Deletes cascade to claims and contradictions about the entry.
+  have existed. Deletes cascade to hypotheses and contradictions about the entry.
 - One `update_*` call per changed thing; each takes the version the previous answered.
 - Changes to the plan take `roadmapVersion`; writes on the canvas take `canvasVersion`; writes to a
   run take neither. Sending the wrong one is refused, not silently accepted.

@@ -1,8 +1,8 @@
 # Experiments and evidence
 
-An experiment is one run of a method card against one claim. Its reference code is `T-<n>`; a bundle
-of evidence is `E-<n>`. The order below is the order BusinessIntelligence enforces; a call out of
-order is refused with the rule it broke.
+An experiment is one run of a method card against one hypothesis. Its reference code is `T-<n>`; a
+bundle of evidence is `E-<n>`. The order below is the order BusinessIntelligence enforces; a call
+out of order is refused with the rule it broke.
 
 ## 1. Design — `design_experiment`
 
@@ -10,20 +10,20 @@ One call plans the whole test card:
 
 | Argument | What it is |
 | --- | --- |
-| `hypothesisId`, `experimentDefinitionId` | The claim and the card from its shortlist. The claim must be scored (Prioritized). |
-| `testName`, `testDescription` | What will be done, to verify the claim. |
+| `hypothesisId`, `experimentDefinitionId` | The hypothesis and the card from its shortlist. The hypothesis must be scored (Prioritized). |
+| `testName`, `testDescription` | What will be done, to verify the hypothesis. |
 | `assignedToUserId`, `deadline` (yyyy-MM-dd), `plannedDuration` (ISO 8601, `P3DT4H`) | Optional plan details. |
 | `metrics` | What we measure: `[{ "name": "Interviewees naming the pain unprompted", "unit": "out of 10" }]`. |
 | `criteria` | When we are right: `[{ "description": "At least 8 of 10 name it unprompted", "metricName": "Interviewees naming the pain unprompted" }]`. `metricName` must match one of the metrics; leave it out for a qualitative criterion. |
 
-Derive the criteria from what would validate the claim — the step's "validated when" sentence when
-you are running a method step. A run cannot start with no criterion. If a metric or criterion is
+Derive the criteria from what would validate the hypothesis — the step's "validated when" sentence
+when you are running a method step. A run cannot start with no criterion. If a metric or criterion is
 refused after the experiment was created, the experiment exists with what came before it: read it
 with `get_experiment` and finish with `add_metric` and `add_criterion`.
 
 ## 2. Run — `start_experiment`, `record_observation`, `judge_criterion`, `record_spend`
 
-`start_experiment` moves the run to Running and the claim to Testing. As the run goes:
+`start_experiment` moves the run to Running and the hypothesis to Testing. As the run goes:
 
 - `record_observation` puts a reading on a metric: a number (`observedValue`), a word
   (`observedText`), or both. Metric ids come from the designed experiment.
@@ -60,12 +60,12 @@ One call writes the learning card and ends the run:
 - `verdict`: `Validated` needs every criterion met; `Invalidated` needs at least one missed;
   `Inconclusive` needs `notes` saying why the run cannot be read.
 
-The claim's confidence recomputes from the completed run. `abort_experiment` stops a run without a
-verdict and its evidence is no longer read; `delete_experiment` removes a designed run that never
+The hypothesis's confidence recomputes from the completed run. `abort_experiment` stops a run without
+a verdict and its evidence is no longer read; `delete_experiment` removes a designed run that never
 started.
 
 ## After the verdict
 
-Validated moves the claim's confidence up; Invalidated moves it down and is a pivot signal worth
-saying out loud; Inconclusive means redesign — two retries, then the claim is deferred. The decision
-on the claim (`decide_hypothesis`) is the founder's; see hypotheses.md.
+Validated moves the hypothesis's confidence up; Invalidated moves it down and is a pivot signal worth
+saying out loud; Inconclusive means redesign — two retries, then the hypothesis is deferred. The
+decision on the hypothesis (`decide_hypothesis`) is the founder's; see hypotheses.md.

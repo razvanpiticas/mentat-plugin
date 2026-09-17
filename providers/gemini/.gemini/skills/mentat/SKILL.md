@@ -44,9 +44,9 @@ Every call is also tenant-scoped from the caller's token. A caller who belongs t
 ## The tools
 
 One hundred and eleven tools, all over BusinessIntelligence: thirty-three reads (portfolios, projects,
-where a project stands, the canvas, one block by code, one claim, one experiment, the method cards, a
-project's plan, its runs, its agents and goals, its learnings, its board, its change log and its
-decision ledger) and seventy-eight writes (entries, claims, experiments, evidence, questions, risks,
+where a project stands, the canvas, one block by code, one hypothesis, one experiment, the method
+cards, a project's plan, its runs, its agents and goals, its learnings, its board, its change log and its
+decision ledger) and seventy-eight writes (entries, hypotheses, experiments, evidence, questions, risks,
 ideas, contradictions, insights, the plan's rows, runs, method gates, agents and goals, the board's
 jobs, escalations and decisions). The full table with permissions and which tools take which version
 is in [reference/tools.md](reference/tools.md). **How to use them — which kind, which fields, what
