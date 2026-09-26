@@ -3,8 +3,19 @@
   "displayName": "Cursor",
   "skillPaths": [
     ".cursor/skills/mentat",
+    ".cursor/skills/mentat-advance",
     ".cursor/skills/mentat-agent",
     ".cursor/skills/mentat-canvas",
+    ".cursor/skills/mentat-distiller",
+    ".cursor/skills/mentat-experiment",
+    ".cursor/skills/mentat-gate-check",
+    ".cursor/skills/mentat-hypothesis",
+    ".cursor/skills/mentat-inbox",
+    ".cursor/skills/mentat-linker",
+    ".cursor/skills/mentat-operation",
+    ".cursor/skills/mentat-planner",
+    ".cursor/skills/mentat-routines",
+    ".cursor/skills/mentat-search",
     ".cursor/skills/mentat-update"
   ],
   "mcp": {

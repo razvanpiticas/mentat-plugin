@@ -16,8 +16,8 @@ One call plans the whole test card:
 | `metrics` | What we measure: `[{ "name": "Interviewees naming the pain unprompted", "unit": "out of 10" }]`. |
 | `criteria` | When we are right: `[{ "description": "At least 8 of 10 name it unprompted", "metricName": "Interviewees naming the pain unprompted" }]`. `metricName` must match one of the metrics; leave it out for a qualitative criterion. |
 
-Derive the criteria from what would validate the hypothesis — the step's "validated when" sentence
-when you are running a method step. A run cannot start with no criterion. If a metric or criterion is
+The criteria come from `P.V2` and, inside an operation, from its "validated when" sentence; the
+`mentat-experiment` skill writes them. A run cannot start with no criterion. If a metric or criterion is
 refused after the experiment was created, the experiment exists with what came before it: read it
 with `get_experiment` and finish with `add_metric` and `add_criterion`.
 
@@ -31,9 +31,6 @@ with `get_experiment` and finish with `add_metric` and `add_criterion`.
   completion.
 - `record_spend` records money (amount and currency together) and hours.
 
-Much of a run is done by people — interviews, a landing page, a concierge delivery. Do the parts you
-can, and say plainly which parts the person has to do and what to bring back.
-
 ## 3. Evidence — `record_evidence`
 
 One bundle per kind of signal gathered, recorded in one call:
@@ -45,10 +42,8 @@ One bundle per kind of signal gathered, recorded in one call:
 | `polarity`, `modality`, `setting`, `investmentSize` | The book's four axes: Opinion/Fact, Say/Do, Lab/RealWorld, Small/Large. Leave an axis out when it does not apply. |
 | `dataPoints` | The readings behind the bundle, each with `source` and a `textValue`, `numericValue` or `extra`. The confidence rollup weights the bundle by how many there are, so record every interviewee, every conversion. |
 
-Strongest evidence is what people **did**, in the **real world**, at **large** investment, as
-**fact**; a quote from an interview is Say, Opinion, Lab, Small. Rate honestly. `update_evidence`
-re-rates, re-characterises or re-summarises; `add_data_point` appends a reading; `delete_evidence`
-is for a bundle recorded by mistake, not for a weak one.
+`update_evidence` re-rates, re-characterises or re-summarises; `add_data_point` appends a reading;
+`delete_evidence` is for a bundle recorded by mistake, not for a weak one.
 
 ## 4. Complete — `complete_experiment`
 
@@ -66,6 +61,5 @@ started.
 
 ## After the verdict
 
-Validated moves the hypothesis's confidence up; Invalidated moves it down and is a pivot signal worth
-saying out loud; Inconclusive means redesign — two retries, then the hypothesis is deferred. The
-decision on the hypothesis (`decide_hypothesis`) is the founder's; see hypotheses.md.
+The hypothesis's confidence recomputes from the completed run, as above. The decision on the
+hypothesis is the person's; see hypotheses.md.

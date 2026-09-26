@@ -1,34 +1,20 @@
 # Entries: kinds, fields and statuses
 
 `add_entry` needs the block's id, the kind's `kindDefinitionId`, a title, a status, and — for a typed
-kind — `fields`. All of it but the words comes from `get_block`: its `kinds` list carries each kind's
-`definitionId`, `code`, `storage` and, for a custom kind, the `attributes` it declares.
+kind — `fields`. All of it comes from `get_block`: its `kinds` list carries each kind's
+`definitionId`, `code`, `storage`, its `schema` — the columns and the words — and, for a custom kind,
+the `attributes` it declares.
 
 ## Typed kinds: the `fields` object
 
 `fields` is a JSON object. Its `kind` property is the storage name, exactly as `get_block` spells it;
-the other properties are that storage's columns. Enum-valued columns take the member name as
-written below. Ids point at entries anywhere on the canvas unless the column says the same block.
+the other properties are the columns of the kind's `schema` whose `writtenThrough` is `Fields`, under
+the names the schema gives. A pointer column takes an id; a word column takes one of the schema's
+words.
 
-| Storage (`kind`) | Columns | Allowed words |
-| --- | --- | --- |
-| `CustomerSegment` | `marketType` | MassMarket, NicheMarket, Segmented, Diversified, MultiSidedPlatform |
-| `CustomerJob` | `segmentId` (same block), `jobKind`, `importance` | jobKind: Functional, Social, Emotional, Supporting · importance: VeryLow, Low, Medium, High, VeryHigh |
-| `CustomerPain` | `segmentId` (same block), `severity` | VeryLow, Low, Medium, High, VeryHigh |
-| `CustomerGain` | `segmentId` (same block), `relevance` | VeryLow, Low, Medium, High, VeryHigh |
-| `ValueProposition` | `segmentId` (null while the fit is open) | — |
-| `ProductService` | `valuePropositionId` (same block) | — |
-| `PainReliever` | `valuePropositionId` (same block), `painId` (null while no pain is named) | — |
-| `GainCreator` | `valuePropositionId` (same block), `gainId` (null while no gain is named) | — |
-| `Channel` | `segmentId` (null = every segment), `phase`, `isOwned`, `isDirect`, `tactic` (null when none fits) | phase: Awareness, Evaluation, Purchase, Delivery, AfterSales · tactic: WarmOutreach, FreeContent, ColdOutreach, PaidAdvertising, LeadMagnet, CustomerReferral, AffiliateOrAgency |
-| `CustomerRelationship` | `segmentId` (null = every segment), `relationshipKind` | PersonalAssistance, DedicatedPersonalAssistance, SelfService, AutomatedService, Community, CoCreation |
-| `RevenueStream` | `segmentId` (null = every segment), `revenueKind`, `pricing` | revenueKind: Subscription, OneTimePurchase, UsageFee, Licensing, Advertising, MarketplaceCommission, Freemium · pricing: ListPrice, FeatureDependent, SegmentDependent, VolumeDependent, Negotiated, YieldManaged, RealTimeMarket, Auction |
-| `KeyResource` | `resourceKind`, `owner` (null when nobody is named) | Physical, Intellectual, Human, Financial |
-| `KeyActivity` | `activityKind`, `owner` (null when nobody is named) | Production, ProblemSolving, PlatformNetwork |
-| `KeyPartner` | `partnershipKind`, `suppliesResourceId`, `performsActivityId` (both nullable) | StrategicAlliance, JointVenture, Supplier, Agency, Affiliate |
-| `CostItem` | `costKind`, `driverKind` + `driverId` (together or neither), `amount` + `currency` (together or neither), `period` | costKind: Fixed, Variable · driverKind: Resource, Activity, Partner · period: OneOff, PerMonth, PerYear, PerUnit |
-
-Example — a pain on the Customer Segments block, for the segment `CS-01` whose id you read:
+Example — a pain on the Customer Segments block, for a segment whose id you read, after reading the
+`CS.PAINS` kind's schema (two columns: a pointer to a segment on the same block, and a rating sent as
+a word):
 
 ```json
 {
@@ -50,7 +36,8 @@ use `retire_entry` when the entry no longer holds.
 A free-form kind takes `title` and `body` only; sending `fields` to it is refused. A custom kind
 (`storage: Custom`) takes `attributes`, a JSON object keyed by the `key` of each declared attribute
 `get_block` lists, with required ones present and typed ones matching. Keys the kind does not declare
-pass untouched.
+pass untouched. The schema of a custom kind lists the same columns as its declared attributes; a
+`Rating` column of a custom kind takes a whole number 1 to 5, not a word.
 
 ## Statuses
 

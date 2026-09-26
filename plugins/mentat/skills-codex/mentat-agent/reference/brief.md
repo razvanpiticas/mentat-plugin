@@ -57,6 +57,16 @@ be qualitative. `isMine` is what you plan from.
 An unlinked `Human` entry is a key person who is not a member of the organisation — a supplier's
 account manager, a contractor. Their name is all there is; there is nobody to ask.
 
+## `project` — where the venture stands
+
+The same record `get_project_state` answers, read once here. `roadmap` carries `lastCompleted`,
+`inFlight`, `next`, `gatesAwaitingPerson` and `hasThesis`; `inboxPendingCount` is how many rows wait
+for the person you work for; `changesSinceLastRun` and `changesTruncated` are the delta since your last
+ended run; `myOpenWork` and `resolvedSinceLastRun` are yours. `overview.blocks` is one line per block
+of the canvas — its code, its name, how many live entries it holds, how many hypotheses stand on it and
+its confidence — so which blocks are empty is read here rather than by pulling the canvas. The front
+door reads its five status lines from here.
+
 ## `person` — the signed-in member's profile, or null
 
 `title`, `body` and `version`. Written in the person's own voice: their background, what they bring,
@@ -78,8 +88,8 @@ wins — that is what it is for.
 | Not here | Read it with |
 | --- | --- |
 | The rest of the canvas | `mentat-canvas`: `get_block` for one block, `get_canvas` only when the task spans them |
-| The routines of the project | `list_routines` |
+| The routines of the project, and one routine's instructions | `list_routines`, `get_routine` |
 | Documents with `loadAtBoot` false | `list_charter_documents`, then the document by id |
 | Other agents' instructions | Nothing. They are not yours to read |
 | Any row of a sibling venture | Nothing. A project sees its own rows and the shared ones, never a sibling's |
-| The runs and the activity behind you | The runs screen in the browser |
+| The runs and the activity behind you | `list_runs` for the runs of every kind with their summaries, `list_activity` for the feed; the brief's own `changesSinceLastRun` first |

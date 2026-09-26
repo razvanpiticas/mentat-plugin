@@ -8,13 +8,13 @@ reference code is `H-<block code>-<n>`, such as `H-CS-002`.
 
 `create_hypothesis` takes `weBelieve`, `polarity`, `businessConcern` and optionally `aboutEntryId`.
 
-- **One sentence, "We believe that …".** Testable (an experiment can show it false), precise (who,
-  what, how much), discrete (one hypothesis, not two joined by "and").
-- **Polarity** — `Positive` when the experiment tries to prove it, `Negative` when it tries to
-  disprove it.
-- **Business concern** — `Desirability` (do they want it), `Feasibility` (can we do it),
-  `Viability` (does the money work). It is a hard filter on which method cards can test the
-  hypothesis, so choose it by what the hypothesis is really about.
+- **One sentence, "We believe that …"**, sent as `weBelieve`.
+- **Polarity** — `Positive` or `Negative`.
+- **Business concern** — `Desirability`, `Feasibility` or `Viability`. It is a hard filter on which
+  method cards can test the hypothesis.
+
+What each of these means, and how a hypothesis is written, is the procedure `P.V1` the
+`mentat-hypothesis` skill fetches; this file says only what the call takes.
 
 Example: on CS, about the pain `CS-04`, Desirability, Positive: "We believe that freelance designers
 who bill by the hour lose at least two billable hours a week to tracking their time by hand."
@@ -27,20 +27,22 @@ who bill by the hour lose at least two billable hours a week to tracking their t
 | --- | --- | --- |
 | Wording | `weBelieve`, `polarity`, `businessConcern` | Refused once the hypothesis is scored: rewrite before scoring. |
 | Quality | `isTestable`, `isPrecise`, `isDiscrete` | All three true is what allows scoring. |
-| Scores | `importance`, `evidence` | Refused while a quality check fails. Both −5 to 5. |
+| Scores | `importance`, `evidence` | Refused while a quality check fails. |
 
-Importance answers "if this is wrong, how bad?": 5 is fatal to the business, −5 is harmless.
-Evidence answers "how much do we already know?": 5 means no evidence, test first; −5 means plenty.
-The top-right of the map — important and unproven — is what gets tested first. Send the groups in
-one call when you have them all; the tool applies them in the order above.
+Both run −5 to 5, and the direction of each is fixed by the domain, not chosen by the sender:
+`importance` is −5 when the business model barely depends on the sentence and 5 when it rests on
+it; `evidence` is **−5 when there is no evidence at all, or what there is points against the
+hypothesis**, and **5 when there is strong, recent evidence for it**. A hypothesis nobody has
+found anything out about is scored −5 on evidence, never 5. `P.V1` says how to judge the two;
+this file says only which way the numbers run. Send the groups in one call when you have them
+all; the tool applies them in the order above.
 
 ## Shortlist a method
 
 `list_experiment_definitions` with the hypothesis's `businessConcern` answers the cards that can
-test it, each with its evidence strength, cost, setup time and run time on a 1 to 5 scale. Rank by
-fit to the hypothesis's wording (`get_experiment_definition` shows `bestFor`), evidence strength
-against importance (a fatal hypothesis deserves strong evidence), and cost against what the person
-can spend. `recommend_experiment_definition` puts a card on the hypothesis's shortlist;
+test it, each with its evidence strength, cost, setup time and run time on a 1 to 5 scale;
+`get_experiment_definition` shows one whole, `bestFor` among it.
+`recommend_experiment_definition` puts a card on the hypothesis's shortlist;
 `withdraw_experiment_definition` takes it off. A card whose concerns do not include the
 hypothesis's is refused.
 

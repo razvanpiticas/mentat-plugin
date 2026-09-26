@@ -3,8 +3,19 @@
   "displayName": "Gemini CLI",
   "skillPaths": [
     ".gemini/skills/mentat",
+    ".gemini/skills/mentat-advance",
     ".gemini/skills/mentat-agent",
     ".gemini/skills/mentat-canvas",
+    ".gemini/skills/mentat-distiller",
+    ".gemini/skills/mentat-experiment",
+    ".gemini/skills/mentat-gate-check",
+    ".gemini/skills/mentat-hypothesis",
+    ".gemini/skills/mentat-inbox",
+    ".gemini/skills/mentat-linker",
+    ".gemini/skills/mentat-operation",
+    ".gemini/skills/mentat-planner",
+    ".gemini/skills/mentat-routines",
+    ".gemini/skills/mentat-search",
     ".gemini/skills/mentat-update"
   ],
   "mcp": {

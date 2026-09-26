@@ -3,8 +3,19 @@
   "displayName": "OpenCode",
   "skillPaths": [
     ".opencode/skills/mentat",
+    ".opencode/skills/mentat-advance",
     ".opencode/skills/mentat-agent",
     ".opencode/skills/mentat-canvas",
+    ".opencode/skills/mentat-distiller",
+    ".opencode/skills/mentat-experiment",
+    ".opencode/skills/mentat-gate-check",
+    ".opencode/skills/mentat-hypothesis",
+    ".opencode/skills/mentat-inbox",
+    ".opencode/skills/mentat-linker",
+    ".opencode/skills/mentat-operation",
+    ".opencode/skills/mentat-planner",
+    ".opencode/skills/mentat-routines",
+    ".opencode/skills/mentat-search",
     ".opencode/skills/mentat-update"
   ],
   "mcp": {

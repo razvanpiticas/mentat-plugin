@@ -1,6 +1,6 @@
 ---
 name: mentat-canvas
-description: Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights. Use this whenever a task touches a project's canvas in any way, even if the user never says the word canvas — filling Customer Segments, writing a value proposition, proposing or scoring a hypothesis, designing or completing an experiment, recording interview evidence, logging a question or risk, or reading what a project already holds. It also drives a project's roadmap: reading the plan, ordering and skipping its rows, running an operation end to end, and the method gates and pivots above it. Every method skill writes through this one; the operation skill (mentat-operation, coming next) runs a roadmap operation end to end with the tools below.
+description: Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows, the run tools, the method gates and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it.
 argument-hint: <project name or id> <what to read or write>
 allowed-tools: mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_canvas, mcp__mentat__get_block, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__create_project, mcp__mentat__record_project_insight, mcp__mentat__add_entry, mcp__mentat__update_entry, mcp__mentat__retire_entry, mcp__mentat__delete_entry, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__recommend_experiment_definition, mcp__mentat__withdraw_experiment_definition, mcp__mentat__park_hypothesis, mcp__mentat__unpark_hypothesis, mcp__mentat__retire_hypothesis, mcp__mentat__decide_hypothesis, mcp__mentat__delete_hypothesis, mcp__mentat__design_experiment, mcp__mentat__add_metric, mcp__mentat__add_criterion, mcp__mentat__start_experiment, mcp__mentat__record_observation, mcp__mentat__judge_criterion, mcp__mentat__complete_experiment, mcp__mentat__abort_experiment, mcp__mentat__record_spend, mcp__mentat__delete_experiment, mcp__mentat__record_evidence, mcp__mentat__update_evidence, mcp__mentat__add_data_point, mcp__mentat__delete_evidence, mcp__mentat__add_question, mcp__mentat__update_question, mcp__mentat__resolve_question, mcp__mentat__add_risk, mcp__mentat__update_risk, mcp__mentat__resolve_risk, mcp__mentat__add_idea, mcp__mentat__update_idea, mcp__mentat__resolve_idea, mcp__mentat__record_contradiction, mcp__mentat__rule_contradiction, mcp__mentat__get_roadmap, mcp__mentat__get_operation_package, mcp__mentat__get_gate_status, mcp__mentat__list_gate_evaluations, mcp__mentat__get_run, mcp__mentat__list_runs, mcp__mentat__list_operation_definitions, mcp__mentat__get_operation_definition, mcp__mentat__list_pivot_definitions, mcp__mentat__set_roadmap_thesis, mcp__mentat__place_roadmap_item, mcp__mentat__skip_roadmap_item, mcp__mentat__include_roadmap_item, mcp__mentat__annotate_roadmap_item, mcp__mentat__append_roadmap_operation, mcp__mentat__add_roadmap_move, mcp__mentat__remove_roadmap_move, mcp__mentat__apply_pivot, mcp__mentat__start_run, mcp__mentat__checkpoint_run, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__end_run, mcp__mentat__cancel_run, mcp__mentat__evaluate_gate
 ---
@@ -37,33 +37,39 @@ will be refused the same way, and the fix is a new `start_run`, never a retry.
 
 ## Addressing
 
-Reads take **codes**: block codes are `CS` Customer Segments, `VP` Value Proposition, `CH` Channels,
-`CR` Customer Relationships, `RS` Revenue Streams, `KR` Key Resources, `KA` Key Activities, `KP` Key
-Partners, `CO` Cost Structure, `CL` Competitive Landscape, `MM` Market Mechanics, `ID` Innovation and
-Dislocation; a tenant may have custom blocks with codes of their own. Writes take **ids** a read
-answered: `blockId`, `kindDefinitionId`, `entryId`, `hypothesisId`, `experimentId`, `evidenceId`,
-`metricId`, `criterionId`. Never guess an id.
+Reads take **codes**. A block's code comes from `get_canvas`, which lists every block with its code,
+or from a refusal of `get_block`, which lists the codes that exist; never from memory, because a
+project may hold custom blocks with codes of their own. Writes take **ids** a read answered:
+`blockId`, `kindDefinitionId`, `entryId`, `hypothesisId`, `experimentId`, `evidenceId`, `metricId`,
+`criterionId`. Never guess an id.
 
 ## Which kind, which shape
 
-A block's kinds come in three storages, and the storage decides what `add_entry` takes:
+Every kind `get_block` lists carries its `schema`: the columns a write of that kind takes, each with
+its type, whether it is required, what it points at and the words it accepts with what each word
+means. Read the schema of the kind you are about to write; it is the only source of its columns and
+words.
 
-| Storage | What to send | Example kinds |
-| --- | --- | --- |
-| `FreeForm` | `title`, `body` (markdown) | every block's Notes kind; `VP.DREAM`, `VP.ENH`, `VP.NAME` |
-| a typed storage (`CustomerSegment`, `CustomerJob`, `CustomerPain`, `CustomerGain`, `ValueProposition`, `ProductService`, `PainReliever`, `GainCreator`, `Channel`, `CustomerRelationship`, `RevenueStream`, `KeyResource`, `KeyActivity`, `KeyPartner`, `CostItem`) | `title`, `body`, and `fields`: a JSON object whose `kind` is that storage name plus the columns for it | `CS`, `CS.JOBS`, `CS.PAINS`, `VP.PS`, `CH`, `RS`, `KR`, `KA`, `KP`, `CO` |
-| `Custom` | `title`, `body`, and `attributes`: the fields the kind declares | `CL.POS`, `CL.ENV`, `CL.FOL` |
+- A kind whose schema has no columns is free-form: `add_entry` takes `title` and `body` (markdown)
+  only.
+- A kind whose storage is `Custom` takes `attributes`: a JSON object keyed by the schema's column
+  names.
+- Every other kind takes `fields`: a JSON object whose `kind` property is the kind's `storage` name,
+  exactly as `get_block` spells it, plus one property per schema column whose `writtenThrough` is
+  `Fields`. A column whose `writtenThrough` is `OwnAction` or `ReadOnly` is never sent; its
+  description says where it is written.
+- A `Pointer` column takes the id of an entry of the storage its `pointer.targetStorages` names, on
+  the same block when `pointer.scope` is `SameBlock` and anywhere on the canvas when it is
+  `SameCanvas`. Write the entry pointed at first; the document answers its reference code beside the
+  id, under the member `pointer.referenceCodeMember` names.
+- A `Choice` or `Rating` column takes one of its `words`, spelled exactly. A misspelt word is refused
+  naming the column and the words that would have worked, so it costs a round trip, not a wrong row.
 
-The columns of every typed storage, with the exact words their enum-valued columns accept, are in
-[reference/entries.md](reference/entries.md). Read it before your first typed write in a session; a
-misspelt column value is refused naming the column, so it costs a round trip, not a wrong row.
+When the kind you want does not exist on the block, write to the block's free-form Notes kind and say
+in the body what it is; do not force content into a kind it does not fit. Worked examples and the
+statuses are in [reference/entries.md](reference/entries.md).
 
-Jobs, pains and gains belong to a segment: write the `CustomerSegment` entry first and put its id in
-`segmentId`. Products, pain relievers and gain creators belong to a value proposition the same way.
-When the kind you want does not exist on the block, write to the block's Notes kind and say in the
-body what it is; do not force content into a kind it does not fit.
-
-## Status is a claim about truth, so choose it honestly
+## Status says how true an entry is, so choose it honestly
 
 `Confirmed` means evidence is in hand. `Reported` means someone said so. `Inferred` means you
 reasoned it from other entries. `Hypothesis` means it is a guess to be tested. `Unknown` means the
@@ -112,7 +118,7 @@ one call — every row after it is renumbered), `skip_roadmap_item` with a reaso
 `add_roadmap_move` for an idea a person has adopted, `remove_roadmap_move`.
 Each answers the whole plan with the version it produced; carry that into the next change.
 
-**Running an operation** is the loop this skill exists for:
+**Running an operation** is `mentat-operation`'s loop; these are the calls it is made of:
 
 1. `get_operation_package` with the row's id. It answers the method text as this project has it, the
    procedures in order with their ids, the places on the canvas the operation writes to, what it waits
@@ -134,19 +140,21 @@ Each answers the whole plan with the version it produced; carry that into the ne
    the reason, not an invalidated verdict.
 
 Pause with `pause_run` and continue by starting the next run with `resumedFromRunId` set to the paused
-one. `get_run` and `list_runs` read what has been done. `cancel_run` abandons a run nobody intends to
+one. `get_run` reads one run whole and `list_runs` — which takes the portfolio beside the project —
+lists a venture's runs of every kind with the summary each left. `cancel_run` abandons a run nobody intends to
 finish and is a person's call, not yours.
 
 A run is opened on other subjects too — an experiment, a job off the board, or the project itself —
 by sending `experimentId`, `workItemId` or none of the three instead of `operationId`. Only an attempt
 at a row of the plan checkpoints; every other shape of run records its progress with `observe_run`.
 
-**Gates and pivots are a person's call, never yours.** `get_gate_status` answers what the gate would
-say now — the question, every block with the confidence it holds against the bar it must clear, and
-whether it would pass — and records nothing. Present those numbers, then `evaluate_gate` only once the
-person has decided; a passing evaluation moves the project up a tier. When a gate fails, read
-`list_pivot_definitions`, show what each kind of pivot would change and which operations it puts back
-on the plan, and call `apply_pivot` only on their instruction. STOP and call the AskUserQuestion tool to clarify.
+**Gates and pivots have a skill of their own.** `get_gate_status` answers what the gate would say now
+— the question, every checked block with the confidence it holds against the bar it must clear, and
+whether it would pass — and records nothing. `evaluate_gate` records an evaluation for life and moves
+the project as the outcome and its boundary policy say; `apply_pivot` sends it back a tier and appends
+the rows the pivot revisits. The `mentat-gate-check` skill is what calls them: in a session on the
+person's word, from a routine on the rule that skill carries. From here, present the numbers and hand
+over; never evaluate or pivot on your own judgement.
 
 The exact tier names, row statuses, the verdict rule per validation level, the checkpoint payload
 convention and two worked runs are in [reference/roadmap-and-runs.md](reference/roadmap-and-runs.md).

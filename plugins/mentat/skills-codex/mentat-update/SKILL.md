@@ -1,6 +1,6 @@
 ---
 name: mentat-update
-description: Moves the installed Mentat plugin to the version published on the public mirror, and reports what changed. Use when asked to update, upgrade or refresh Mentat, the Mentat plugin or the Mentat skills, when a Mentat tool is missing or behaves unlike its documentation, or when the tools the server reports disagree with what the skills describe.
+description: Update the plugin: moves the installed Mentat plugin to the version published on the public mirror, and reports what changed. Use when asked to update, upgrade or refresh Mentat, the Mentat plugin or the Mentat skills, when a Mentat tool is missing or behaves unlike its documentation, or when the tools the server reports disagree with what the skills describe.
 ---
 
 # Updating Mentat

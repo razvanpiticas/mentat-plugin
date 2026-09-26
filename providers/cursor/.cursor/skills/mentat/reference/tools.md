@@ -5,52 +5,58 @@ file carries what the schema cannot say: which permission each tool demands, whe
 anything, and which take and answer a canvas version. How to use them well is the `mentat-canvas`
 skill's job.
 
-One hundred and eleven tools: thirty-three reads and seventy-eight writes.
+One hundred and twenty-seven tools: thirty-nine reads and eighty-eight writes.
 
 ## Reads — `mcp:tools.read`
 
 | Tool | Reaches | Answers |
 | --- | --- | --- |
 | `server_info` | Nothing. Answers from the process | Deployment name, route, the tool list |
-| `list_portfolios` | BusinessIntelligence | The caller's portfolios, first page |
+| `list_portfolios` | BusinessIntelligence | One page of the caller's portfolios, `pageNumber` for the next |
 | `list_projects` | BusinessIntelligence | One page of a portfolio's projects |
 | `get_project` | BusinessIntelligence | The project and its overview, with the canvas version |
-| `get_project_state` | BusinessIntelligence | Where a project stands: the canvas in summary, the plan position, the decisions, your open jobs, what a person answered while you were away, and what changed since your last run ended |
+| `get_project_state` | BusinessIntelligence | Where a project stands: the canvas in summary with every block's counts, the plan position and whether it has a thesis, the decisions, your open jobs, what a person answered while you were away, how many inbox rows still wait for the person you work for, and what changed since your last run ended |
 | `get_canvas` | BusinessIntelligence | The whole canvas document and its version |
-| `get_block` | BusinessIntelligence | One block by code, its kinds, everything on it, the version |
+| `get_block` | BusinessIntelligence | One block by code, its kinds with each kind's schema, everything on it, the version |
 | `get_hypothesis` | BusinessIntelligence | One hypothesis with its runs |
 | `get_experiment` | BusinessIntelligence | One run with metric and criterion ids, evidence |
 | `list_experiment_definitions` | BusinessIntelligence | The method cards, optionally for one concern |
 | `get_experiment_definition` | BusinessIntelligence | One card's full method text |
-| `get_roadmap` | BusinessIntelligence | A project's plan: thesis, rows in order, the gate line, the roadmap version |
+| `get_roadmap` | BusinessIntelligence | A project's plan: thesis, rows in order with the blocks each operation writes to, the gate line, the roadmap version |
 | `get_operation_package` | BusinessIntelligence | One row's method text, targets, prerequisites and any run to resume |
 | `get_gate_status` | BusinessIntelligence | What the method gate would answer now, recorded nowhere |
 | `list_gate_evaluations` | BusinessIntelligence | The gate evaluations a project has recorded |
 | `get_run` | BusinessIntelligence | One run of any kind with its events, and — on an attempt at a row of the plan — the verdict, the procedures finished and what it produced |
-| `list_runs` | BusinessIntelligence | One page of a project's attempts at rows of its plan |
+| `list_runs` | BusinessIntelligence | One page of a project's runs of every kind, newest first, each with the summary it left. Takes the portfolio and the project |
 | `list_operation_definitions` | BusinessIntelligence | The operation definitions, shipped or as one project has them |
 | `get_operation_definition` | BusinessIntelligence | One operation definition in full |
+| `get_procedure` | BusinessIntelligence | One procedure of the method catalogue by its code, with the wording this organisation reads |
 | `list_pivot_definitions` | BusinessIntelligence | The kinds of pivot a project may adopt |
 | `boot_agent` | BusinessIntelligence | One agent's whole brief: the company writing, the mission and its objectives, the project's state, the team, the person, the agent's own instructions |
 | `list_agents` | BusinessIntelligence | The agents a project may boot: its own and the portfolio's shared ones |
 | `get_agent` | BusinessIntelligence | One agent with its documents, its routines and the canvases it works |
 | `list_routines` | BusinessIntelligence | A project's scheduled work, for the harness that fires it |
+| `get_routine` | BusinessIntelligence | One routine whole, its instructions included — through `mentat-routines` |
 | `list_charter_documents` | BusinessIntelligence | The company writing a project reads, with the bodies asked for by id |
 | `list_goals` | BusinessIntelligence | A project's goal tree with the latest reading of each metric |
-| `list_insights` | BusinessIntelligence | The learnings recorded about one subject, of any of the five kinds |
-| `get_insight` | BusinessIntelligence | One learning, of any of the five kinds |
+| `list_insights` | BusinessIntelligence | The learnings recorded about one subject, of any of the six kinds, or every learning since a moment; narrowed by status either way, at most 50 an answer, and it says how many more matched |
+| `get_insight` | BusinessIntelligence | One learning, of any of the six kinds |
 | `list_activity` | BusinessIntelligence | A project's change feed, newest first, cursor-paged |
 | `get_history` | BusinessIntelligence | Everything that ever happened to one row, newest first, cursor-paged |
 | `list_work_items` | BusinessIntelligence | A project's board: top-level jobs, each carrying the chunks under it |
 | `get_work_item` | BusinessIntelligence | One job with its chunks, its thread and the spells it spent in each column |
 | `list_decisions` | BusinessIntelligence | The decisions a project is working to, newest first |
+| `list_untyped_links` | BusinessIntelligence | The links the embedding job drew and nobody has given a word to, both ends named and quoted, with every word you may type with |
+| `search` | BusinessIntelligence | The rows of a project that are about something, found by embedding the question once; each row with the passage that matched quoted and a similarity from 0 to 1. Spends one embedding against the organisation's allowance |
+| `get_neighbours` | BusinessIntelligence | Everything one hop from one row, by its code: the structural edges and every accepted link, each with its word, its direction and its confidence |
+| `run_analytical_query` | BusinessIntelligence | The rows one read-only query you write answers over the project's property graph, with the query echoed |
 
 ## Writes — `mcp:tools.write`
 
 Every write below takes `canvasVersion` and answers the version it produced, except: `create_project`
 and `record_project_insight`, which take none; the nine changes to a plan, which take `roadmapVersion`
 instead and answer the whole plan; and the six writes to a run, the organisation's writes, the board's
-writes, `raise_escalation`, `record_decision` and `evaluate_gate`, which take neither. Deletes answer
+writes, `raise_escalation`, `send_message`, `record_decision` and `evaluate_gate`, which take neither. Deletes answer
 only the version.
 
 **`canvasVersion` and `roadmapVersion` are different numbers.** A project's plan and its canvas are
@@ -70,6 +76,7 @@ names which of the two moved.
 | `add_idea`, `update_idea`, `resolve_idea` | Ideas |
 | `record_contradiction`, `rule_contradiction` | Contradictions |
 | `set_roadmap_thesis`, `place_roadmap_item`, `skip_roadmap_item`, `include_roadmap_item`, `annotate_roadmap_item`, `append_roadmap_operation`, `add_roadmap_move`, `remove_roadmap_move`, `apply_pivot` | A project's plan — these take `roadmapVersion` |
+| `set_roadmap_move_work_item` | Points a move at the job that carries it out |
 | `start_run`, `checkpoint_run`, `observe_run`, `pause_run`, `end_run`, `cancel_run` | Runs of a project — no version |
 | `evaluate_gate` | Records what a method gate answered — no version |
 | `create_agent` | Adds an agent to a project, or to the portfolio when no project is named |
@@ -81,18 +88,27 @@ names which of the two moved.
 | `update_goal` | Changes a goal's title, description, metric, deadline or owner |
 | `set_goal_status` | Activates, achieves, misses or abandons a goal |
 | `record_goal_measurement` | Appends a measurement: the value, the date it was true and the source it came from |
-| `record_operation_insight` | Records a learning about one operation, with the instructions it proposes for one of its procedures |
+| `create_routine` | Adds a piece of scheduled work to a project, switched off — through `mentat-routines` |
+| `update_routine` | Rewrites a routine's name, cron line, time zone, instructions and agent together — through `mentat-routines` |
+| `enable_routine` | Switches a routine on, so the harness is to schedule it — through `mentat-routines` |
+| `disable_routine` | Switches a routine off, keeping everything it says — through `mentat-routines` |
+| `record_operation_insight` | Records a learning about one operation: what to watch for and what goes wrong |
 | `record_block_entry_definition_insight` | Records a learning about one entry kind |
 | `record_experiment_definition_insight` | Records a learning about one method card |
+| `record_procedure_insight` | Records a learning about one procedure of the catalogue, with the whole new instructions it proposes |
 | `supersede_insight` | Marks an older insight replaced by a newer one that says it better |
 | `contradict_insight` | Marks a confirmed insight as no longer holding |
 | `link_to_goal` | Puts a hypothesis or an experiment behind a goal it serves |
 | `unlink_from_goal` | Takes one out from behind a goal |
+| `type_link` | Gives one inferred link its meaning: the word, its direction and its size, creating the word when none fits |
+| `confirm_link` | Records a person's judgement that a link holds |
+| `reject_link` | Records a person's judgement that a link does not hold, and stops the guess being proposed again |
 | `create_work_item` | Writes one piece of the project's work down, under a parent job or on its own |
 | `update_work_item` | Rewrites a job's line, brief, three ratings, due date and assignee — the whole text, not a patch |
 | `transition_work_item` | Moves a job to another column of the board |
 | `comment_on_work_item` | Appends one remark to a job's thread |
-| `raise_escalation` | Puts a question a run cannot answer on its own in front of a person |
+| `raise_escalation` | Puts a question a run cannot answer on its own in front of a person — through `mentat-inbox` |
+| `send_message` | Tells a person something they should know and need not answer — through `mentat-inbox` |
 | `record_decision` | Writes a decision of the business into the project's ledger |
 
 The organisation's writes take no version either: an agent, a routine, a goal and a measurement belong
@@ -100,6 +116,11 @@ to the organisation or to the project rather than to the canvas or the plan. A c
 exception and carries a version of its own, sent as `expectedVersion` on `revise_charter_document` and
 answered by every read of it, so a proposal written against text somebody has since edited is refused
 rather than applied silently over their words.
+
+The four routine writes carry no `runId` either, and BusinessIntelligence refuses one that arrives
+inside a run: a schedule is set by somebody who has read it. This server also never fires a routine —
+the scheduler on the person's machine does — so `enable_routine` and `disable_routine` are half of the
+act each way, and the entry on the machine is the other half.
 
 The board, the inbox and the decision ledger carry no version either: a job, an escalation and a
 decision hang off the project rather than off the canvas, and the last write to a job stands.

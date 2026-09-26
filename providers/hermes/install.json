@@ -3,8 +3,19 @@
   "displayName": "Hermes",
   "skillPaths": [
     ".hermes/skills/mentat",
+    ".hermes/skills/mentat-advance",
     ".hermes/skills/mentat-agent",
     ".hermes/skills/mentat-canvas",
+    ".hermes/skills/mentat-distiller",
+    ".hermes/skills/mentat-experiment",
+    ".hermes/skills/mentat-gate-check",
+    ".hermes/skills/mentat-hypothesis",
+    ".hermes/skills/mentat-inbox",
+    ".hermes/skills/mentat-linker",
+    ".hermes/skills/mentat-operation",
+    ".hermes/skills/mentat-planner",
+    ".hermes/skills/mentat-routines",
+    ".hermes/skills/mentat-search",
     ".hermes/skills/mentat-update"
   ],
   "mcp": {

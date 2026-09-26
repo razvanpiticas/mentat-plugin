@@ -3,8 +3,19 @@
   "displayName": "OpenClaw",
   "skillPaths": [
     ".agents/skills/mentat",
+    ".agents/skills/mentat-advance",
     ".agents/skills/mentat-agent",
     ".agents/skills/mentat-canvas",
+    ".agents/skills/mentat-distiller",
+    ".agents/skills/mentat-experiment",
+    ".agents/skills/mentat-gate-check",
+    ".agents/skills/mentat-hypothesis",
+    ".agents/skills/mentat-inbox",
+    ".agents/skills/mentat-linker",
+    ".agents/skills/mentat-operation",
+    ".agents/skills/mentat-planner",
+    ".agents/skills/mentat-routines",
+    ".agents/skills/mentat-search",
     ".agents/skills/mentat-update"
   ],
   "mcp": {
