@@ -147,9 +147,9 @@ finishes its remaining subjects, hands its digest back, and the answer is worked
 A proposal you record inside the run carries proposed text, so the server files a review row in
 the person's inbox with the link — you send nothing about it. The person approves it where the
 subject lives and presses Apply; on a subject the product ships, Apply first takes the
-organisation's own copy and applies to that. A method card the product ships refuses Apply: your
-proposal on it reaches the product's authors and the card stays as it is. The next `get_procedure`
-or `get_block` reads the applied text; until then nothing has changed, and you never say it has.
+organisation's own copy and applies to that — a method card included. The next `get_procedure`,
+`get_block` or `get_experiment_definition` reads the applied text; until then nothing has changed, and
+you never say it has.
 
 ## Reading a refusal
 

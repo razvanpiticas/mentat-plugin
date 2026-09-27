@@ -5,7 +5,7 @@ file carries what the schema cannot say: which permission each tool demands, whe
 anything, and which take and answer a canvas version. How to use them well is the `mentat-canvas`
 skill's job.
 
-One hundred and twenty-seven tools: thirty-nine reads and eighty-eight writes.
+One hundred and twenty-nine tools: thirty-nine reads and ninety writes.
 
 ## Reads — `mcp:tools.read`
 
@@ -56,7 +56,7 @@ One hundred and twenty-seven tools: thirty-nine reads and eighty-eight writes.
 Every write below takes `canvasVersion` and answers the version it produced, except: `create_project`
 and `record_project_insight`, which take none; the nine changes to a plan, which take `roadmapVersion`
 instead and answer the whole plan; and the six writes to a run, the organisation's writes, the board's
-writes, `raise_escalation`, `send_message`, `record_decision` and `evaluate_gate`, which take neither. Deletes answer
+writes, the two writes to a method card, `raise_escalation`, `send_message`, `record_decision` and `evaluate_gate`, which take neither. Deletes answer
 only the version.
 
 **`canvasVersion` and `roadmapVersion` are different numbers.** A project's plan and its canvas are
@@ -95,6 +95,8 @@ names which of the two moved.
 | `record_operation_insight` | Records a learning about one operation: what to watch for and what goes wrong |
 | `record_block_entry_definition_insight` | Records a learning about one entry kind |
 | `record_experiment_definition_insight` | Records a learning about one method card |
+| `customise_experiment_definition` | Takes the organisation's own copy of a method card that ships with Mentat, which every project then reads in its place — on the person's word; takes no run |
+| `update_experiment_definition` | Changes a method card's name, texts (the execution instructions among them) or ratings, keeping the rest — the organisation's own card or its copy of a shipped one; on the person's word; takes no run |
 | `record_procedure_insight` | Records a learning about one procedure of the catalogue, with the whole new instructions it proposes |
 | `supersede_insight` | Marks an older insight replaced by a newer one that says it better |
 | `contradict_insight` | Marks a confirmed insight as no longer holding |

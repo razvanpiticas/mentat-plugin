@@ -1,6 +1,6 @@
 ---
 name: mentat-experiment
-description: Design or run an experiment against a hypothesis of a Mentat canvas — the test card from the method card and the design procedure, the run with its observations, judged criteria, spend and evidence, the learning card and a verdict that agrees with the facts, and the decision laid out for the person — from the card and the procedures it fetches at the moment of use. Use when the person wants to test a hypothesis, design a test card, record what a test showed, or close a test; and from mentat-hypothesis when the person says to test now. It writes through the mentat-canvas loop; the decision on the hypothesis is the person's.
+description: Design or run an experiment against a hypothesis of a Mentat canvas — the test card from the method card and the design procedure, the run with its observations, judged criteria, spend and evidence, the learning card and a verdict that agrees with the facts, and the decision laid out for the person — from the card and the procedures it fetches at the moment of use. Use when the person wants to test a hypothesis, design a test card, record what a test showed, or close a test; when they want to change how the organisation runs a kind of test (a card's texts, its execution instructions, its ratings); and from mentat-hypothesis when the person says to test now. It writes through the mentat-canvas loop; the decision on the hypothesis is the person's.
 ---
 
 # Mentat experiment
@@ -43,6 +43,9 @@ Here the run is handed to you when `mentat-agent` or `mentat-hypothesis` invokes
   step 2 below, from the hypothesis's shortlist and what was already tried against it.
 - **An experiment** already designed or running ("record what the interviews showed on T-3",
   "close T-3"): start at the step the experiment's status says.
+- **A card to adjust** ("our search ads test should sign in to our Google Ads account first",
+  "customer interviews here are twelve, not twenty"): "Adjust a card" below. It needs no hypothesis
+  and no run.
 
 ## Design
 
@@ -193,7 +196,42 @@ budget the ratings did not predict, a confound — report them by code and ask w
 recording. On the person's word only: `record_experiment_definition_insight` on the card (sample
 size, budget, confound; `proposedText` only when you know what the instructions should say
 instead), or `record_procedure_insight` on `P.V2` or `P.V3`. `list_insights` on the subject first.
-Never unattended: the blockers go in the run report.
+Never unattended: the blockers go in the run report. When the person would rather change the card
+itself than record a learning about it, that is "Adjust a card".
+
+## Adjust a card
+
+A card says what to do (its overview) and how this organisation runs it (its execution
+instructions), with its requirements and four ratings. The person names it in words — "the search
+ads test", "customer interviews" — and you find it by name in `list_experiment_definitions`; never
+ask for a slug or an identifier.
+
+1. **Read it whole.** `get_experiment_definition`: the overview, the execution instructions, the
+   requirements, the ratings with their notes, and `source`. Say back in two or three lines what it
+   says now about the part they want changed.
+2. **A card that ships with Mentat is not changed in place.** `source` `System`: say it plainly —
+   "this card comes with Mentat and every organisation reads it; changing it makes your
+   organisation's own copy, which every project of yours then uses, and the learnings stay" — and on
+   their yes call `customise_experiment_definition` and carry on with the copy it answers with.
+   `Customised` (the organisation's copy) or `Tenant` (its own card): change it directly.
+3. **Draft the change against what it says now.** How the test is run here — sign in there, use this
+   tool, this budget cap, this many interviews — goes in the execution instructions; what the test
+   is, in the overview; a prerequisite, in the requirements; a changed cost or evidence strength, in
+   the ratings with the note that says why. Each text is sent whole: take the current text and write
+   the full new one, never only the lines you add. Show what changes, before and after.
+   STOP and use Codex's structured user-input tool when available; if it is unavailable, ask directly in chat to clarify.
+4. **Write it on their word**: one `update_experiment_definition` with only the fields that change.
+   Report what changed, by the card's name.
+
+**Never a secret in a card.** A password, an API key or a token is never written into any text of a
+card — every agent and every project of the organisation reads it. Name where it is kept instead
+("the key in the `GOOGLE_ADS_API_KEY` environment variable"), and say why when the person pastes one.
+
+**Unattended, never customise or change a card.** A change the run found worth making goes to
+`mentat-inbox` as a message naming the card, what should change and why; the run goes on.
+
+The card's classification, the roles it needs, its pairings and removing a customisation are done on
+the card's page; say so when asked.
 
 ## Reading a refusal
 
@@ -217,7 +255,9 @@ Never unattended: the blockers go in the run report.
 ## Rules that are easy to get wrong
 
 - **Fetch the card and the procedures every session.** They change when a person approves a
-  rewrite.
+  rewrite or changes the card.
+- **A card that ships with Mentat is customised before it is changed**, on the person's word, and
+  never from a routine. No password, key or token ever goes into a card.
 - **Criteria before observations**, never after: a pass line written after the data is in is a
   story, not a test — `P.V2` says so and the skill obeys it.
 - **The person starts the experiment**, attended. Unattended, only a `Digital` card with cost

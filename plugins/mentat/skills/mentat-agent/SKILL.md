@@ -79,7 +79,8 @@ tools from here: "plan", "re-plan", "make the roadmap" → `mentat-planner`; "ad
 one", "what's next, do it" → `mentat-advance`; a row of the plan → `mentat-operation`, handed your
 `agentId`, which opens that row's run itself with the id and the row (one row, one run: open no run
 of your own for it first); a hypothesis →
-`mentat-hypothesis`; an experiment → `mentat-experiment`; the gate → `mentat-gate-check`; the insights
+`mentat-hypothesis`; an experiment, or changing how the organisation runs a kind of test (a card's texts, its
+execution instructions, its ratings — the calls are the person's and take no run id) → `mentat-experiment`; the gate → `mentat-gate-check`; the insights
 → `mentat-distiller`; the links → `mentat-linker`; a question about what the canvas knows →
 `mentat-search`; anything to be read or written on the canvas by code → `mentat-canvas`; a routine to
 switch on, switch off, reschedule, add or run now → `mentat-routines`, whose calls are the person's and

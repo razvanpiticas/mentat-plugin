@@ -7,6 +7,7 @@ Then every "ask" above is one of two things.
 
 | Step | Attended | Unattended |
 | --- | --- | --- |
+| choosing the card | show two or three, recommend one, the person picks | the card handed, else the shortlist's first that fits; never ask, never stall |
 | the fit and the cost | ask | write the card anyway; say in the run's notes what is missing |
 | the test card | the person confirms | written as drafted |
 | the start | the person starts | the three conditions in the skill's "Before the start", and the escalation "A start that spends, or needs the person's hands" when any of them fails — that rule is in the skill body, not here, because it is the one a run gets wrong |
@@ -14,6 +15,7 @@ Then every "ask" above is one of two things.
 | the learning card and the verdict | the person confirms | written as drafted, the verdict the criteria support |
 | the decision | the person decides | **the escalation "Hypothesis decision"** with the proposed call, then `pause_run` |
 | an abort | the person decides | never; escalate as a decision of the business |
+| adjusting a card | the person says yes to the copy and to the change | never; a message through `mentat-inbox` naming the card, what should change and why |
 
 Raising an escalation: invoke the `mentat-inbox` skill with the ask named above; it files the row
 with `runId` and hands you back the `inboxItemId`; record it with `observe_run` and then
