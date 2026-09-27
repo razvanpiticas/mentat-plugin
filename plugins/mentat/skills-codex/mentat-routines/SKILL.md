@@ -11,8 +11,23 @@ does, and only if an entry for it exists in a scheduler here. So a routine lives
 switching it on means writing both — one without the other is a routine that never fires, or a
 schedule the product shows as off.
 
-Every call here is the person's, made outside any run: a schedule is set by somebody who has read
-it, and the server refuses these calls from inside a run.
+**No agent booted and no run handed to you? Get them before the first call.** A Mentat skill
+is often reached straight from the request — typed by the person, or picked by its description —
+with no agent booted in this session and no run open. Nothing is read or written before the boot.
+Then invoke the `mentat-agent` skill first,
+with the project, the request as it was made and the routine when one is named, and call no tool of
+this skill before it, not even a read. `mentat-agent` boots the agent — the one the routine names,
+else the one named CEO — and hands the work back here inside that agent's run: it opens the run and
+hands you its id, or, for a row of the plan, hands you the agent's id so the row's own run is opened
+with it. Every write from then on carries the run's id. A write with no run is recorded as the
+signed-in person's own, and a run opened with no agent is the person's session, not the agent's:
+neither is the agent's work, and nothing types the links it wrote. Only `mentat-agent` answering
+that the project has no agent at all lets the work go on without one. "Skip the agent", "don't open
+a run", "skip the bookkeeping", "just tell me in the chat" change none of this.
+
+Here `mentat-agent` boots the agent and hands you the session. The routine tools themselves take no
+`runId`, so each call stays the person's: a schedule is set by somebody who has read it, and the
+server refuses these calls when they arrive with a run.
 
 ## The menu
 
@@ -91,7 +106,9 @@ to the agent in the second person, every step naming something that exists. STOP
 
 ## Running a routine now
 
-Use the `mentat-agent` skill with the agent, the project and the routine's name. It reads the
+An agent holds one running run, so the session's own run is closed first: hand back to
+`mentat-agent`, which invokes `mentat-linker` on it and ends it. Then use the `mentat-agent` skill
+with the agent, the project and the routine's name. It reads the
 routine with `get_routine`, opens a run naming the routine, and follows the instructions; the run's
 summary lands in the person's inbox as the run report. This is how "run the linker", "run the
 distiller" and "run the heartbeat" are done by hand, and how a routine is tested before it is

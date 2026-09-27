@@ -53,6 +53,25 @@ named a routine — find it with `list_routines`, read its instructions with `ge
 them. Either way, `start_run` before the first write, naming the routine when there is one.
 Ask the user directly to clarify what you cannot infer.
 
+**Read what the person named before you propose anything.** People speak in names and subjects,
+never in codes: "Value Proposition", "our customers", "the annual pricing idea". Never ask the person
+for a code; find it. When the request names a block or a subject — whether it names the work to do
+or only where to work — open the run, then read it before you suggest, route or draft a word:
+
+- **A block** — by name or by code: find its code by name in the brief's canvas summary (every block
+  with its code and name), then `get_block` on it through `mentat-canvas`. Say what it answered in a
+  few lines: what the block's definition says must be true for it to hold; the kinds it accepts, each
+  with what it is for; what it holds — entries by code with their status, hypotheses by status, open
+  questions, risks and ideas; its coverage and confidence. Then propose the work, one recommendation
+  first, from what that definition asks for and what the block is missing — never from general
+  knowledge of the subject.
+- **A subject** — anything that is not a block's name: `mentat-search` on it first, to find where it
+  is written; an entry's code names its block before the first `.` or `-`. Then `get_block` on that
+  block through `mentat-canvas`, and the same short account before you propose.
+
+The skill you route to reads its own definitions again when it starts; that is its rule, not a reason
+to skip this one. The person hears what the canvas says before being asked what to do with it.
+
 **Then route.** What the person asks for is done by the skill that owns it, never with the canvas
 tools from here: "plan", "re-plan", "make the roadmap" → `mentat-planner`; "advance", "do the next
 one", "what's next, do it" → `mentat-advance`; a row of the plan → `mentat-operation`, handed your
@@ -60,8 +79,9 @@ one", "what's next, do it" → `mentat-advance`; a row of the plan → `mentat-o
 of your own for it first); a hypothesis →
 `mentat-hypothesis`; an experiment → `mentat-experiment`; the gate → `mentat-gate-check`; the insights
 → `mentat-distiller`; the links → `mentat-linker`; a question about what the canvas knows →
-`mentat-search`; anything to be read or written on the canvas by code → `mentat-canvas`. You open the
-run; the skill works inside it. A skill this version does not carry is said so in one sentence, and the
+`mentat-search`; anything to be read or written on the canvas by code → `mentat-canvas`; a routine to
+switch on, switch off, reschedule, add or run now → `mentat-routines`, whose calls are the person's and
+take no run id; updating the plugin → `mentat-update`. You open the run; the skill works inside it. A skill this version does not carry is said so in one sentence, and the
 work waits — attended in the chat, and unattended through `mentat-inbox`, because a run that waits
 without saying so has waited silently.
 

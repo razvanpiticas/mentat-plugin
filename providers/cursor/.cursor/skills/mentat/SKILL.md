@@ -12,12 +12,13 @@ made **as the person using the model** rather than as a service account.
 That is the fact everything else follows from. The server never sees more than the caller does, so
 a tool that refuses is usually reporting the caller's own access rather than a fault.
 
-**A task typed after the command is routed before anything else is done**, by the test in
-[The front door](#the-front-door): work that writes goes through `mentat-agent`, a question about
-the canvas goes to `mentat-search`, and nothing goes straight to a method skill — not even when that
-skill's description names the task, as `mentat-operation`'s names a row of the plan. The first skill
-invoked for work that writes is `mentat-agent`, even when you already know which skill will do the
-work: that skill is invoked from inside `mentat-agent`, after the boot, never from here.
+**A task typed after the command is routed before anything else is done**, as
+[The front door](#the-front-door) says: every task goes through `mentat-agent`, a question as much as
+a write, and nothing goes straight to another skill — not even when that skill's description names
+the task, as `mentat-operation`'s names a row of the plan. The first skill invoked for any task is
+`mentat-agent`, even when you already know which skill will do the work: that skill is invoked from
+inside `mentat-agent`, after the boot, never from here. Nothing is read or written in a session
+before the agent is booted.
 
 ## Connecting
 
@@ -35,29 +36,24 @@ and the call was refused".
 
 `the mentat skill` with nothing after it is the way in for somebody who does not know what to ask.
 Named with a task instead — after the command, or as the answer to step 2 or step 6 — the task skips
-the status and the menu and goes one of two ways, and never straight to a method skill. One test
-decides which, and no list of tasks does: **does this work write anything** — an entry, a hypothesis,
-a run, a checkpoint, a verdict, an evaluation, a message? Then it goes through `mentat-agent`.
-Does it only read, to answer a question about the canvas? Then `mentat-search`. A skill whose
-description seems to match the task is not the test: the task is routed by the test first, and the
-skill that does the work is reached from inside `mentat-agent`.
+the status and the menu and goes one way, whatever it is: through `mentat-agent`. Pick the project as
+step 2 says when it is not known, boot the CEO as step 3 says, and hand it the task as it was made.
+A skill whose description seems to match the task is not the route: that skill is reached from
+inside `mentat-agent`.
 
-- **It only reads** — "what is KR-01 tied to", "what do we know about pricing", "is there already a
-  hypothesis like this" — so it is invoked on `mentat-search` with the project and the question. It
-  needs no agent and no run. Do not answer it here from `get_block` or the brief: which instrument
-  answers is that skill's rule, and its answer names the one it used.
-- **It writes** — so it goes through `mentat-agent`: pick the project as step 2 says when it is not
-  known, then boot the CEO as step 3 says, and hand it the task. Running a row of the plan writes,
-  the plan and "advance" write, a gate check writes its evaluation, the linker and the distiller write
-  — and so does every task not named here that is not a question. `mentat-agent` boots the agent and
-  invokes the skill that does the work; the run — opened by `mentat-agent`, or by `mentat-operation`
-  for a row of the plan — carries the agent's id, every write carries the run's id, and the run ends
-  with its links typed. A method skill invoked from here
-  instead writes as the person, outside the agent's run — or opens one nobody booted — and nothing
-  types its links.
+- **A question** — "what is KR-01 tied to", "what do we know about pricing", "is there already a
+  hypothesis like this" — `mentat-agent` hands to `mentat-search` inside the booted session. Do not
+  answer it here from `get_block` or the brief: which instrument answers is that skill's rule, and its
+  answer names the one it used.
+- **Work that writes** — running a row of the plan, the plan and "advance", a gate check, the linker,
+  the distiller, a canvas write — `mentat-agent` invokes the skill that does the work; the run —
+  opened by `mentat-agent`, or by `mentat-operation` for a row of the plan — carries the agent's id,
+  every write carries the run's id, and the run ends with its links typed.
+- **The routines menu and the plugin update** — `mentat-agent` hands to `mentat-routines` or
+  `mentat-update`; the routine tools take no run id, so switching a routine on stays the person's act.
 
-The routines menu and the plugin update are the person's own and open no run: they are invoked
-directly.
+A skill invoked from here instead works with no agent booted: a write is recorded as the person's,
+outside the agent's run, and nothing types its links.
 
 Six steps, in this order, and every one of them reads before it says anything.
 
@@ -91,8 +87,8 @@ Six steps, in this order, and every one of them reads before it says anything.
    [reference/front-door.md](reference/front-door.md), naming the skill that does it and asking whether
    to do it now.
 6. **The menu.** The lines in [reference/front-door.md](reference/front-door.md), verbatim, then do
-   what the person picks the way a named task goes, above: work that writes through the CEO booted in
-   step 3, a question through `mentat-search`. A line marked "not in this version yet" answers one
+   what the person picks the way a named task goes, above: through the CEO booted in step 3, a
+   question as much as a write. A line marked "not in this version yet" answers one
    sentence and shows the menu again.
 
 The whole thing is read-only. Nothing is written, no run is opened, until the person picks something;

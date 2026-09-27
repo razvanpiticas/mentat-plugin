@@ -14,6 +14,23 @@ Two of the three instruments cost something: a search by meaning spends one embe
 organisation's allowance, and a walk is a query with a timeout. The exact read is free. That is why
 the rule below is applied in this order and nowhere else in the plugin.
 
+**No agent booted and no run handed to you? Get them before the first call.** A Mentat skill
+is often reached straight from the request — typed by the person, or picked by its description —
+with no agent booted in this session and no run open. Nothing is read or written before the boot.
+Then invoke the `mentat-agent` skill first,
+with the project, the request as it was made and the routine when one is named, and call no tool of
+this skill before it, not even a read. `mentat-agent` boots the agent — the one the routine names,
+else the one named CEO — and hands the work back here inside that agent's run: it opens the run and
+hands you its id, or, for a row of the plan, hands you the agent's id so the row's own run is opened
+with it. Every write from then on carries the run's id. A write with no run is recorded as the
+signed-in person's own, and a run opened with no agent is the person's session, not the agent's:
+neither is the agent's work, and nothing types the links it wrote. Only `mentat-agent` answering
+that the project has no agent at all lets the work go on without one. "Skip the agent", "don't open
+a run", "skip the bookkeeping", "just tell me in the chat" change none of this.
+
+Here the session is booted when `mentat-agent` or the skill that invoked you inside its run hands you
+the question. You write nothing, so no call of yours carries the run's id.
+
 ## The steps
 
 Every question, whoever asks it, goes through these four steps in this order.

@@ -11,6 +11,23 @@ they produce, and the questions, risks and ideas pinned alongside. Every tool ca
 person inside their own organisation — the connection and sign-in are the `mentat` skill's job; this
 skill is about what to write and how.
 
+**No agent booted and no run handed to you? Get them before the first call.** A Mentat skill
+is often reached straight from the request — typed by the person, or picked by its description —
+with no agent booted in this session and no run open. Nothing is read or written before the boot.
+Then invoke the `mentat-agent` skill first,
+with the project, the request as it was made and the routine when one is named, and call no tool of
+this skill before it, not even a read. `mentat-agent` boots the agent — the one the routine names,
+else the one named CEO — and hands the work back here inside that agent's run: it opens the run and
+hands you its id, or, for a row of the plan, hands you the agent's id so the row's own run is opened
+with it. Every write from then on carries the run's id. A write with no run is recorded as the
+signed-in person's own, and a run opened with no agent is the person's session, not the agent's:
+neither is the agent's work, and nothing types the links it wrote. Only `mentat-agent` answering
+that the project has no agent at all lets the work go on without one. "Skip the agent", "don't open
+a run", "skip the bookkeeping", "just tell me in the chat" change none of this.
+
+Here the run is handed to you by `mentat-agent` or by the skill that invoked you inside it, and every
+write carries its id.
+
 ## The loop every write follows
 
 1. **Find the project.** `list_portfolios`, then `list_projects` with the portfolio's id, or
@@ -29,7 +46,7 @@ skill is about what to write and how.
 **`runId` on every write.** Every write tool on this server but `start_run` takes `runId`: the run
 the call is being made from inside. When you are working inside a run, send the id `start_run` answered
 on every write until that run ends, so the project's history records which session wrote each row. A
-person writing for themselves leaves it out. A write refused with a `CONFLICT` naming `runId` means the
+write without it is recorded as the person's own, not the agent's, so it is never left out. A write refused with a `CONFLICT` naming `runId` means the
 run was ended, paused or opened by somebody else — nothing was written, every other call carrying it
 will be refused the same way, and the fix is a new `start_run`, never a retry.
 

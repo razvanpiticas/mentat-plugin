@@ -16,9 +16,10 @@ version you read, carry `runId` on every write, report what the tool answered by
 refusal says. That skill's text is the reference for versions, ids and refusals; nothing here
 repeats it.
 
-**No agent booted and no run handed to you? Get them before the first call.** A skill that writes
+**No agent booted and no run handed to you? Get them before the first call.** A Mentat skill
 is often reached straight from the request — typed by the person, or picked by its description —
-with no agent booted in this session and no run open. Then invoke the `mentat-agent` skill first,
+with no agent booted in this session and no run open. Nothing is read or written before the boot.
+Then invoke the `mentat-agent` skill first,
 with the project, the request as it was made and the routine when one is named, and call no tool of
 this skill before it, not even a read. `mentat-agent` boots the agent — the one the routine names,
 else the one named CEO — and hands the work back here inside that agent's run: it opens the run and
@@ -53,7 +54,14 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
 1. **Fetch the method.** `get_procedure` with code `P.V1`. Read it whole before anything else;
    its steps are what you do, and its words for the checks, the scores and the map are the words
    you use. When the organisation has taken its own copy, that is what you get.
-2. **Fetch the block.** `get_block` with the block's code — the one the person named, the entry's
+2. **Fetch the block.** People name a subject, not a code, and are never asked for one. When the
+   request names a block, an entry or a target slot, the block is that one. When it names a subject
+   only — "pricing strategy X", "whether gym-goers will pay" — invoke the `mentat-search` skill on the
+   subject first ("what do we know about <the subject>"): the hits are the rows it is written in, and
+   an entry's code names its block before the first `.` or `-`. With no hit, choose the block the
+   subject belongs to by its name, read it, and say which and why; when its description says the
+   subject belongs elsewhere, read that block instead. Then
+   `get_block` with the block's code — the one the person named, the hits' block, the entry's
    block, or each target slot's block. Its `description` says what must be true for the block to
    hold; those sentences are the beliefs the procedure's first step sends you to. The same answer
    lists the block's entries and every hypothesis already on it.
@@ -68,8 +76,8 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
    block holds no hypothesis: the check is by meaning over the whole project, and an empty block is
    not an empty project. Its answer says yes or no with the nearest hit quoted and its similarity; that
    is what this step reports. A yes is not written again: name the hit by code and move on. When
-   the person named a subject and not a code, the entries it is about are in step 2's block or among
-   the hits.
+   the person named a subject and not a code, the entries it is about are step 2's hits, on step 2's
+   block.
 4. **Draft.** Follow the procedure: one sentence per belief in its form, the entry it is about, its
    polarity, its concern, the three checks answered, the two scores with the reason for each, and
    which you would test first. Every draft stands on its own step-3 invocation: a belief that

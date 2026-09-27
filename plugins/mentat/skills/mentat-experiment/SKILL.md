@@ -18,9 +18,10 @@ Every read and write goes through the `mentat-canvas` loop — the version, `run
 report by code, do what a refusal says. That skill's `reference/experiments-and-evidence.md` lists
 what each call takes; nothing here repeats it.
 
-**No agent booted and no run handed to you? Get them before the first call.** A skill that writes
+**No agent booted and no run handed to you? Get them before the first call.** A Mentat skill
 is often reached straight from the request — typed by the person, or picked by its description —
-with no agent booted in this session and no run open. Then invoke the `mentat-agent` skill first,
+with no agent booted in this session and no run open. Nothing is read or written before the boot.
+Then invoke the `mentat-agent` skill first,
 with the project, the request as it was made and the routine when one is named, and call no tool of
 this skill before it, not even a read. `mentat-agent` boots the agent — the one the routine names,
 else the one named CEO — and hands the work back here inside that agent's run: it opens the run and
@@ -40,40 +41,56 @@ Here the run is handed to you when `mentat-agent` or `mentat-hypothesis` invokes
   interviews") or from `mentat-hypothesis` on the person's word, with the `runId` and
   `canvasVersion` it holds and, when the hypothesis came from an operation, that operation's
   "validated when" sentence.
-- **A hypothesis alone** ("let's test H-CS-004"): the shortlist is read off `get_hypothesis`; when
-  it is empty, `list_experiment_definitions` by the hypothesis's concern and
-  `recommend_experiment_definition` first, as `mentat-hypothesis` would.
+- **A hypothesis alone** ("let's test the gym-goers one"): the card is chosen with the person in
+  step 2 below, from the hypothesis's shortlist and what was already tried against it.
 - **An experiment** already designed or running ("record what the interviews showed on T-3",
   "close T-3"): start at the step the experiment's status says.
 
 ## Design
 
-1. **Fetch the method.** `get_procedure` `P.V2`, then `get_experiment_definition` for the card:
-   overview, execution instructions, what it is best for, requirements, the notes behind its four
-   ratings, the capabilities it needs, its run mode. Read both whole. The card is the playbook for
-   this kind of test; the procedure is how any test card is written.
-2. **Read the hypothesis.** `get_hypothesis`: its sentence, concern, scores, the runs already
-   against it. A hypothesis that is not scored cannot be tested; send it back to
-   `mentat-hypothesis`.
-3. **Check the fit, and say what it costs.** The card's requirements against what the project
+1. **Read the hypothesis and everything already tried against it.** `get_hypothesis`: its sentence,
+   concern, scores, its shortlist (`recommendedDefinitionIds`) and its experiments. A hypothesis that
+   is not scored cannot be tested; send it back to `mentat-hypothesis`. Then `get_experiment` on each
+   of its experiments: the card it used, the test card (who, where, what), the metrics and criteria,
+   what was observed, the verdict and the learning card. That is what the next test must not repeat:
+   an advertisement test that failed on one set of keywords is not run again on the same keywords.
+2. **Choose the card.** Handed one, it is that card; otherwise:
+   - **Attended, show the choice.** The shortlist's cards, two or three, side by side, one line each:
+     name, run mode, evidence strength, cost, setup and run time, the capabilities it needs, why it
+     fits this hypothesis, and what was already run with it here. Recommend one. A card that already
+     ran against this hypothesis is offered again only with what will differ this time, taken from
+     its learning card; after a weak test, prefer a stronger one — the card's recommended successors
+     (`recommendedSuccessorIds` on `list_experiment_definitions`) are the next tests it leads to. An
+     empty or unfitting shortlist: `list_experiment_definitions` by the hypothesis's concern, then
+     `recommend_experiment_definition` for the one or two you would propose, then show them. The
+     person picks. STOP and call the AskUserQuestion tool to clarify.
+   - **Unattended, never ask and never stall.** The card is the shortlist's: the one you were handed;
+     handed none, the first of `recommendedDefinitionIds`, in their order. A card whose requirement
+     the project cannot meet goes to the next on the same shortlist. Only when the shortlist is
+     empty, or nothing on it fits, do you choose one — `list_experiment_definitions` by the
+     hypothesis's concern, then `recommend_experiment_definition` before the design. Never a card of
+     your own picking over one the shortlist holds: which card is tested was decided when it was
+     shortlisted, and whether it starts is decided by the three conditions of the start, not by
+     which card would be the better test. A card that already ran against this hypothesis is still
+     designed; step 5 makes the test card differ from the earlier one.
+3. **Read the card, then the method.** `get_experiment_definition` on the card, the overview first:
+   what the test is, what it is best for, its requirements, the notes behind its four ratings, the
+   capabilities it needs, its run mode; then its execution instructions, the organisation's own how.
+   Then `get_procedure` `P.V2`: how any test card is written. Read all of it whole.
+4. **Check the fit, and say what it costs.** The card's requirements against what the project
    holds; the capabilities it needs against the team the brief lists (when there is no brief, ask);
    the cost and time ratings against what the person said they can spend. Missing capability, high
    cost, a requirement the project cannot meet: say so, propose the next card on the shortlist, and
-   let the person choose. STOP and call the AskUserQuestion tool to clarify.
-   **Unattended, the card is the shortlist's.** Design the card you were handed; handed none, the
-   first of `get_hypothesis`'s `recommendedDefinitionIds`, in their order. A card whose requirement
-   the project cannot meet goes to the next on the same shortlist. Only when the shortlist is empty,
-   or nothing on it fits, do you choose one — `list_experiment_definitions` by the hypothesis's
-   concern, then `recommend_experiment_definition` before the design. Never a card of your own
-   picking over one the shortlist holds: which card is tested was decided when it was shortlisted,
-   and whether it starts is decided by the three conditions of the start, not by which card would
-   be the better test.
-4. **Draft the test card** by the procedure: the hypothesis unchanged; what will be done, precise
+   let the person choose. STOP and call the AskUserQuestion tool to clarify. Unattended, step 2's rule decides instead.
+5. **Draft the test card** by the procedure: the hypothesis unchanged; what will be done, precise
    on who, where and what; the metrics with units; the success criteria, each a number a metric
    must reach or a qualitative line, written **before** any observation — from the operation's
    "validated when" when the hypothesis came from one; a name, an owner, a deadline, a planned
-   duration. Show the card; the person confirms or edits. STOP and call the AskUserQuestion tool to clarify.
-5. **Write it**: one `design_experiment` with the card, the metrics and the criteria,
+   duration. When a card already ran against this hypothesis, the card says what differs from that
+   run — other keywords, another audience, another channel — and why, from its learning card; the
+   same test again is not a new test. Show the card; the person confirms or edits.
+   STOP and call the AskUserQuestion tool to clarify.
+6. **Write it**: one `design_experiment` with the card, the metrics and the criteria,
    `canvasVersion`, `runId`. A part refused after the experiment was created: `get_experiment`, then
    `add_metric` or `add_criterion` — never a second design.
 

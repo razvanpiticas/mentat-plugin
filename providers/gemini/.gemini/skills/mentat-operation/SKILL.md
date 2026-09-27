@@ -15,9 +15,10 @@ Every read and write by code goes through the `mentat-canvas` skill: it knows th
 and the refusals. A question about what the canvas knows on a subject goes through `mentat-search`.
 Talking to a person who is not here goes through `mentat-inbox`.
 
-**No agent booted and no run handed to you? Get them before the first call.** A skill that writes
+**No agent booted and no run handed to you? Get them before the first call.** A Mentat skill
 is often reached straight from the request — typed by the person, or picked by its description —
-with no agent booted in this session and no run open. Then invoke the `mentat-agent` skill first,
+with no agent booted in this session and no run open. Nothing is read or written before the boot.
+Then invoke the `mentat-agent` skill first,
 with the project, the request as it was made and the routine when one is named, and call no tool of
 this skill before it, not even a read. `mentat-agent` boots the agent — the one the routine names,
 else the one named CEO — and hands the work back here inside that agent's run: it opens the run and

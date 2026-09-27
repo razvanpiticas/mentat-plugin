@@ -9,9 +9,10 @@ A project's plan is a sequence of rows — operations of the method and moves fr
 
 The rule that says what comes next is in [reference/next-action.md](reference/next-action.md). It is the one copy; the front door reads the same file to say the next action without doing it.
 
-**No agent booted and no run handed to you? Get them before the first call.** A skill that writes
+**No agent booted and no run handed to you? Get them before the first call.** A Mentat skill
 is often reached straight from the request — typed by the person, or picked by its description —
-with no agent booted in this session and no run open. Then invoke the `mentat-agent` skill first,
+with no agent booted in this session and no run open. Nothing is read or written before the boot.
+Then invoke the `mentat-agent` skill first,
 with the project, the request as it was made and the routine when one is named, and call no tool of
 this skill before it, not even a read. `mentat-agent` boots the agent — the one the routine names,
 else the one named CEO — and hands the work back here inside that agent's run: it opens the run and

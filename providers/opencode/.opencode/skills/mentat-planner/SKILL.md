@@ -9,9 +9,10 @@ A Mentat project's plan is two things the product already holds and nothing else
 
 The method is not here. It is the procedure `P.P1`, read with `get_procedure` at the start of every session, and its steps are the rounds below. What is here is the mechanics: which tool answers what, which version each write carries, where the person's word is required, and what a refusal means. Every canvas and roadmap write follows the `mentat-canvas` skill's loop — read, write with the version you were answered, report what the tool answered by code — so read that skill's "The loop every write follows" and "The roadmap and operation runs" once; this skill only says what to write and when.
 
-**No agent booted and no run handed to you? Get them before the first call.** A skill that writes
+**No agent booted and no run handed to you? Get them before the first call.** A Mentat skill
 is often reached straight from the request — typed by the person, or picked by its description —
-with no agent booted in this session and no run open. Then invoke the `mentat-agent` skill first,
+with no agent booted in this session and no run open. Nothing is read or written before the boot.
+Then invoke the `mentat-agent` skill first,
 with the project, the request as it was made and the routine when one is named, and call no tool of
 this skill before it, not even a read. `mentat-agent` boots the agent — the one the routine names,
 else the one named CEO — and hands the work back here inside that agent's run: it opens the run and
