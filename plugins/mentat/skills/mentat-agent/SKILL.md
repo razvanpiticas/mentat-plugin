@@ -2,7 +2,7 @@
 name: mentat-agent
 description: Boots one of the organisation's agents on one project and works as it — reads the charter, the mission and its objectives, the team, the person it works for and its own instructions, then works on what the person asks for or on what a routine says, proposes work from the goals it owns, reports the blockers it hit, and records the numbers it measured. Use when the person says "boot the CEO", names one of the organisation's agents, asks what an agent should do next, or asks for work to be done and recorded as an agent rather than as themselves. Routes "plan" to mentat-planner, "advance" and "do the next one" to mentat-advance, canvas work to the method skills, and runs a routine's instructions when a routine fired the session.
 argument-hint: <agent name> <project name or id> [routine name]
-allowed-tools: mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_project_state, mcp__mentat__list_agents, mcp__mentat__get_agent, mcp__mentat__boot_agent, mcp__mentat__list_routines, mcp__mentat__get_routine, mcp__mentat__list_charter_documents, mcp__mentat__record_charter_insight, mcp__mentat__revise_charter_document, mcp__mentat__record_operation_insight, mcp__mentat__record_block_entry_definition_insight, mcp__mentat__record_experiment_definition_insight, mcp__mentat__list_insights, mcp__mentat__get_insight, mcp__mentat__supersede_insight, mcp__mentat__contradict_insight, mcp__mentat__list_goals, mcp__mentat__record_goal_measurement, mcp__mentat__link_to_goal, mcp__mentat__unlink_from_goal, mcp__mentat__record_project_insight, mcp__mentat__start_run, mcp__mentat__checkpoint_run, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__end_run, mcp__mentat__get_run, mcp__mentat__list_work_items, mcp__mentat__get_work_item, mcp__mentat__create_work_item, mcp__mentat__update_work_item, mcp__mentat__transition_work_item, mcp__mentat__comment_on_work_item, mcp__mentat__list_decisions, mcp__mentat__record_decision, mcp__mentat__list_activity
+allowed-tools: mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_project_state, mcp__mentat__list_agents, mcp__mentat__get_agent, mcp__mentat__boot_agent, mcp__mentat__list_routines, mcp__mentat__get_routine, mcp__mentat__list_charter_documents, mcp__mentat__write_charter_document, mcp__mentat__set_charter_document_flags, mcp__mentat__list_agent_documents, mcp__mentat__get_agent_document, mcp__mentat__write_agent_document, mcp__mentat__revise_agent_document, mcp__mentat__set_agent_document_flags, mcp__mentat__record_charter_insight, mcp__mentat__revise_charter_document, mcp__mentat__record_operation_insight, mcp__mentat__record_block_entry_definition_insight, mcp__mentat__record_experiment_definition_insight, mcp__mentat__list_insights, mcp__mentat__get_insight, mcp__mentat__supersede_insight, mcp__mentat__contradict_insight, mcp__mentat__list_goals, mcp__mentat__record_goal_measurement, mcp__mentat__link_to_goal, mcp__mentat__unlink_from_goal, mcp__mentat__record_project_insight, mcp__mentat__start_run, mcp__mentat__checkpoint_run, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__end_run, mcp__mentat__get_run, mcp__mentat__list_work_items, mcp__mentat__get_work_item, mcp__mentat__create_work_item, mcp__mentat__update_work_item, mcp__mentat__transition_work_item, mcp__mentat__comment_on_work_item, mcp__mentat__list_decisions, mcp__mentat__record_decision, mcp__mentat__list_activity
 ---
 
 # Mentat agent
@@ -44,8 +44,30 @@ Deliberately not in the brief: the rest of the canvas, other agents' documents, 
 project, and the routines. Read the canvas with `mentat-canvas` when the work needs it, and the
 routines with `list_routines` when you are scheduling rather than working.
 
-A document with `loadAtBoot` false is not in the brief and is fetched with `list_charter_documents`
+A company document with `loadAtBoot` false is not in the brief and is fetched with `list_charter_documents`
 when you need the history behind a fact.
+
+### Writing charter and employee documents
+
+Company documents use `list_charter_documents`, `write_charter_document` and
+`revise_charter_document`. Send exactly one owner: `projectId` for a project's own writing or
+`portfolioId` for shared writing. All four company kinds are supported: `CompanyProfile`, `Tenets`,
+`OperatingProcedures`, and `Custom`.
+
+An employee's own writing uses `list_agent_documents`, `get_agent_document`,
+`write_agent_document`, and `revise_agent_document`, with `portfolioId` and `agentId`.
+Use `AgentInstructions` for standing instructions (one per employee), or `Custom` for additional
+writing. These documents take the employee's scope. Fetch documents omitted from the boot brief
+with `get_agent_document`; company lists intentionally exclude employee documents.
+
+Read before revising and send the document's `expectedVersion`. For an employee's Living document,
+first `record_charter_insight` with the full proposed text, then pass its `insightId` to
+`revise_agent_document`. HumanApprovalOnly still waits for a person; AppendOnly preserves the
+existing text. Every write inside a run carries `runId`, including creations. Never omit it to
+get around a refusal. Complete documents and replacement proposals may contain 50,000 characters.
+
+`set_charter_document_flags` and `set_agent_document_flags` change boot/write-mode settings only
+on a person's instruction outside an agent run. A running employee cannot change its own authority.
 
 ## Confirming, in one line
 

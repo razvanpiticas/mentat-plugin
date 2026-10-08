@@ -42,8 +42,30 @@ Deliberately not in the brief: the rest of the canvas, other agents' documents, 
 project, and the routines. Read the canvas with `mentat-canvas` when the work needs it, and the
 routines with `list_routines` when you are scheduling rather than working.
 
-A document with `loadAtBoot` false is not in the brief and is fetched with `list_charter_documents`
+A company document with `loadAtBoot` false is not in the brief and is fetched with `list_charter_documents`
 when you need the history behind a fact.
+
+### Writing charter and employee documents
+
+Company documents use `list_charter_documents`, `write_charter_document` and
+`revise_charter_document`. Send exactly one owner: `projectId` for a project's own writing or
+`portfolioId` for shared writing. All four company kinds are supported: `CompanyProfile`, `Tenets`,
+`OperatingProcedures`, and `Custom`.
+
+An employee's own writing uses `list_agent_documents`, `get_agent_document`,
+`write_agent_document`, and `revise_agent_document`, with `portfolioId` and `agentId`.
+Use `AgentInstructions` for standing instructions (one per employee), or `Custom` for additional
+writing. These documents take the employee's scope. Fetch documents omitted from the boot brief
+with `get_agent_document`; company lists intentionally exclude employee documents.
+
+Read before revising and send the document's `expectedVersion`. For an employee's Living document,
+first `record_charter_insight` with the full proposed text, then pass its `insightId` to
+`revise_agent_document`. HumanApprovalOnly still waits for a person; AppendOnly preserves the
+existing text. Every write inside a run carries `runId`, including creations. Never omit it to
+get around a refusal. Complete documents and replacement proposals may contain 50,000 characters.
+
+`set_charter_document_flags` and `set_agent_document_flags` change boot/write-mode settings only
+on a person's instruction outside an agent run. A running employee cannot change its own authority.
 
 ## Confirming, in one line
 

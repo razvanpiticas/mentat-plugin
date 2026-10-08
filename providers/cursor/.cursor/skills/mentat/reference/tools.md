@@ -37,7 +37,9 @@ One hundred and twenty-nine tools: thirty-nine reads and ninety writes.
 | `get_agent` | BusinessIntelligence | One agent with its documents, its routines and the canvases it works |
 | `list_routines` | BusinessIntelligence | A project's scheduled work, for the harness that fires it |
 | `get_routine` | BusinessIntelligence | One routine whole, its instructions included — through `mentat-routines` |
-| `list_charter_documents` | BusinessIntelligence | The company writing a project reads, with the bodies asked for by id |
+| `list_charter_documents` | BusinessIntelligence | Company writing under exactly one projectId or portfolioId, with requested bodies by id |
+| `list_agent_documents` | BusinessIntelligence | An employee's instructions and custom document titles |
+| `get_agent_document` | BusinessIntelligence | One employee document with its full text, write mode and version |
 | `list_goals` | BusinessIntelligence | A project's goal tree with the latest reading of each metric |
 | `list_insights` | BusinessIntelligence | The learnings recorded about one subject, of any of the six kinds, or every learning since a moment; narrowed by status either way, at most 50 an answer, and it says how many more matched |
 | `get_insight` | BusinessIntelligence | One learning, of any of the six kinds |
@@ -84,6 +86,11 @@ names which of the two moved.
 | `set_agent_status` | Pauses, resumes or archives an agent |
 | `record_charter_insight` | Records a learning about one charter document, with the full text it proposes instead |
 | `revise_charter_document` | Replaces a charter document's body — for an agent, only on a Living document and only with the insight it applies |
+| `write_charter_document` | Creates any company charter kind under a project or portfolio |
+| `set_charter_document_flags` | Changes company document settings; person-only |
+| `write_agent_document` | Creates employee instructions or a custom employee document |
+| `revise_agent_document` | Rewrites an employee document against expectedVersion, under its write-mode rules |
+| `set_agent_document_flags` | Changes employee document settings; person-only |
 | `create_goal` | Sets the project's mission, or adds an objective under a goal |
 | `update_goal` | Changes a goal's title, description, metric, deadline or owner |
 | `set_goal_status` | Activates, achieves, misses or abandons a goal |
@@ -115,7 +122,7 @@ names which of the two moved.
 
 The organisation's writes take no version either: an agent, a routine, a goal and a measurement belong
 to the organisation or to the project rather than to the canvas or the plan. A charter document is the
-exception and carries a version of its own, sent as `expectedVersion` on `revise_charter_document` and
+exception and carries a version of its own, sent as `expectedVersion` on `revise_charter_document` or `revise_agent_document` and
 answered by every read of it, so a proposal written against text somebody has since edited is refused
 rather than applied silently over their words.
 

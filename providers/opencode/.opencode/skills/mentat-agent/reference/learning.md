@@ -42,3 +42,8 @@ review row in the inbox when you record it inside a run; you send no message abo
 in one call; a `HumanApprovalOnly` document — every seeded one — refuses it, and the answer is the
 insight with its proposed text, nothing more. A version that is not the current one is refused with
 `CONFLICT`: re-read with `list_charter_documents` and rewrite against what the document says now.
+
+Employee instructions and custom documents follow the same approval rules. Read with
+`get_agent_document`; record a proposal with `record_charter_insight`; apply permitted Living
+changes using `revise_agent_document` with that `insightId` and the version just read.
+Company reads and revisions accept exactly one of `projectId` or `portfolioId`.

@@ -89,7 +89,7 @@ wins — that is what it is for.
 | --- | --- |
 | The rest of the canvas | `mentat-canvas`: `get_block` for one block, `get_canvas` only when the task spans them |
 | The routines of the project, and one routine's instructions | `list_routines`, `get_routine` |
-| Documents with `loadAtBoot` false | `list_charter_documents`, then the document by id |
+| Documents with `loadAtBoot` false | `list_charter_documents` with `documentIds` for company writing; `get_agent_document` for employee writing |
 | Other agents' instructions | Nothing. They are not yours to read |
 | Any row of a sibling venture | Nothing. A project sees its own rows and the shared ones, never a sibling's |
 | The runs and the activity behind you | `list_runs` for the runs of every kind with their summaries, `list_activity` for the feed; the brief's own `changesSinceLastRun` first |
