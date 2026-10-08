@@ -148,4 +148,4 @@ The `mentat` skill's table, plus:
 - **Rows are addressed by id.** A plan row has no reference code; name it by its position and slug, or its idea's code, when you report.
 - **The order is the person's.** The shipped order of the operations is advice; the plan is the order that serves the mission.
 - **Report what the tool answered**, by code: `G-02`, `DEC-04`, `W-07`, `IDEA-3`, and the row's position and slug.
-- **Stay under the limits**: a goal title 300 characters and its description 10,000, the thesis 5,000, a note 5,000, a skip reason 2,000, a decision's title 300 and each of its bodies 10,000, a job's title 300 and brief 20,000.
+- **Preserve the complete text**: titles, descriptions, notes, reasons, decisions and work briefs have no character caps. Keep each field relevant to its purpose.
