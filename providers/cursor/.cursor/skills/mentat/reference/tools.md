@@ -5,7 +5,7 @@ file carries what the schema cannot say: which permission each tool demands, whe
 anything, and which take and answer a canvas version. How to use them well is the `mentat-canvas`
 skill's job.
 
-One hundred and twenty-nine tools: thirty-nine reads and ninety writes.
+One hundred and thirty-eight tools: forty-one reads and ninety-seven writes.
 
 ## Reads — `mcp:tools.read`
 
@@ -70,6 +70,7 @@ names which of the two moved.
 | `create_project` | Creates a project and opens its canvas |
 | `record_project_insight` | Adds a learning about the project |
 | `add_entry`, `update_entry`, `retire_entry`, `delete_entry` | Entries on a block |
+| `choose_beachhead`, `clear_beachhead` | The one customer segment marked as the market to win first; choosing one takes the mark off the segment that held it |
 | `create_hypothesis`, `update_hypothesis`, `recommend_experiment_definition`, `withdraw_experiment_definition`, `park_hypothesis`, `unpark_hypothesis`, `retire_hypothesis`, `decide_hypothesis`, `delete_hypothesis` | Hypotheses |
 | `design_experiment`, `add_metric`, `add_criterion`, `start_experiment`, `record_observation`, `judge_criterion`, `complete_experiment`, `abort_experiment`, `record_spend`, `delete_experiment` | Runs |
 | `record_evidence`, `update_evidence`, `add_data_point`, `delete_evidence` | Evidence bundles |

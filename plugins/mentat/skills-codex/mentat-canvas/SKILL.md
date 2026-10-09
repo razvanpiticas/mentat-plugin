@@ -72,7 +72,9 @@ words.
 - Every other kind takes `fields`: a JSON object whose `kind` property is the kind's `storage` name,
   exactly as `get_block` spells it, plus one property per schema column whose `writtenThrough` is
   `Fields`. A column whose `writtenThrough` is `OwnAction` or `ReadOnly` is never sent; its
-  description says where it is written.
+  description says where it is written. A customer segment's `isBeachhead` is one: mark the market
+  to win first with `choose_beachhead` (it takes the mark off whichever segment held it) and withdraw
+  it with `clear_beachhead`.
 - A `Pointer` column takes the id of an entry of the storage its `pointer.targetStorages` names, on
   the same block when `pointer.scope` is `SameBlock` and anywhere on the canvas when it is
   `SameCanvas`. Write the entry pointed at first; the document answers its reference code beside the

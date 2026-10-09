@@ -52,6 +52,18 @@ pass untouched. The schema of a custom kind lists the same columns as its declar
 `update_entry` with `status` moves an entry between them; the move happens after any text change in
 the same call, against the version the text change produced.
 
+## The beachhead
+
+A customer segment's `isBeachhead` column is written by an action of its own, never in `fields`,
+because choosing the market to win first changes two segments at once. `choose_beachhead` takes the
+segment's `entryId`, marks it and takes the mark off whichever segment held it, so the block never has
+two; it answers the chosen segment and the new canvas version, and the segment that lost the mark
+shows it on the next `get_block`. `clear_beachhead` takes the segment that holds the mark now and
+leaves the block with none; naming any other segment is refused, so read the block first. Both take
+`canvasVersion` and, inside a run, `runId`, like every other write here. Both are refused for an entry
+that is not a customer segment of the Customer Segments block, and choosing is refused for a retired
+one.
+
 ## Retire versus delete
 
 `retire_entry` keeps the entry with a reason and, when another entry took its place,
