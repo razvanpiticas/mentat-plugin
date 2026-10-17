@@ -1,6 +1,6 @@
 ---
-name: mentat-experiment
-description: Design or run an experiment against a hypothesis of a Mentat canvas — the test card from the method card and the design procedure, the run with its observations, judged criteria, spend and evidence, the learning card and a verdict that agrees with the facts, and the decision laid out for the person — from the card and the procedures it fetches at the moment of use. Use when the person wants to test a hypothesis, design a test card, record what a test showed, or close a test; when they want to change how the organisation runs a kind of test (a card's texts, its execution instructions, its ratings); and from mentat-hypothesis when the person says to test now. It writes through the mentat-canvas loop; the decision on the hypothesis is the person's.
+name: "mentat-experiment"
+description: "Design or run an experiment against a hypothesis of a Mentat canvas — the test card from the method card and the design procedure, the run with its observations, judged criteria, spend and evidence, the learning card and a verdict that agrees with the facts, and the decision laid out for the person — from the card and the procedures it fetches at the moment of use. Use when the person wants to test a hypothesis, design a test card, record what a test showed, or close a test; when they want to change how the organisation runs a kind of test (a card's texts, its execution instructions, its ratings); and from mentat-hypothesis when the person says to test now. It writes through the mentat-canvas loop; the decision on the hypothesis is the person's."
 ---
 
 # Mentat experiment

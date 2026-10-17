@@ -1,6 +1,6 @@
 ---
-name: mentat-advance
-description: Do the next row of the plan of a Mentat project — read where the plan stands, pick the one thing that comes next by the next-action rule, do it through the skill that owns it, and stop at every point that is a person's, leaving what waits in their inbox. Use when the Heartbeat routine fires, when the person says "advance", "do the next one" or "what's next, do it", and when a run paused on a person's answer has its answer.
+name: "mentat-advance"
+description: "Do the next row of the plan of a Mentat project — read where the plan stands, pick the one thing that comes next by the next-action rule, do it through the skill that owns it, and stop at every point that is a person's, leaving what waits in their inbox. Use when the Heartbeat routine fires, when the person says \"advance\", \"do the next one\" or \"what's next, do it\", and when a run paused on a person's answer has its answer."
 ---
 
 # Mentat advance

@@ -1,6 +1,6 @@
 ---
-name: mentat-routines
-description: Routines: switch on, run now. The routines menu — what a Mentat project has scheduled, switching a routine on or off in both places it lives (the server row and this machine's scheduler), adding a new one, rescheduling one, and running one now by hand. Use when the person asks what runs on its own, wants the Heartbeat, the Nightly distiller or the Nightly linker switched on or off, wants a new scheduled job, or wants a routine run right now.
+name: "mentat-routines"
+description: "Routines: switch on, run now. The routines menu — what a Mentat project has scheduled, switching a routine on or off in both places it lives (the server row and this machine's scheduler), adding a new one, rescheduling one, and running one now by hand. Use when the person asks what runs on its own, wants the Heartbeat, the Nightly distiller or the Nightly linker switched on or off, wants a new scheduled job, or wants a routine run right now."
 ---
 
 # Mentat routines

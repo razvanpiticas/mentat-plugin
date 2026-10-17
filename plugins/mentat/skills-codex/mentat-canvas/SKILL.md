@@ -1,6 +1,6 @@
 ---
-name: mentat-canvas
-description: Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows, the run tools, the method gates and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it.
+name: "mentat-canvas"
+description: "Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows, the run tools, the method gates and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it."
 ---
 
 # Mentat canvas

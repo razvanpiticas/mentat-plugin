@@ -1,6 +1,6 @@
 ---
-name: mentat-planner
-description: Make or redo the plan of a Mentat project with the person who owns it — the mission with its number and date, the thesis, the phases as dated objectives with a "done when", the operations and moves placed in order inside each phase and put behind it, every gap written as a job, and the approval recorded as a decision of the business. Use when the person says "make the plan", "plan the roadmap", "re-plan", "redo the plan", "which blocks first", when the front door's next action is the plan, or when mentat-advance finds no thesis or no next row. A person's request reaches it through mentat-agent, which boots the agent the plan is written under.
+name: "mentat-planner"
+description: "Make or redo the plan of a Mentat project with the person who owns it — the mission with its number and date, the thesis, the phases as dated objectives with a \"done when\", the operations and moves placed in order inside each phase and put behind it, every gap written as a job, and the approval recorded as a decision of the business. Use when the person says \"make the plan\", \"plan the roadmap\", \"re-plan\", \"redo the plan\", \"which blocks first\", when the front door's next action is the plan, or when mentat-advance finds no thesis or no next row. A person's request reaches it through mentat-agent, which boots the agent the plan is written under."
 ---
 
 # Mentat planner

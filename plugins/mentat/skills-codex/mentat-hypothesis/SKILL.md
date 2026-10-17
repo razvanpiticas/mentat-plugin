@@ -1,6 +1,6 @@
 ---
-name: mentat-hypothesis
-description: Propose hypotheses on a block of a Mentat canvas — write them in the testable form the method asks for, check and score them, shortlist the method cards that can test them — from the procedure and the block's definition it fetches at the moment of use, never from anything it remembers. Use when the person asks for a hypothesis on a block, an entry or a note, when an operation reaches the point where its beliefs are written down, or when the person asks what should be tested next. It writes through the mentat-canvas loop and hands the test itself to mentat-experiment.
+name: "mentat-hypothesis"
+description: "Propose hypotheses on a block of a Mentat canvas — write them in the testable form the method asks for, check and score them, shortlist the method cards that can test them — from the procedure and the block's definition it fetches at the moment of use, never from anything it remembers. Use when the person asks for a hypothesis on a block, an entry or a note, when an operation reaches the point where its beliefs are written down, or when the person asks what should be tested next. It writes through the mentat-canvas loop and hands the test itself to mentat-experiment."
 ---
 
 # Mentat hypothesis

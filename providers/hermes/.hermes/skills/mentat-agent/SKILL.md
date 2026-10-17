@@ -1,6 +1,6 @@
 ---
-name: mentat-agent
-description: Boots one of the organisation's agents on one project and works as it — reads the charter, the mission and its objectives, the team, the person it works for and its own instructions, then works on what the person asks for or on what a routine says, proposes work from the goals it owns, reports the blockers it hit, and records the numbers it measured. Use when the person says "boot the CEO", names one of the organisation's agents, asks what an agent should do next, or asks for work to be done and recorded as an agent rather than as themselves. Routes "plan" to mentat-planner, "advance" and "do the next one" to mentat-advance, canvas work to the method skills, and runs a routine's instructions when a routine fired the session.
+name: "mentat-agent"
+description: "Boots one of the organisation's agents on one project and works as it — reads the charter, the mission and its objectives, the team, the person it works for and its own instructions, then works on what the person asks for or on what a routine says, proposes work from the goals it owns, reports the blockers it hit, and records the numbers it measured. Use when the person says \"boot the CEO\", names one of the organisation's agents, asks what an agent should do next, or asks for work to be done and recorded as an agent rather than as themselves. Routes \"plan\" to mentat-planner, \"advance\" and \"do the next one\" to mentat-advance, canvas work to the method skills, and runs a routine's instructions when a routine fired the session."
 ---
 
 # Mentat agent

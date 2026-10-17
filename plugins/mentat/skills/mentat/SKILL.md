@@ -1,8 +1,8 @@
 ---
-name: mentat
-description: The front door to Mentat and the connection under every other Mentat skill. Invoked with nothing, it signs in, wakes the venture's Chief Executive, says where the venture stands and what happened last, proposes the one thing that should happen next, and offers everything else the plugin can do. Use when the person types the Mentat command alone, asks "where do we stand", "what's next", "what can you do", or for a menu; when a Mentat tool refuses a call; or when connecting a harness to the Mentat server.
-argument-hint: [nothing — the menu] or [what to do]
-allowed-tools: mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_roadmap, mcp__mentat__list_agents, mcp__mentat__boot_agent, mcp__mentat__get_project_state, mcp__mentat__get_gate_status, mcp__mentat__list_runs, mcp__mentat__list_activity
+name: "mentat"
+description: "The front door to Mentat and the connection under every other Mentat skill. Invoked with nothing, it signs in, wakes the venture's Chief Executive, says where the venture stands and what happened last, proposes the one thing that should happen next, and offers everything else the plugin can do. Use when the person types the Mentat command alone, asks \"where do we stand\", \"what's next\", \"what can you do\", or for a menu; when a Mentat tool refuses a call; or when connecting a harness to the Mentat server."
+argument-hint: "[nothing — the menu] or [what to do]"
+allowed-tools: "mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_roadmap, mcp__mentat__list_agents, mcp__mentat__boot_agent, mcp__mentat__get_project_state, mcp__mentat__get_gate_status, mcp__mentat__list_runs, mcp__mentat__list_activity"
 ---
 
 # Mentat

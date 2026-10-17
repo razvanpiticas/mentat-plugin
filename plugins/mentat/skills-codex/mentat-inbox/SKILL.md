@@ -1,6 +1,6 @@
 ---
-name: mentat-inbox
-description: Talks to the person when nobody is in the window — a message they read, a question that blocks the run, and the answer that came back. Use inside a run that a routine fired: for anything the person should know but need not answer, for anything the run cannot decide on its own, and to read what a person answered since the last run. Never in an attended session, where the person is in the chat and you simply ask.
+name: "mentat-inbox"
+description: "Talks to the person when nobody is in the window — a message they read, a question that blocks the run, and the answer that came back. Use inside a run that a routine fired: for anything the person should know but need not answer, for anything the run cannot decide on its own, and to read what a person answered since the last run. Never in an attended session, where the person is in the chat and you simply ask."
 ---
 
 # Mentat inbox

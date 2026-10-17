@@ -1,8 +1,8 @@
 ---
-name: mentat-linker
-description: Gives the links the server drew between rows that read alike their meaning — type the links with the word that fits, its direction, and for increases and decreases how much. Use it before end_run on the rows a run wrote, nightly over the whole project when the Nightly linker routine fires, and when a person says "type the links" or asks what the related links mean. It never confirms or rejects a link and never merges two rows: those are a person's, on the links screen.
-argument-hint: <project> [runId]
-allowed-tools: mcp__mentat__list_untyped_links, mcp__mentat__type_link, mcp__mentat__get_block, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__get_run, mcp__mentat__observe_run, mcp__mentat__get_project, mcp__mentat__list_projects, mcp__mentat__list_portfolios
+name: "mentat-linker"
+description: "Gives the links the server drew between rows that read alike their meaning — type the links with the word that fits, its direction, and for increases and decreases how much. Use it before end_run on the rows a run wrote, nightly over the whole project when the Nightly linker routine fires, and when a person says \"type the links\" or asks what the related links mean. It never confirms or rejects a link and never merges two rows: those are a person's, on the links screen."
+argument-hint: "<project> [runId]"
+allowed-tools: "mcp__mentat__list_untyped_links, mcp__mentat__type_link, mcp__mentat__get_block, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__get_run, mcp__mentat__observe_run, mcp__mentat__get_project, mcp__mentat__list_projects, mcp__mentat__list_portfolios"
 ---
 
 # Mentat linker

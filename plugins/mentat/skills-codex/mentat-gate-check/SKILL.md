@@ -1,6 +1,6 @@
 ---
-name: mentat-gate-check
-description: Check the gate above a Mentat project's plan — read what the gate would say now, block by block against the bar each must clear, run the pre-gate review so the riskiest untested hypothesis is on the table, and record the evaluation on the person's word; on a fail, present the pivots and apply one only on their instruction. Use when the person asks whether the gate passes, what blocks the next tier, or to evaluate the gate; when an operation run finishes the tier's work; and when the heartbeat routine finds the tier's work done. A person's request reaches it through mentat-agent, which boots the agent the evaluation is recorded under.
+name: "mentat-gate-check"
+description: "Check the gate above a Mentat project's plan — read what the gate would say now, block by block against the bar each must clear, run the pre-gate review so the riskiest untested hypothesis is on the table, and record the evaluation on the person's word; on a fail, present the pivots and apply one only on their instruction. Use when the person asks whether the gate passes, what blocks the next tier, or to evaluate the gate; when an operation run finishes the tier's work; and when the heartbeat routine finds the tier's work done. A person's request reaches it through mentat-agent, which boots the agent the evaluation is recorded under."
 ---
 
 # Mentat gate check

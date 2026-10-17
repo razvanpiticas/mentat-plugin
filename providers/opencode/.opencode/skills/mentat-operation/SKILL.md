@@ -1,6 +1,6 @@
 ---
-name: mentat-operation
-description: Run one operation of a Mentat project's plan end to end — read its package, follow its steps in order, write what they produce on the canvas inside a run, checkpoint after every step, hand the Experiment-level steps to the hypothesis and experiment skills, end with a verdict only where the operation's level asks for one, and hand to the gate check when the tier's work is done. Use when the person names a row of the plan, says "run the next one", or asks for an operation of the method to be done; and when the heartbeat routine advances the plan. A person's request for a row reaches it through mentat-agent, which boots the agent the row's run is recorded under.
+name: "mentat-operation"
+description: "Run one operation of a Mentat project's plan end to end — read its package, follow its steps in order, write what they produce on the canvas inside a run, checkpoint after every step, hand the Experiment-level steps to the hypothesis and experiment skills, end with a verdict only where the operation's level asks for one, and hand to the gate check when the tier's work is done. Use when the person names a row of the plan, says \"run the next one\", or asks for an operation of the method to be done; and when the heartbeat routine advances the plan. A person's request for a row reaches it through mentat-agent, which boots the agent the row's run is recorded under."
 ---
 
 # Mentat operation

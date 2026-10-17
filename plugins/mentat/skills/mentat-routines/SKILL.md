@@ -1,8 +1,8 @@
 ---
-name: mentat-routines
-description: Routines: switch on, run now. The routines menu — what a Mentat project has scheduled, switching a routine on or off in both places it lives (the server row and this machine's scheduler), adding a new one, rescheduling one, and running one now by hand. Use when the person asks what runs on its own, wants the Heartbeat, the Nightly distiller or the Nightly linker switched on or off, wants a new scheduled job, or wants a routine run right now.
-argument-hint: [switch on | switch off | reschedule | new | run now] [routine name]
-allowed-tools: mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__list_agents, mcp__mentat__list_routines, mcp__mentat__get_routine, mcp__mentat__create_routine, mcp__mentat__update_routine, mcp__mentat__enable_routine, mcp__mentat__disable_routine, Bash(node *), Bash(pnpm *)
+name: "mentat-routines"
+description: "Routines: switch on, run now. The routines menu — what a Mentat project has scheduled, switching a routine on or off in both places it lives (the server row and this machine's scheduler), adding a new one, rescheduling one, and running one now by hand. Use when the person asks what runs on its own, wants the Heartbeat, the Nightly distiller or the Nightly linker switched on or off, wants a new scheduled job, or wants a routine run right now."
+argument-hint: "[switch on | switch off | reschedule | new | run now] [routine name]"
+allowed-tools: "mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__list_agents, mcp__mentat__list_routines, mcp__mentat__get_routine, mcp__mentat__create_routine, mcp__mentat__update_routine, mcp__mentat__enable_routine, mcp__mentat__disable_routine, Bash(node *), Bash(pnpm *)"
 ---
 
 # Mentat routines

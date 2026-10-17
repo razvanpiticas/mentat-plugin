@@ -1,8 +1,8 @@
 ---
-name: mentat-advance
-description: Do the next row of the plan of a Mentat project — read where the plan stands, pick the one thing that comes next by the next-action rule, do it through the skill that owns it, and stop at every point that is a person's, leaving what waits in their inbox. Use when the Heartbeat routine fires, when the person says "advance", "do the next one" or "what's next, do it", and when a run paused on a person's answer has its answer.
-argument-hint: <project name or id>
-allowed-tools: mcp__mentat__get_project, mcp__mentat__get_project_state, mcp__mentat__get_roadmap, mcp__mentat__get_gate_status, mcp__mentat__list_runs, mcp__mentat__get_run, mcp__mentat__start_run, mcp__mentat__pause_run, mcp__mentat__list_work_items, mcp__mentat__get_work_item, mcp__mentat__create_work_item, mcp__mentat__transition_work_item, mcp__mentat__comment_on_work_item, mcp__mentat__set_roadmap_move_work_item, mcp__mentat__observe_run
+name: "mentat-advance"
+description: "Do the next row of the plan of a Mentat project — read where the plan stands, pick the one thing that comes next by the next-action rule, do it through the skill that owns it, and stop at every point that is a person's, leaving what waits in their inbox. Use when the Heartbeat routine fires, when the person says \"advance\", \"do the next one\" or \"what's next, do it\", and when a run paused on a person's answer has its answer."
+argument-hint: "<project name or id>"
+allowed-tools: "mcp__mentat__get_project, mcp__mentat__get_project_state, mcp__mentat__get_roadmap, mcp__mentat__get_gate_status, mcp__mentat__list_runs, mcp__mentat__get_run, mcp__mentat__start_run, mcp__mentat__pause_run, mcp__mentat__list_work_items, mcp__mentat__get_work_item, mcp__mentat__create_work_item, mcp__mentat__transition_work_item, mcp__mentat__comment_on_work_item, mcp__mentat__set_roadmap_move_work_item, mcp__mentat__observe_run"
 ---
 
 # Mentat advance

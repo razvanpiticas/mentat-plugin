@@ -1,6 +1,6 @@
 ---
-name: mentat
-description: The front door to Mentat and the connection under every other Mentat skill. Invoked with nothing, it signs in, wakes the venture's Chief Executive, says where the venture stands and what happened last, proposes the one thing that should happen next, and offers everything else the plugin can do. Use when the person types the Mentat command alone, asks "where do we stand", "what's next", "what can you do", or for a menu; when a Mentat tool refuses a call; or when connecting a harness to the Mentat server.
+name: "mentat"
+description: "The front door to Mentat and the connection under every other Mentat skill. Invoked with nothing, it signs in, wakes the venture's Chief Executive, says where the venture stands and what happened last, proposes the one thing that should happen next, and offers everything else the plugin can do. Use when the person types the Mentat command alone, asks \"where do we stand\", \"what's next\", \"what can you do\", or for a menu; when a Mentat tool refuses a call; or when connecting a harness to the Mentat server."
 ---
 
 # Mentat

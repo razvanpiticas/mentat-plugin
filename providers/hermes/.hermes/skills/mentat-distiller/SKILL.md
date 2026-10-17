@@ -1,6 +1,6 @@
 ---
-name: mentat-distiller
-description: Distil the insights an organisation has recorded — the drafts a run left behind and the confirmed learnings — into one proposal per subject whose text should change, folding repeats together, escalating contradictions and never approving or applying anything. Use when the person says "distil the insights", "what did we learn about P.V1", "clean up the learnings", when the Nightly distiller routine fires, or when a run's blockers were recorded and the person asks what the method should say instead.
+name: "mentat-distiller"
+description: "Distil the insights an organisation has recorded — the drafts a run left behind and the confirmed learnings — into one proposal per subject whose text should change, folding repeats together, escalating contradictions and never approving or applying anything. Use when the person says \"distil the insights\", \"what did we learn about P.V1\", \"clean up the learnings\", when the Nightly distiller routine fires, or when a run's blockers were recorded and the person asks what the method should say instead."
 ---
 
 # Mentat distiller

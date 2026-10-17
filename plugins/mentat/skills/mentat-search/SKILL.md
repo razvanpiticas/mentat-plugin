@@ -1,8 +1,8 @@
 ---
-name: mentat-search
-description: Finds what nobody knows the code of on a project's canvas, and says how it found it. Three instruments and one rule — exact reads when the code or the block is known, search by meaning through the embeddings when only the subject is known or a duplicate is being checked, the graph when a row is known and what hangs on it is wanted, a shaped walk for a question with more than one hop. Use when a skill or a person asks what the canvas knows about something, whether a hypothesis like this already exists, what a row is tied to, or a question with a shape such as which open questions block a hypothesis a high risk depends on. Reads only; every answer names its instrument and quotes the query it ran.
-argument-hint: <project> <the question>
-allowed-tools: ReadMcpResourceTool, mcp__mentat__search, mcp__mentat__get_neighbours, mcp__mentat__run_analytical_query, mcp__mentat__get_block, mcp__mentat__get_canvas, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__get_run, mcp__mentat__get_project, mcp__mentat__list_projects, mcp__mentat__list_portfolios
+name: "mentat-search"
+description: "Finds what nobody knows the code of on a project's canvas, and says how it found it. Three instruments and one rule — exact reads when the code or the block is known, search by meaning through the embeddings when only the subject is known or a duplicate is being checked, the graph when a row is known and what hangs on it is wanted, a shaped walk for a question with more than one hop. Use when a skill or a person asks what the canvas knows about something, whether a hypothesis like this already exists, what a row is tied to, or a question with a shape such as which open questions block a hypothesis a high risk depends on. Reads only; every answer names its instrument and quotes the query it ran."
+argument-hint: "<project> <the question>"
+allowed-tools: "ReadMcpResourceTool, mcp__mentat__search, mcp__mentat__get_neighbours, mcp__mentat__run_analytical_query, mcp__mentat__get_block, mcp__mentat__get_canvas, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__get_run, mcp__mentat__get_project, mcp__mentat__list_projects, mcp__mentat__list_portfolios"
 ---
 
 # Mentat search
