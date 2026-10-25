@@ -84,9 +84,12 @@ or only where to work — open the run, then read it before you suggest, route o
   with its code and name), then `get_block` on it through `mentat-canvas`. Say what it answered in a
   few lines: what the block's definition says must be true for it to hold; the kinds it accepts, each
   with what it is for; what it holds — entries by code with their status, hypotheses by status, open
-  questions, risks and ideas; its coverage and confidence. Then propose the work, one recommendation
-  first, from what that definition asks for and what the block is missing — never from general
-  knowledge of the subject.
+  questions, risks and ideas; its coverage and confidence. On Customer Segments and Value Proposition
+  `get_block` lists the segments in short and our value propositions, never what is written inside
+  them: before the account, read each segment the account needs with `get_customer_segment` (its
+  profiles, jobs, pains and gains) and each value proposition with `get_value_proposition` (its
+  products, relievers and creators). Then propose the work, one recommendation first, from what that
+  definition asks for and what the block is missing — never from general knowledge of the subject.
 - **A subject** — anything that is not a block's name: `mentat-search` on it first, to find where it
   is written; an entry's code names its block before the first `.` or `-`. Then `get_block` on that
   block through `mentat-canvas`, and the same short account before you propose.

@@ -13,10 +13,10 @@ reference code is `H-<block code>-<n>`, such as `H-CS-002`.
 - **Business concern** — `Desirability`, `Feasibility` or `Viability`. It is a hard filter on which
   method cards can test the hypothesis.
 
-What each of these means, and how a hypothesis is written, is the procedure `P.V1` the
+What each of these means, and how a hypothesis is written, is the Hypothesise step the
 `mentat-hypothesis` skill fetches; this file says only what the call takes.
 
-Example: on CS, about the pain `CS-04`, Desirability, Positive: "We believe that freelance designers
+Example: on CS, about the pain `CS.PAINS-04`, Desirability, Positive: "We believe that freelance designers
 who bill by the hour lose at least two billable hours a week to tracking their time by hand."
 
 ## Score it and pass the quality checks
@@ -33,7 +33,7 @@ Both run −5 to 5, and the direction of each is fixed by the domain, not chosen
 `importance` is −5 when the business model barely depends on the sentence and 5 when it rests on
 it; `evidence` is **−5 when there is no evidence at all, or what there is points against the
 hypothesis**, and **5 when there is strong, recent evidence for it**. A hypothesis nobody has
-found anything out about is scored −5 on evidence, never 5. `P.V1` says how to judge the two;
+found anything out about is scored −5 on evidence, never 5. The Hypothesise step says how to judge the two;
 this file says only which way the numbers run. Send the groups in one call when you have them
 all; the tool applies them in the order above.
 

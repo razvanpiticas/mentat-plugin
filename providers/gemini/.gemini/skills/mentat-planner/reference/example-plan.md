@@ -16,7 +16,7 @@ A drinks retailer that has traded for years and wants to be first online in its 
 | `G-05` Build the model | VP, CH, CR, RS, KA, KP | 2026-12-01 | 2027-06-30 | the decided moves shipped |
 | `G-06` Scale | every block | 2027-07-01 | 2027-12-31 | monthly revenue read against the leader's |
 
-**Rows of `G-02`** (round 4): `customer-jobs-pains-gains` placed 1, `cost-structure` placed 2, `channel-selection` placed 3 — each `link_to_goal` to `G-02`; `persona` skipped: "we sell to thousands of buyers we already know by their orders, not to a persona"; the idea `IDEA-12` "reopen the tax warehouse" adopted and placed as a move in `G-05`; gaps: `W-01` "Export the order history since 2009 into the analysis store", `W-02` "Enter purchase prices per product" — both `Proposed`, about `G-02`.
+**Rows of `G-02`** (round 4): `customer-profile` placed 1, `cost-structure` placed 2, `channel-selection` placed 3 — each `link_to_goal` to `G-02`; `persona` skipped: "we sell to thousands of buyers we already know by their orders, not to a persona"; the idea `IDEA-12` "reopen the tax warehouse" adopted and placed as a move in `G-05`; gaps: `W-01` "Export the order history since 2009 into the analysis store", `W-02` "Enter purchase prices per product" — both `Proposed`, about `G-02`.
 
 **Measures** (round 5): `G-02` measures "monthly online revenue, website against shop, from the order history"; `G-05` measures "conversion per channel and repeat rate".
 

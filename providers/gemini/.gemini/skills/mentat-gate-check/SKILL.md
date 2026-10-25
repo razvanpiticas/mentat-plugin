@@ -72,8 +72,13 @@ this run, unattended, with nobody asked — see
 1. **Read the gate.** `get_gate_status(projectId)`. It answers the plan's gate line (`roadmap.isDue`,
    the tier and the next one, how many rows of the tier are done and which are pending), the gate's
    code, name and question, `currentScores` — one line per checked block: confidence, threshold,
-   passed, shortfall — `wouldPass`, the latest evaluation and how many consecutive failures stand at
-   this boundary. At the last tier there is no gate and the reason says so: report it and stop.
+   passed, shortfall — and beside them `fitPairShortfalls`: on a gate that reads the pairs (the Value
+   gate), one line per segment to win with no value proposition of ours at problem–solution fit —
+   `segmentId`, `referenceCode`, `title` — and empty on every other gate. Then `wouldPass`, the
+   latest evaluation and how many consecutive failures stand at this boundary. A gate fails on a
+   block below its bar **or** on any line of `fitPairShortfalls`: `wouldPass` false with every block
+   clearing is a fail on the pairs alone, and it has no weakest block. At the last tier there is no
+   gate and the reason says so: report it and stop.
 2. **Use the agent's run; open one only when there is none.** One agent holds one running run at a
    time, in a session and from a routine alike, and an agent belongs to the portfolio rather than to
    one project. Booted as an agent, you are already inside its project run: work in that one and
@@ -92,8 +97,10 @@ this run, unattended, with nobody asked — see
    three; its answer names the instrument and the query, and when the walk is refused it says so.
    The output is one list: the riskiest untested hypotheses at this boundary, by code, and the open
    questions `mentat-search` found blocking them.
-4. **Present.** The question; the scores table (below); `wouldPass`; the tier's pending rows; the
-   consecutive failures and the last evaluation's outcome; the review's list. Then, in one line,
+4. **Present.** The question; the scores table, with a "Not passed" line under it for each line of
+   `fitPairShortfalls` ([reference/gate-and-pivot.md](reference/gate-and-pivot.md)); `wouldPass`;
+   the tier's pending rows; the consecutive failures and the last evaluation's outcome; the review's
+   list. Then, in one line,
    what pressing the button would do: a pass under this project's boundary policy either moves the
    tier at once or leaves the project awaiting the person's unlock on the project screen; a fail
    records a failure and the row to run next.
@@ -104,11 +111,17 @@ this run, unattended, with nobody asked — see
    without asking, and a gate that is not due is an escalation — both in
    [When a routine fired this run](#when-a-routine-fired-this-run). `evaluate_gate(projectId,
    nextOperationId?, notes?, runId)`: on an expected fail, `nextOperationId` is the row that fills the
-   weakest block ([reference/gate-and-pivot.md](reference/gate-and-pivot.md)); on an expected pass,
-   leave it out — it is refused there. Report the evaluation: passed or not, the weakest block, the
-   next row, and what the project's status is now (`get_project`).
-6. **On a fail, the pivots.** `list_pivot_definitions`; for each: the name, what changes, the rows it
-   puts back on the plan. Say which one fits the weakest block and why, and the alternative — run the
+   weakest block, or, on a fail on the pairs alone, the `value-map` or `fit` row that gives the first
+   segment of `fitPairShortfalls` its value proposition or its fit
+   ([reference/gate-and-pivot.md](reference/gate-and-pivot.md)); on an expected pass, leave it out —
+   it is refused there. Report the evaluation: passed or not, the weakest block or the segments short
+   of a pair, the next row, and what the project's status is now (`get_project`).
+6. **On a fail, the pivots — never on the pairs alone.** A fail on the pairs alone proposes no pivot:
+   every block cleared its bar, so the business model held, and what is missing is our value
+   proposition at problem–solution fit on each segment named. Propose the next row — write the value
+   proposition, reach the fit — and evaluating again. Any other fail: `list_pivot_definitions`; for
+   each: the name, what changes, the rows it puts back on the plan. Say which one fits the weakest
+   block and why, and the alternative — run the
    next row again and re-evaluate. `apply_pivot(projectId, roadmapVersion, pivotDefinitionId, toTier,
    notes, runId)` **only on the person's instruction**, with the tier they chose (earlier than the
    project's; `get_roadmap` for the version). Report the plan's new tail and the project's tier.
@@ -145,12 +158,17 @@ reply:
   [reference/gate-and-pivot.md](reference/gate-and-pivot.md) — then `observe_run` with the
   `inboxItemId` and `end_run` with the digest. The next firing evaluates on the answer "evaluate".
   "Say evaluate and I will do it", with the run left open, raises nothing and nobody answers it.
-- **On a fail**: `evaluate_gate` with the next row computed from the weakest block; then one
+- **On a fail with a block below its bar**: `evaluate_gate` with the next row computed from the
+  weakest block; then one
   escalation carrying the scores, the evaluation recorded, the row proposed, and the pivot you would
   propose — name, what changes, the rows it puts back, the tier to go back to — and the alternative.
   `apply_pivot` is never called in this run. The person answers "apply {pivot} to {tier}", applies it
   on the roadmap screen, or answers "no pivot"; the next firing that finds the answer "apply …" calls
   `apply_pivot` with exactly the values the escalation proposed, and nothing else.
+- **On a fail on the pairs alone**: `evaluate_gate` with the `value-map` or `fit` row for the first
+  segment short of a pair; then one escalation, "the gate failed on the pairs alone" in
+  [reference/gate-and-pivot.md](reference/gate-and-pivot.md), naming each segment by code and
+  proposing to write its value proposition and reach problem–solution fit — never a pivot.
 - Nothing is recorded as an insight; `end_run`'s digest is the report.
 
 **These escalations end the run, they do not pause it.** Record the `inboxItemId` `mentat-inbox`
@@ -199,7 +217,8 @@ The `mentat` skill's table and `mentat-canvas`'s, plus:
   is an escalation through `mentat-inbox`, never a question put in the reply.
 - **A pivot is never applied without a person's instruction**, in the chat or in an answer to the
   escalation. Proposing it is yours; applying it is theirs.
-- **The next row on a fail is the one that fills the weakest block**, computed before the evaluation
+- **The next row on a fail is the one that fills the weakest block** — on a fail on the pairs alone,
+  the `value-map` or `fit` row for the first segment short of a pair — computed before the evaluation
   and sent on it; the evaluation stores it and `mentat-advance` runs it.
 - **Kill and unlock are on the screens.** Never suggest a tool for either; say where they are.
 - **Report by code**, and the numbers as the tool answered them: a confidence is two decimals, a

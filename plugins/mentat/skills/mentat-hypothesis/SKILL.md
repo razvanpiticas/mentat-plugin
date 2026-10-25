@@ -2,15 +2,15 @@
 name: "mentat-hypothesis"
 description: "Propose hypotheses on a block of a Mentat canvas — write them in the testable form the method asks for, check and score them, shortlist the method cards that can test them — from the procedure and the block's definition it fetches at the moment of use, never from anything it remembers. Use when the person asks for a hypothesis on a block, an entry or a note, when an operation reaches the point where its beliefs are written down, or when the person asks what should be tested next. It writes through the mentat-canvas loop and hands the test itself to mentat-experiment."
 argument-hint: "<project> <block code, entry code, or \"from the operation\">"
-allowed-tools: "mcp__mentat__get_project, mcp__mentat__get_block, mcp__mentat__get_hypothesis, mcp__mentat__get_procedure, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__recommend_experiment_definition, mcp__mentat__withdraw_experiment_definition, mcp__mentat__park_hypothesis, mcp__mentat__retire_hypothesis, mcp__mentat__link_to_goal, mcp__mentat__list_insights, mcp__mentat__record_procedure_insight, mcp__mentat__record_block_entry_definition_insight"
+allowed-tools: "mcp__mentat__get_project, mcp__mentat__get_block, mcp__mentat__get_hypothesis, mcp__mentat__get_procedure, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__recommend_experiment_definition, mcp__mentat__withdraw_experiment_definition, mcp__mentat__park_hypothesis, mcp__mentat__retire_hypothesis, mcp__mentat__link_to_goal, mcp__mentat__list_insights, mcp__mentat__record_procedure_insight, mcp__mentat__record_block_entry_definition_insight, mcp__mentat__list_operation_definitions, mcp__mentat__get_operation_definition, mcp__mentat__get_customer_segment, mcp__mentat__get_value_proposition"
 ---
 
 # Mentat hypothesis
 
 A hypothesis is one sentence the business is betting on, written so a test can settle it. This
-skill carries none of the method for writing one: the method is a procedure of the catalogue,
-`P.V1`, and what must be true for a block is in that block's definition. Both are fetched when you
-start and followed as read. What is here is the mechanics: which calls, in what order, what to ask,
+skill carries none of the method for writing one: the method is the Hypothesise step, the first of
+the four steps every `Experiment` operation shares, a procedure of the catalogue; what must be true
+for a block is in that block's definition. Both are fetched when you start and followed as read. What is here is the mechanics: which calls, in what order, what to ask,
 what to hand on.
 
 Every read and write goes through the `mentat-canvas` loop — read before you write, write with the
@@ -40,11 +40,16 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
 - **A block** ("propose hypotheses on Customer Segments"), **an entry or a note** ("a hypothesis
   for CS-04", "for this note"), or **a subject in words** ("about whether gym-goers will pay").
 - **From an operation**: `mentat-operation` hands over the run id, the canvas version, the row of
-  the plan, its "validated when" sentence, the blocks and kinds it writes to, the theme question
-  and the entries its procedures wrote. The contract is in
+  the plan, the Hypothesise step's code, and the hand-over its last own step's checkpoint answered:
+  "Hypothesise now", the "validated when" sentence, the operation's own instruction, and the test
+  orders — the open ones with the entries to write hypotheses about, the others waiting. A hand-over
+  with no test order comes with the target slots and the entries the run's own steps wrote
+  (`writtenEntryIds`), by id and code, instead. The contract is in
   [reference/handoffs.md](reference/handoffs.md). Everything below is the same, step 3's
-  `mentat-search` invocation per belief included; the blocks come
-  from the target slots instead of the person, and at the end you hand back what you wrote instead
+  `mentat-search` invocation per belief included. With test orders, the beliefs are one per entry of
+  an open test order and the blocks are those entries' blocks. With none, the beliefs are the ones the
+  "validated when" sentence depends on, about the entries the run wrote, and the blocks are the target
+  slots' blocks and those entries' blocks. Either way, at the end you hand back what you wrote instead
   of asking what to test.
 - **From a move's job**: `mentat-advance` hands over the run id, the block, the adopted idea by code
   and title, and the job's description. The beliefs are what the idea bets on; everything below is
@@ -53,9 +58,13 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
 
 ## The loop
 
-1. **Fetch the method.** `get_procedure` with code `P.V1`. Read it whole before anything else;
-   its steps are what you do, and its words for the checks, the scores and the map are the words
-   you use. When the organisation has taken its own copy, that is what you get.
+1. **Fetch the method.** `get_procedure` with the Hypothesise step's code. From an operation, the
+   code is handed over. Otherwise read it where every `Experiment` operation lists the steps it
+   shares: `list_operation_definitions` with the project, any operation whose `validationLevel` is
+   `Experiment`, `get_operation_definition` on it, and in its `sharedSteps` the one named
+   Hypothesise. Never type a code from memory. Read the step whole before anything else; its steps
+   are what you do, and its words for the checks, the scores and the map are the words you use.
+   When the organisation has taken its own copy, that is what you get.
 2. **Fetch the block.** People name a subject, not a code, and are never asked for one. When the
    request names a block, an entry or a target slot, the block is that one. When it names a subject
    only — "pricing strategy X", "whether gym-goers will pay" — invoke the `mentat-search` skill on the
@@ -64,15 +73,18 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
    subject belongs to by its name, read it, and say which and why; when its description says the
    subject belongs elsewhere, read that block instead. Then
    `get_block` with the block's code — the one the person named, the hits' block, the entry's
-   block, or each target slot's block. Its `description` says what must be true for the block to
-   hold; those sentences are the beliefs the procedure's first step sends you to. The same answer
-   lists the block's entries and every hypothesis already on it.
-3. **Find what is already there — through the `mentat-search` skill, never the `search` tool.**
-   If you are about to call `search`, or to load it with ToolSearch, stop and invoke `mentat-search`
+   block, the block of each entry the hand-over names, or, from a hand-over with no test order, every
+   target slot's block and the block of each entry the run wrote. Its `description` says what must be true
+   for the block to hold; those sentences are the beliefs the procedure's first step sends you to.
+   The same answer lists the block's entries and every hypothesis already on it. An entry written
+   inside another — a job, pain or gain inside a profile, a reliever or creator inside a value
+   proposition — is read whole with `get_customer_segment` or `get_value_proposition` on its owner.
+3. **Find what is already there — through the `mentat-search` skill, never the search tool.**
+   If you are about to call the search tool, or to load it with ToolSearch, stop and invoke `mentat-search`
    instead. For each belief, invoke the `mentat-search` skill once, on the block's project, with the
    question "a hypothesis that <the belief in one sentence>": the duplicate check by meaning — one
    invocation per belief, never one search for several. Which instrument answers is that skill's
-   rule, and it reads the glossary before its first search; a `search` sent from here skips the
+   rule, and it reads the glossary before its first search; a search sent from here skips the
    glossary. Inside an operation's run this step is the same, word for word: the handover changes
    where the beliefs come from, never how they are checked. The call is made even when step 2's
    block holds no hypothesis: the check is by meaning over the whole project, and an empty block is
@@ -82,7 +94,12 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
    block.
 4. **Draft.** Follow the procedure: one sentence per belief in its form, the entry it is about, its
    polarity, its concern, the three checks answered, the two scores with the reason for each, and
-   which you would test first. Every draft stands on its own step-3 invocation: a belief that
+   which you would test first. From an operation, the beliefs are the hand-over's: one hypothesis
+   about each entry of an open test order, as the operation's instruction says, and none about an
+   order that waits. A hand-over with no test order: the beliefs the "validated when" sentence
+   depends on and the ones the target blocks' descriptions name, each about the entry the run wrote
+   that it bets on (`aboutEntryId`), or about no entry when it bets on none of them.
+   Every draft stands on its own step-3 invocation: a belief that
    comes up while drafting goes back through `mentat-search` before it joins the list, and "none
    of them exists yet" is said only of beliefs that were searched. Put the drafts in front of the person as a list — the sentence, the
    concern, the scores and why, one line each — with your recommendation, not a menu.
@@ -98,7 +115,7 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
    the business model barely depends on the sentence and 5 when it rests on it. `evidence` is −5
    when there is no evidence at all, or what there is points against the hypothesis, and 5 when
    there is strong, recent evidence for it. So "nothing on this canvas says anything about it" is
-   −5, never 5, and a score of 5 must be able to name the evidence it stands on. `P.V1` says how
+   −5, never 5, and a score of 5 must be able to name the evidence it stands on. The Hypothesise step says how
    to judge the two; this is only which way they run, and it holds whatever a fetched copy of the
    procedure does or does not say.
 7. **Shortlist.** For each hypothesis to be tested — the ones the person picked attended, every one
@@ -111,7 +128,7 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
    shortlisted for each, and ask whether to test one now; "yes" hands the hypothesis and the card
    to the `mentat-experiment` skill with the run id and the version you hold. From an operation:
    hand back the codes and ids you wrote, the ones you found and left, the shortlists and the
-   version, and stop — the operation checkpoints its procedure; you do not. Unattended: report and
+   version, and stop — the operation checkpoints the Hypothesise step; you do not. Unattended: report and
    stop; the shortlist waits.
 
 A hypothesis that serves one of the project's goals is put behind it with `link_to_goal`, once per
@@ -123,12 +140,12 @@ You know the run is a routine's because it was opened with a routine, and `menta
 when it invokes you. Then step 5 is skipped: the drafts are written as drafted, the checks record
 what your own check found, and the reason for each score goes in what you hand back to the skill
 that invoked you — that skill owns the run and writes the note, the checkpoint and the report; you
-never call `observe_run` yourself, as [reference/handoffs.md](reference/handoffs.md) says. The
+never call observe_run yourself, as [reference/handoffs.md](reference/handoffs.md) says. The
 person reads the reasons in the run report and retires or rewrites on the screens — the audit says
 an agent wrote them.
 Step 7 still runs: every hypothesis you wrote gets its shortlist, because choosing a card costs
 nothing and is what the person wakes up to. Nothing here is a person's call, so nothing escalates:
-`decide_hypothesis` is never yours, and **you** do not invoke `mentat-experiment` — that is what
+decide_hypothesis is never yours, and **you** do not invoke `mentat-experiment` — that is what
 "the shortlist waits" means here. The skill that owns the run may: inside an operation's run,
 `mentat-operation` hands the first card of your shortlist on itself, and the start rule is
 `mentat-experiment`'s. Say in what you hand back which hypotheses are new and which card you ranked
@@ -138,7 +155,7 @@ first, so the report can name them and the operation knows what to hand over.
 
 When the run hit blockers — a refusal you could not get past, a block description that misled
 you, a procedure step that did not fit — report them by code and ask whether any is worth
-recording. Only on the person's word: `record_procedure_insight` on `P.V1` for a step that misled
+recording. Only on the person's word: `record_procedure_insight` on the Hypothesise step for a step that misled
 (the whole rewritten text as `proposedText` only when you know what it should say), or
 `record_block_entry_definition_insight` on the kind whose description was wrong. `list_insights`
 on the subject first; a draft that already says it is not repeated. Never on your own initiative,
@@ -154,8 +171,8 @@ and never unattended: the blockers go in the run report and the person decides i
   `list_experiment_definitions` narrowed to the right concern.
 - `CONFLICT` saying the wording cannot change — the hypothesis is scored. A different sentence is a
   different hypothesis: write a new one and retire the old with the reason.
-- `NOT_FOUND` on `get_procedure` `P.V1` — the catalogue is missing its practice rows; say so and
-  stop. Do not write hypotheses from memory of the method.
+- `NOT_FOUND` on `get_procedure` for the Hypothesise step — the catalogue is missing the steps every
+  `Experiment` operation shares; say so and stop. Do not write hypotheses from memory of the method.
 
 ## Rules that are easy to get wrong
 
@@ -163,7 +180,7 @@ and never unattended: the blockers go in the run report and the person decides i
   approves a rewrite; what you remember from last week is stale on purpose.
 - **A duplicate is reported, not written.** The block's list is the truth; read it.
 - **The person confirms before the first write**, and confirms each draft, not the batch.
-- **Never `decide_hypothesis`**, never `evaluate_gate`, never a verdict. The decision is a person's;
+- **Never decide_hypothesis**, never evaluate_gate, never a verdict. The decision is a person's;
   you lay out the evidence when `mentat-experiment` has produced some.
 - **Write the entry you are about first.** A hypothesis about a segment nobody has written is a
   hypothesis about nothing; `mentat-canvas` writes the entry, then you write the hypothesis.

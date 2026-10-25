@@ -1,8 +1,8 @@
 ---
 name: "mentat-distiller"
-description: "Distil the insights an organisation has recorded — the drafts a run left behind and the confirmed learnings — into one proposal per subject whose text should change, folding repeats together, escalating contradictions and never approving or applying anything. Use when the person says \"distil the insights\", \"what did we learn about P.V1\", \"clean up the learnings\", when the Nightly distiller routine fires, or when a run's blockers were recorded and the person asks what the method should say instead."
+description: "Distil the insights an organisation has recorded — the drafts a run left behind and the confirmed learnings — into one proposal per subject whose text should change, folding repeats together, escalating contradictions and never approving or applying anything. Use when the person says \"distil the insights\", \"what did we learn about persona.4\", \"clean up the learnings\", when the Nightly distiller routine fires, or when a run's blockers were recorded and the person asks what the method should say instead."
 argument-hint: "<project name or id> [subject: a procedure code, an entry kind code, an operation slug, a card slug, a charter document title, or \"the project\"] | [since <date> | since the last run]"
-allowed-tools: "mcp__mentat__list_insights, mcp__mentat__get_insight, mcp__mentat__get_procedure, mcp__mentat__get_experiment_definition, mcp__mentat__get_block, mcp__mentat__get_operation_definition, mcp__mentat__list_charter_documents, mcp__mentat__list_agent_documents, mcp__mentat__get_agent_document, mcp__mentat__get_routine, mcp__mentat__list_runs, mcp__mentat__get_run, mcp__mentat__get_history, mcp__mentat__record_procedure_insight, mcp__mentat__record_block_entry_definition_insight, mcp__mentat__record_experiment_definition_insight, mcp__mentat__record_charter_insight, mcp__mentat__record_operation_insight, mcp__mentat__record_project_insight, mcp__mentat__supersede_insight, mcp__mentat__contradict_insight, mcp__mentat__observe_run"
+allowed-tools: "mcp__mentat__list_insights, mcp__mentat__get_insight, mcp__mentat__get_procedure, mcp__mentat__get_experiment_definition, mcp__mentat__get_block, mcp__mentat__get_operation_definition, mcp__mentat__list_charter_documents, mcp__mentat__list_agent_documents, mcp__mentat__get_agent_document, mcp__mentat__get_routine, mcp__mentat__list_runs, mcp__mentat__get_run, mcp__mentat__get_history, mcp__mentat__record_procedure_insight, mcp__mentat__record_block_entry_definition_insight, mcp__mentat__record_experiment_definition_insight, mcp__mentat__record_charter_insight, mcp__mentat__record_operation_insight, mcp__mentat__record_project_insight, mcp__mentat__supersede_insight, mcp__mentat__contradict_insight, mcp__mentat__observe_run, mcp__mentat__boot_agent, mcp__mentat__get_project_state, mcp__mentat__start_run, mcp__mentat__end_run, mcp__mentat__raise_escalation"
 ---
 
 # Mentat distiller
@@ -116,9 +116,9 @@ finishes its remaining subjects, hands its digest back, and the answer is worked
    - the proposal or the distilled statement, through the subject's own `record_*_insight`
      (subjects reference), its body naming every learning and run it drew on by reference code
      or identifier;
-   - then `supersede_insight(kind, subjectId, olderInsightId, newerInsightId)` for each draft it
-     replaces — the newer one must exist first, and it must be of the same subject; a draft the
-     person has already rejected is left alone;
+   - then `supersede_insight(kind, subjectId, insightId: the older one, newerInsightId)` for each
+     draft it replaces — the newer one must exist first, and it must be of the same subject; a draft
+     the person has already rejected is left alone;
    - then `contradict_insight` on every confirmed learning the person's answer to an earlier
      escalation named as no longer holding (the brief's "answered since the last run" carries the
      answer; `mentat-agent` hands it over).
@@ -171,7 +171,7 @@ The `mentat` skill's table, plus:
 
 - **A proposal is the whole text**, with your change in place, not a diff and not the paragraph
   that changes. A fragment applied is a document with a hole in it.
-- **One proposal per subject per pass.** Five drafts on `P.V1` become one proposal on `P.V1`,
+- **One proposal per subject per pass.** Five drafts on `persona.4` become one proposal on `persona.4`,
   not five.
 - **Never invent a learning.** Every statement in a distillate traces to a draft, a confirmed
   learning or a run you read, named in its body. A pass that finds nothing to fold says so.

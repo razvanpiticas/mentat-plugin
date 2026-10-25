@@ -2,7 +2,7 @@
 name: "mentat-inbox"
 description: "Talks to the person when nobody is in the window — a message they read, a question that blocks the run, and the answer that came back. Use inside a run that a routine fired: for anything the person should know but need not answer, for anything the run cannot decide on its own, and to read what a person answered since the last run. Never in an attended session, where the person is in the chat and you simply ask."
 argument-hint: "<message | escalate | answers> <project>"
-allowed-tools: "mcp__mentat__send_message, mcp__mentat__raise_escalation, mcp__mentat__get_project_state"
+allowed-tools: "mcp__mentat__send_message, mcp__mentat__raise_escalation, mcp__mentat__get_project_state, mcp__mentat__create_work_item, mcp__mentat__transition_work_item, mcp__mentat__observe_run, mcp__mentat__boot_agent, mcp__mentat__get_run, mcp__mentat__get_project, mcp__mentat__list_decisions"
 ---
 
 # Mentat inbox
@@ -39,7 +39,8 @@ Here the run is handed to you by the skill that invoked you inside it.
 | --- | --- | --- | --- |
 | to tell them something that needs no answer | a message | `send_message` | reads it, presses Acknowledge |
 | an answer before the run can go on | an escalation | `raise_escalation`, then the caller pauses the run | answers with a note, or acknowledges — which means "do what you proposed" |
-| to report what the run did | nothing here | `end_run`'s summary becomes the run report on its own | reads it in the morning |
+| the founder's answer to a step that asks them | a step's question | `raise_escalation` with the step's `procedureId`; the raise pauses the run | answers it in words, and the answer becomes the step's answer on the run |
+| to report what the run did | nothing here | the summary at end_run becomes the run report on its own | reads it in the morning |
 | approval of a job you proposed | nothing here | `create_work_item` raises the approval request itself | approves or rejects |
 | a ruling on a learning you drafted with proposed text | nothing here | recording it raises the review row itself | rules on the learning where it lives |
 | to say a job is stuck | nothing here | `transition_work_item` to `Blocked` raises the escalation itself | answers it |
@@ -57,9 +58,9 @@ about one thing is one row too many, and the person answers the first and wonder
    everybody who may approve.
 4. `body` carries what happened, what it means, what you did about it, what you would do next if
    asked. Leave it out only when the title says the whole thing.
-5. Not for what the run report will say anyway. The report is the summary you write at `end_run`;
-   a message is for the thing that would otherwise be buried in it, or that the person should know
-   before the run ends.
+5. Not for what the run report will say anyway. The report is the summary the run's owner writes
+   at end_run; a message is for the thing that would otherwise be buried in it, or that the person
+   should know before the run ends.
 
 Send: `send_message(portfolioId, projectId, recipientUserId?, title, body?, subjectKind?,
 subjectId?, runId)`. The answer is the row as filed; report its id and go on. Nothing waits for it.
@@ -80,16 +81,24 @@ Name the row it is about (`subjectKind`, `subjectId`) when there is one; an esca
 alone when the question is about the run as a whole. Name the person when one person owns the
 answer. Send `raise_escalation(...)` with `runId`, record the `inboxItemId` it answers in the run
 (`observe_run`), then **hand back to the skill that called you: it pauses the run**. Raising does
-not stop the run by itself.
+not stop the run by itself — except a step's question to the founder, below.
 
 One escalation per question. A question you asked in a run that is now paused was asked once; the
 next firing reads the answer (below) and, finding none, leaves the run paused and asks nothing
 again.
 
+**A step's question to the founder** is the one escalation that names the step it is asked at.
+`mentat-operation` hands it to you when a step's founder input applies in a run a routine fired: send
+`raise_escalation` with the step's `procedureId` beside `runId`, the step's question as the title — its
+first sentence when the whole runs past 200 characters — and the body `mentat-operation`'s
+`reference/running-a-row.md` gives, its recommendation last. The server pauses the run in the same
+call, so nothing is observed and nothing is paused after it: hand the `inboxItemId` back and stop.
+The person answers it in their own words, never by a bare acknowledgement.
+
 [reference/asks.md](reference/asks.md) has the body of each escalation a method skill raises under
 the unattended rule — a Checkpoint verdict, a start that spends, a hypothesis decision, a gate's
-pivot proposal, a decision of the business, a missing key — so the same question is always asked
-the same way.
+pivot proposal, a gate failed on the pairs, a decision of the business, a missing key — so the same
+question is always asked the same way.
 
 ## Reading the answer
 
@@ -103,9 +112,13 @@ or escalation a person answered since the asking party's last run — `inboxItem
   even when it is not what you proposed.
 - `Acknowledged` with no note → do what you proposed. **One exception:** a pivot proposal. A pivot
   regresses the tier and rewrites the plan, so a bare acknowledgement never applies one;
-  `apply_pivot` waits for a note saying "apply <pivot> to <tier>", or for the person applying it on
+  apply_pivot waits for a note saying "apply <pivot> to <tier>", or for the person applying it on
   the roadmap screen (`reference/asks.md`).
 - No line → not answered yet. Leave the run paused; ask nothing again.
+
+A step's question comes back `Answered`, with the founder's words. They are the step's answer on the
+run: `get_run` shows them under the step, the run that resumes carries them, and `mentat-operation`
+reads them there.
 
 A message never appears here: it is read, not answered, and acknowledging one tells you nothing.
 

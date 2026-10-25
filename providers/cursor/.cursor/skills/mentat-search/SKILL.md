@@ -52,9 +52,9 @@ Apply in this order; the first row that fits is the instrument.
 
 | The question | Instrument | Call | Cost |
 | --- | --- | --- | --- |
-| names a block, or a code you hold | **exact** | `get_block(code)`; a code that is not a block's → `get_neighbours(code)` for the row's id and kind, then `get_hypothesis`, `get_experiment` or `get_run` by id; the whole model only when the question spans blocks and nothing narrower answers: `get_canvas` | free |
+| names a block, or a code you hold | **exact** | `get_block(projectId, blockCode)`; a code that is not a block's → `get_neighbours(projectId, referenceCode)` for the row's id and kind, then `get_hypothesis`, `get_experiment` or `get_run` by id, or, for an entry written inside an owner, `get_customer_segment` or `get_value_proposition` on the owner; the canvas only when the question spans blocks and nothing narrower answers: `get_canvas` | free |
 | names a subject and no code — "what do we know about pricing"; or is a duplicate check before a write — "is there already a hypothesis like this" | **by meaning** | `search(projectId, question, limit)` | one embedding per call |
-| holds a code and asks what is tied to it — "what hangs on KR-45" | **by connection** | `get_neighbours(projectId, code)` | a query |
+| holds a code and asks what is tied to it — "what hangs on KR-45" | **by connection** | `get_neighbours(projectId, referenceCode)` | a query |
 | has a shape with more than one hop — "open questions that block a hypothesis a high risk depends on" | **by connection, shaped** | `run_analytical_query` with a shape from [reference/shapes.md](reference/shapes.md) | a query, five seconds, 200 rows |
 | has two halves — "what is tied to whatever we know about pricing" | **both** | by meaning to find the rows, then by connection from each | one embedding, then queries |
 
@@ -64,11 +64,18 @@ has the rule with examples and the answer's shape.
 
 ## Exact
 
-`get_block` answers the block whole: its kinds with their shape, every entry, the hypotheses,
-questions, risks and ideas on it. An entry's code names its block before the first `.` or `-`
-(`KR-01` → `KR`, `CS.JOBS-03` → `CS`). For any other code, `get_neighbours(code)` answers first
-the row itself — its kind, its id, its title, its status — which is the id `get_hypothesis`,
-`get_experiment` or `get_run` takes; one free read, and it brings the row's surroundings with it.
+`get_block` answers the block: its kinds with their shape, the entries it lists — the cards, every
+segment of the Customer Segments trees in short, the notes — and the hypotheses, questions, risks
+and ideas on it. A listed entry's code names its block before the first `.` or `-` (`KR-01` → `KR`,
+`CS-03` → `CS`). An entry written inside an owner is not on its block's list — a profile, a context,
+a job, pain or gain, a product, reliever or creator — and is read through that owner:
+`get_customer_segment` with the segment's id for a profile and its items, `get_value_proposition`
+with the value proposition's id for a value map entry. `get_neighbours(projectId, referenceCode)`
+finds the owner first: `in_profile`, `context_of`, `profile_of` and `in_value_map` lead from the
+entry up to it, each with its id. For any other code, `get_neighbours(projectId, referenceCode)`
+answers first the row itself — its kind, its id, its title, its status — which is the id
+`get_hypothesis`, `get_experiment` or `get_run` takes; one free read, and it brings the row's
+surroundings with it.
 
 ## By meaning
 
@@ -85,8 +92,8 @@ quotes it.
 
 ## By connection
 
-`get_neighbours(projectId, code)`: everything one hop from the row — the structural edges (a
-hypothesis's entry, a job's segment, an experiment's hypothesis, what a run wrote) and every
+`get_neighbours(projectId, referenceCode)`: everything one hop from the row — the structural edges (a
+hypothesis's entry, a job's profile, an experiment's hypothesis, what a run wrote) and every
 accepted link (`references`, `related`, and the typed words), each with the edge's name, its
 direction from the row, and for a link its word, origin and confidence. Passages are never
 neighbours; a rejected link is never one. Structural edges come first, then links by confidence.
@@ -153,7 +160,8 @@ the passage quoted. For a walk, the query echoed as the server returned it, then
 - One search per question. Two phrasings are two embeddings for one answer.
 - Name the instrument and quote the query in every answer, including the empty ones. An answer
   that hides how it was found cannot be checked.
-- `get_canvas` is the whole model and large; reach for it last.
+- `get_canvas` is large and still leaves out what is written inside a segment or a value
+  proposition; reach for it last.
 - In a run a routine fired, the fallback on a spent allowance goes into the run report, not into a
   message: "search by meaning was off; answered by code".
 - This skill writes nothing. A duplicate it finds is reported to the calling skill, which decides

@@ -114,12 +114,14 @@ Every call is also tenant-scoped from the caller's token. A caller who belongs t
 
 ## The tools
 
-One hundred and twenty-seven tools, all over BusinessIntelligence: thirty-nine reads (portfolios, projects,
-where a project stands, the canvas, one block by code, one hypothesis, one experiment, the method
-cards, one procedure of the method catalogue, a project's plan, its runs, its agents, routines and
-goals, its learnings, its board, its change log, its decision ledger, and the three ways of finding a
-row nobody knows the code of) and eighty-eight writes (entries, hypotheses, experiments, evidence, questions, risks,
-ideas, contradictions, insights, the plan's rows, runs, method gates, agents, routines and goals, the
+One hundred and sixty-eight tools, all over BusinessIntelligence: forty-four reads (portfolios,
+projects, where a project stands, the canvas, one block by code, one customer segment, one value
+proposition, the idea, one hypothesis, one experiment, the method cards, one procedure of the method
+catalogue, a project's plan, its runs, its agents, routines and goals, its learnings, its board, its
+change log, its decision ledger, and the three ways of finding a row nobody knows the code of) and
+one hundred and twenty-four writes (entries, segments and their parts, end user profiles and
+personas, value maps and fit, the idea, hypotheses, experiments, evidence, questions, risks, ideas,
+contradictions, insights, the plan's rows, runs, method gates, agents, routines and goals, the
 board's jobs, escalations, messages and decisions). The full table with permissions and which tools take which version
 is in [reference/tools.md](reference/tools.md). **How to use them — which kind, which fields, what
 order BusinessIntelligence enforces — is the `mentat-canvas` skill; load it for any read or write on a
@@ -142,6 +144,9 @@ rather than resending the same call.
 - **The refusal is a CONFLICT naming a roadmap version** — somebody else changed the project's plan.
   That is a different number from the canvas version: re-read with `get_roadmap` and resend with the
   one it names.
+- **The refusal is a CONFLICT naming an ideation version** — somebody else changed the project's idea.
+  That is a third number of its own: re-read it with `get_ideation` and resend with the version it
+  names.
 - **The refusal is a CONFLICT naming `runId`** — the run you are working inside was ended, paused or
   opened by somebody else, so nothing was changed. Every other call carrying that run is refused the
   same way. Stop working it, say so, and `start_run` a new one before writing anything else.

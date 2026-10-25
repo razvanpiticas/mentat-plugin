@@ -5,7 +5,7 @@ file carries what the schema cannot say: which permission each tool demands, whe
 anything, and which take and answer a canvas version. How to use them well is the `mentat-canvas`
 skill's job.
 
-One hundred and thirty-eight tools: forty-one reads and ninety-seven writes.
+One hundred and sixty-eight tools: forty-four reads and one hundred and twenty-four writes.
 
 ## Reads — `mcp:tools.read`
 
@@ -14,22 +14,25 @@ One hundred and thirty-eight tools: forty-one reads and ninety-seven writes.
 | `server_info` | Nothing. Answers from the process | Deployment name, route, the tool list |
 | `list_portfolios` | BusinessIntelligence | One page of the caller's portfolios, `pageNumber` for the next |
 | `list_projects` | BusinessIntelligence | One page of a portfolio's projects |
-| `get_project` | BusinessIntelligence | The project and its overview, with the canvas version |
+| `get_project` | BusinessIntelligence | The project and its overview, with the canvas version. Its description is the idea as last stated, or the founder's own words before the idea is stated |
 | `get_project_state` | BusinessIntelligence | Where a project stands: the canvas in summary with every block's counts, the plan position and whether it has a thesis, the decisions, your open jobs, what a person answered while you were away, how many inbox rows still wait for the person you work for, and what changed since your last run ended |
-| `get_canvas` | BusinessIntelligence | The whole canvas document and its version |
-| `get_block` | BusinessIntelligence | One block by code, its kinds with each kind's schema, everything on it, the version |
+| `get_canvas` | BusinessIntelligence | The canvas document and its version: every block as `get_block` answers it, with its cards and the segments in short. What is written inside a segment or a value proposition comes through `get_customer_segment` and `get_value_proposition` |
+| `get_block` | BusinessIntelligence | One block by code, its kinds with each kind's schema, everything on it, the version. On Customer Segments, its trees in short: per segment its code, title, status, state, parent, order, reasons and score, and whether it is a beachhead, a proposed one, served, out of the running or an adjacent market, and which parts it has — never a part's content. On Value Proposition, our value propositions and the notes |
+| `get_customer_segment` | BusinessIntelligence | One customer segment whole: its ratings and score, the three conditions of a market, its comparison, its customers today, its TAM with the total and the market share, its beachhead part with the adjacent markets and the segments it turns away, and its end user profile — who they are, the jobs, pains and gains in rank order, the purchasing criteria in order, the persona with its picture's address and its picture prompt, the context profiles with their items — with the canvas version |
+| `get_value_proposition` | BusinessIntelligence | One value proposition whole: the profile it aims at, its products and services, pain relievers and gain creators in rank order with what each is connected to, the value propositions of what they use today aimed at the same profile, and the fit check, with the canvas version |
 | `get_hypothesis` | BusinessIntelligence | One hypothesis with its runs |
 | `get_experiment` | BusinessIntelligence | One run with metric and criterion ids, evidence |
 | `list_experiment_definitions` | BusinessIntelligence | The method cards, optionally for one concern |
 | `get_experiment_definition` | BusinessIntelligence | One card's full method text |
 | `get_roadmap` | BusinessIntelligence | A project's plan: thesis, rows in order with the blocks each operation writes to, the gate line, the roadmap version |
-| `get_operation_package` | BusinessIntelligence | One row's method text, targets, prerequisites and any run to resume |
+| `get_ideation` | BusinessIntelligence | The project's idea: the founder's starting point and route, the candidates weighed with their signals and ratings, the statement in force, the proposal waiting for a person, every revision with its decision, and the idea's `version`, which every idea write sends as `ideationVersion`; each write answers the next `version` |
+| `get_operation_package` | BusinessIntelligence | One row's method text: its steps in order with what each asks the founder, its targets — blocks and kinds, or the project's idea with the idea itself — the operations it goes back to, in order, and on an `Experiment` operation its hand-over to hypotheses and the steps every `Experiment` operation shares; its prerequisites and any run to resume |
 | `get_gate_status` | BusinessIntelligence | What the method gate would answer now, recorded nowhere |
 | `list_gate_evaluations` | BusinessIntelligence | The gate evaluations a project has recorded |
-| `get_run` | BusinessIntelligence | One run of any kind with its events, and — on an attempt at a row of the plan — the verdict, the procedures finished and what it produced |
+| `get_run` | BusinessIntelligence | One run of any kind with its events, and — on an attempt at a row of the plan — the verdict, its steps with each one finished and the founder's answer to each that asked, and what it produced; on an `Experiment` operation's run, the hand-over to hypotheses as the canvas stands now |
 | `list_runs` | BusinessIntelligence | One page of a project's runs of every kind, newest first, each with the summary it left. Takes the portfolio and the project |
 | `list_operation_definitions` | BusinessIntelligence | The operation definitions, shipped or as one project has them |
-| `get_operation_definition` | BusinessIntelligence | One operation definition in full |
+| `get_operation_definition` | BusinessIntelligence | One operation definition in full: what it asks the founder and at which steps, the operations it goes back to, and on an `Experiment` operation its hand-over and the steps it shares |
 | `get_procedure` | BusinessIntelligence | One procedure of the method catalogue by its code, with the wording this organisation reads |
 | `list_pivot_definitions` | BusinessIntelligence | The kinds of pivot a project may adopt |
 | `boot_agent` | BusinessIntelligence | One agent's whole brief: the company writing, the mission and its objectives, the project's state, the team, the person, the agent's own instructions |
@@ -56,21 +59,42 @@ One hundred and thirty-eight tools: forty-one reads and ninety-seven writes.
 ## Writes — `mcp:tools.write`
 
 Every write below takes `canvasVersion` and answers the version it produced, except: `create_project`
-and `record_project_insight`, which take none; the nine changes to a plan, which take `roadmapVersion`
-instead and answer the whole plan; and the six writes to a run, the organisation's writes, the board's
-writes, the two writes to a method card, `raise_escalation`, `send_message`, `record_decision` and `evaluate_gate`, which take neither. Deletes answer
+and `record_project_insight`, which take none; the ten changes to a plan, which take `roadmapVersion`
+instead and answer the whole plan; the seven writes to the idea, which take `ideationVersion` instead
+and answer the whole idea; and the six writes to a run, the organisation's writes, the board's
+writes, the two writes to a method card, `raise_escalation`, `send_message`, `record_decision` and `evaluate_gate`, which take none of the three. Deletes answer
 only the version.
 
-**`canvasVersion` and `roadmapVersion` are different numbers.** A project's plan and its canvas are
-separate records that move independently, so a change to one carries its own version and a conflict
-names which of the two moved.
+**`canvasVersion`, `roadmapVersion` and `ideationVersion` are three different numbers.** A project's
+canvas, its plan and its idea are separate records that move independently, so a change to one
+carries its own version and a conflict names which of them moved.
 
 | Tool | Changes |
 | --- | --- |
-| `create_project` | Creates a project and opens its canvas |
+| `create_project` | Creates a project and opens its canvas; its description is the founder's own words |
 | `record_project_insight` | Adds a learning about the project |
-| `add_entry`, `update_entry`, `retire_entry`, `delete_entry` | Entries on a block |
-| `choose_beachhead`, `clear_beachhead` | The one customer segment marked as the market to win first; choosing one takes the mark off the segment that held it |
+| `add_entry`, `update_entry`, `retire_entry`, `delete_entry` | Entries. A kind written inside another entry takes its owner's id as `ownerId` when it is added: a child segment its parent, an end user profile its segment, a context profile its end user profile, a job, pain or gain its profile, a product, reliever or creator its value proposition. A confirmed or reported customer or value entry carries its `source`. `update_entry` on our value proposition also writes what it forgoes and why |
+| `rerank_entries` | Puts every entry of one kind inside one owner in a new order, top first: the order is the rank |
+| `set_customer_segment_state` | Shortlists a segment, drops it with why, or makes it a candidate again |
+| `split_customer_segment` | Adds child segments under a segment, with why it is split |
+| `rate_customer_segment` | Writes a segment's seven ratings, each with its reason, in one call |
+| `test_market_conditions` | Writes the three conditions of a market, each with whether it holds and its evidence |
+| `write_comparison` | Writes a shortlisted segment's whole comparison, the founder's own rows included |
+| `write_customers_today` | Writes the customers an existing business has in a segment, which marks it served |
+| `write_total_addressable_market` | Writes a beachhead's TAM: the end users counted bottom up and top down, the annual revenue per end user and how it was worked out, the growth rate |
+| `choose_beachhead` | Proposes a leaf segment as a beachhead with its part — why this one, what it gives up, when to switch, the offers to try first, whether it is the hardest side of a platform, the adjacent markets in order, the beachhead it replaces, and why not on every other shortlisted segment — with its decision in the ledger: an agent's is proposed and a person accepts it on the decisions tab, a person's is accepted as written |
+| `write_turned_away_segments` | Writes the whole list of segments a beachhead turns away, each with how to tell them and what to refer them to |
+| `describe_end_user` | Writes who the end user is: the end user profile's fifteen characteristics and any added ones, in one call |
+| `write_purchasing_criteria` | Writes an end user profile's whole list of purchasing criteria, in order, each pointing at one of its jobs, pains or gains |
+| `write_persona` | Writes or replaces the persona of an end user profile: how it was made, its fact sheet, its words for the top pain and its picture prompt |
+| `upload_persona_picture`, `remove_persona_picture` | Puts a picture on the persona — a PNG, JPEG, WebP or SVG file of at most 25 MB, its bytes sent in base64 — or takes it off |
+| `erase_persona` | Erases a real end user's persona when they ask: its facts and its picture, and their values in the history |
+| `move_end_user_profile` | Moves an end user profile, with its context profiles and persona, onto a leaf segment |
+| `aim_value_proposition` | Aims a value proposition at a profile |
+| `connect_value_map_entry`, `disconnect_value_map_entry` | Connects a product, reliever or creator to the job, pain or gain it addresses, or takes the connection off |
+| `add_what_they_use_today` | Adds the value proposition of what they use today, aimed at the same profile as ours, on a Competitive Position entry that exists or a new one |
+| `reach_fit` | Records the next kind of fit our value proposition reached; problem–solution fit takes the reason to switch from what they use today |
+| `write_starting_point`, `add_ideation_candidate`, `update_ideation_candidate`, `drop_ideation_candidate`, `add_ideation_signal`, `update_ideation_signal`, `propose_ideation_revision` | The project's idea — these take `ideationVersion`: the founder's starting point and the route, the ideas weighed and the signals read for them, and a statement of the idea naming its riskiest hypothesis; an agent's statement is proposed for a person to accept, a person's is accepted as written |
 | `create_hypothesis`, `update_hypothesis`, `recommend_experiment_definition`, `withdraw_experiment_definition`, `park_hypothesis`, `unpark_hypothesis`, `retire_hypothesis`, `decide_hypothesis`, `delete_hypothesis` | Hypotheses |
 | `design_experiment`, `add_metric`, `add_criterion`, `start_experiment`, `record_observation`, `judge_criterion`, `complete_experiment`, `abort_experiment`, `record_spend`, `delete_experiment` | Runs |
 | `record_evidence`, `update_evidence`, `add_data_point`, `delete_evidence` | Evidence bundles |
@@ -79,8 +103,8 @@ names which of the two moved.
 | `add_idea`, `update_idea`, `resolve_idea` | Ideas |
 | `record_contradiction`, `rule_contradiction` | Contradictions |
 | `set_roadmap_thesis`, `place_roadmap_item`, `skip_roadmap_item`, `include_roadmap_item`, `annotate_roadmap_item`, `append_roadmap_operation`, `add_roadmap_move`, `remove_roadmap_move`, `apply_pivot` | A project's plan — these take `roadmapVersion` |
-| `set_roadmap_move_work_item` | Points a move at the job that carries it out |
-| `start_run`, `checkpoint_run`, `observe_run`, `pause_run`, `end_run`, `cancel_run` | Runs of a project — no version |
+| `set_roadmap_move_work_item` | Points a move of the plan at the job that carries it out — it takes `roadmapVersion` too |
+| `start_run`, `checkpoint_run`, `observe_run`, `pause_run`, `end_run`, `cancel_run` | Runs of a project — no version. `checkpoint_run` carries the founder's answer to a step that asked them; it and `end_run` carry the operations the project goes back to, in order |
 | `evaluate_gate` | Records what a method gate answered — no version |
 | `create_agent` | Adds an agent to a project, or to the portfolio when no project is named |
 | `update_agent` | Renames and retitles an agent, and shares a project's agent with the whole portfolio |
@@ -117,7 +141,7 @@ names which of the two moved.
 | `update_work_item` | Rewrites a job's line, brief, three ratings, due date and assignee — the whole text, not a patch |
 | `transition_work_item` | Moves a job to another column of the board |
 | `comment_on_work_item` | Appends one remark to a job's thread |
-| `raise_escalation` | Puts a question a run cannot answer on its own in front of a person — through `mentat-inbox` |
+| `raise_escalation` | Puts a question a run cannot answer on its own in front of a person — through `mentat-inbox`. Sent with the `procedureId` of a step that asks the founder, it is that step's question, and the run pauses until the person answers it |
 | `send_message` | Tells a person something they should know and need not answer — through `mentat-inbox` |
 | `record_decision` | Writes a decision of the business into the project's ledger |
 
@@ -136,8 +160,8 @@ The board, the inbox and the decision ledger carry no version either: a job, an 
 decision hang off the project rather than off the canvas, and the last write to a job stands.
 
 `delete_entry`, `delete_hypothesis`, `delete_experiment`, `delete_evidence`, `remove_roadmap_move`,
-`unlink_from_goal`, `cancel_run` and `apply_pivot` are marked destructive; a harness may ask before
-running them.
+`unlink_from_goal`, `cancel_run`, `apply_pivot`, `remove_persona_picture`, `erase_persona` and
+`disconnect_value_map_entry` are marked destructive; a harness may ask before running them.
 
 `evaluate_gate` and `apply_pivot` move a project's tier, so BusinessIntelligence asks for
 `projects.manage` on them rather than `canvas.write`. A caller who may edit a canvas and not move a

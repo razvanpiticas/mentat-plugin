@@ -16,7 +16,7 @@ One call plans the whole test card:
 | `metrics` | What we measure: `[{ "name": "Interviewees naming the pain unprompted", "unit": "out of 10" }]`. |
 | `criteria` | When we are right: `[{ "description": "At least 8 of 10 name it unprompted", "metricName": "Interviewees naming the pain unprompted" }]`. `metricName` must match one of the metrics; leave it out for a qualitative criterion. |
 
-The criteria come from `P.V2` and, inside an operation, from its "validated when" sentence; the
+The criteria come from the Design the test step and, inside an operation, from its "validated when" sentence; the
 `mentat-experiment` skill writes them. A run cannot start with no criterion. If a metric or criterion is
 refused after the experiment was created, the experiment exists with what came before it: read it
 with `get_experiment` and finish with `add_metric` and `add_criterion`.

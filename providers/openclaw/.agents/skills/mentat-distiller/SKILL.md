@@ -1,6 +1,6 @@
 ---
 name: "mentat-distiller"
-description: "Distil the insights an organisation has recorded — the drafts a run left behind and the confirmed learnings — into one proposal per subject whose text should change, folding repeats together, escalating contradictions and never approving or applying anything. Use when the person says \"distil the insights\", \"what did we learn about P.V1\", \"clean up the learnings\", when the Nightly distiller routine fires, or when a run's blockers were recorded and the person asks what the method should say instead."
+description: "Distil the insights an organisation has recorded — the drafts a run left behind and the confirmed learnings — into one proposal per subject whose text should change, folding repeats together, escalating contradictions and never approving or applying anything. Use when the person says \"distil the insights\", \"what did we learn about persona.4\", \"clean up the learnings\", when the Nightly distiller routine fires, or when a run's blockers were recorded and the person asks what the method should say instead."
 ---
 
 # Mentat distiller
@@ -114,9 +114,9 @@ finishes its remaining subjects, hands its digest back, and the answer is worked
    - the proposal or the distilled statement, through the subject's own `record_*_insight`
      (subjects reference), its body naming every learning and run it drew on by reference code
      or identifier;
-   - then `supersede_insight(kind, subjectId, olderInsightId, newerInsightId)` for each draft it
-     replaces — the newer one must exist first, and it must be of the same subject; a draft the
-     person has already rejected is left alone;
+   - then `supersede_insight(kind, subjectId, insightId: the older one, newerInsightId)` for each
+     draft it replaces — the newer one must exist first, and it must be of the same subject; a draft
+     the person has already rejected is left alone;
    - then `contradict_insight` on every confirmed learning the person's answer to an earlier
      escalation named as no longer holding (the brief's "answered since the last run" carries the
      answer; `mentat-agent` hands it over).
@@ -169,7 +169,7 @@ The `mentat` skill's table, plus:
 
 - **A proposal is the whole text**, with your change in place, not a diff and not the paragraph
   that changes. A fragment applied is a document with a hole in it.
-- **One proposal per subject per pass.** Five drafts on `P.V1` become one proposal on `P.V1`,
+- **One proposal per subject per pass.** Five drafts on `persona.4` become one proposal on `persona.4`,
   not five.
 - **Never invent a learning.** Every statement in a distillate traces to a draft, a confirmed
   learning or a run you read, named in its body. A pass that finds nothing to fold says so.

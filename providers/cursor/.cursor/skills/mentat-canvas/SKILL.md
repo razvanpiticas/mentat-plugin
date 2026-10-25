@@ -1,6 +1,6 @@
 ---
 name: "mentat-canvas"
-description: "Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows, the run tools, the method gates and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it."
+description: "Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks and inside other entries, the customer segments' trees with their parts, end user profiles and personas, value propositions with their value maps and fit, the project's idea, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows, the run tools, the method gates and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it."
 ---
 
 # Mentat canvas
@@ -35,11 +35,15 @@ write carries its id.
 2. **Read before you write.** `get_block` with the block's code answers the block's id, the kinds of
    entry it accepts (each with the `kindDefinitionId` and `storage` a write needs), everything already
    written on it, and the canvas version. Reading first is how you avoid writing a duplicate of an
-   entry that already exists and how you learn which ids to address.
+   entry that already exists and how you learn which ids to address. On Customer Segments it answers
+   the trees in short, without what is written inside a segment: `get_customer_segment` reads one
+   segment whole, `get_value_proposition` one value proposition whole, `get_ideation` the idea.
 3. **Write with the version you read.** Every write takes `canvasVersion` and answers with the new
    one. Carry the answered version into the next write. Two writes in a row against the same version
    means the second is refused as stale — that is the canvas protecting itself from a decision made on
-   old state, not a fault.
+   old state, not a fault. The idea keeps its own number: `get_ideation` answers it as the idea's
+   `version`, its writes send it as `ideationVersion` and answer the next `version`; the plan's
+   take `roadmapVersion`.
 4. **Report what the tool answered**, by reference code (`CS-04`, `H-CS-002`, `T-3`, `E-7`), never
    what you intended. A refusal changed nothing unless its message says otherwise.
 
@@ -52,7 +56,11 @@ will be refused the same way, and the fix is a new `start_run`, never a retry.
 
 ## Addressing
 
-Reads take **codes**. A block's code comes from `get_canvas`, which lists every block with its code,
+`get_block` and `get_neighbours` take **codes**. `get_customer_segment` takes `segmentId` and
+`get_value_proposition` takes `valuePropositionId`: the ids `get_block` answered for that code or,
+for a value proposition of what they use today, the id `get_value_proposition` answered under
+`whatTheyUseToday`. A
+block's code comes from `get_canvas`, which lists every block with its code,
 or from a refusal of `get_block`, which lists the codes that exist; never from memory, because a
 project may hold custom blocks with codes of their own. Writes take **ids** a read answered:
 `blockId`, `kindDefinitionId`, `entryId`, `hypothesisId`, `experimentId`, `evidenceId`, `metricId`,
@@ -72,9 +80,17 @@ words.
 - Every other kind takes `fields`: a JSON object whose `kind` property is the kind's `storage` name,
   exactly as `get_block` spells it, plus one property per schema column whose `writtenThrough` is
   `Fields`. A column whose `writtenThrough` is `OwnAction` or `ReadOnly` is never sent; its
-  description says where it is written. A customer segment's `isBeachhead` is one: mark the market
-  to win first with `choose_beachhead` (it takes the mark off whichever segment held it) and withdraw
-  it with `clear_beachhead`.
+  description says where it is written — a segment's ratings, its beachhead part, a persona are
+  written by tools of their own, below.
+- **A kind written inside another entry takes its owner's id as `ownerId`** on `add_entry`: a segment
+  under its parent segment (none for the root of a tree, the market), an end user profile
+  (`CS.PROFILE`) inside a segment, a context profile (`CS.CONTEXT`) inside an end user profile, a
+  job, pain or gain inside a profile, end user or context, a product, reliever or creator inside a
+  value proposition. Sent without one: "CS.PAINS is written inside a profile: send the profile's id
+  as ownerId." A kind written on the block itself refuses an `ownerId`.
+- **A customer or value entry that is `Confirmed` or `Reported` carries its `source`**: where it came
+  from, so anyone can check it — the link, the interview, the business's own data. Without one: "A
+  Reported entry needs its source, so anyone can check it."
 - A `Pointer` column takes the id of an entry of the storage its `pointer.targetStorages` names, on
   the same block when `pointer.scope` is `SameBlock` and anywhere on the canvas when it is
   `SameCanvas`. Write the entry pointed at first; the document answers its reference code beside the
@@ -83,8 +99,46 @@ words.
   naming the column and the words that would have worked, so it costs a round trip, not a wrong row.
 
 When the kind you want does not exist on the block, write to the block's free-form Notes kind and say
-in the body what it is; do not force content into a kind it does not fit. Worked examples and the
-statuses are in [reference/entries.md](reference/entries.md).
+in the body what it is; do not force content into a kind it does not fit. Worked examples, the
+statuses and every tool of the segments, profiles, value maps and the idea are in
+[reference/entries.md](reference/entries.md).
+
+## Segments, profiles and the persona
+
+The Customer Segments block holds trees: a market at the root, segments split under it, and on a
+beachhead or a shortlisted segment its end user profile with its jobs, pains and gains, its purchasing
+criteria, its persona and its context profiles. A segment's parts have tools of their own, each
+taking the segment's or the profile's id and `canvasVersion`: `set_customer_segment_state`,
+`split_customer_segment`, `rate_customer_segment`, `test_market_conditions`, `write_comparison`,
+`write_customers_today`, `write_total_addressable_market`, `choose_beachhead`,
+`write_turned_away_segments`; `describe_end_user`, `write_purchasing_criteria`, `write_persona`,
+`upload_persona_picture`, `remove_persona_picture`, `erase_persona`, `move_end_user_profile`. Each
+writes its part whole: send everything the part holds, not the change. `rerank_entries` puts every
+entry of one kind inside one owner in a new order; the order is the rank.
+
+A beachhead is proposed, never marked: `choose_beachhead` writes its part and its decision, and an
+agent's decision waits on the decisions tab for a person to accept it. A beachhead is replaced by
+choosing the one that replaces it; it is never cleared.
+
+## Value propositions and fit
+
+Our value proposition is aimed at one profile (`aim_value_proposition`); its products, relievers and
+creators are written inside it and connected to the jobs, pains and gains they address
+(`connect_value_map_entry`, `disconnect_value_map_entry`). What they use today is a value proposition
+of its own on a Competitive Position entry, mapped against the profile ours aims at:
+`add_what_they_use_today` takes our value proposition's id (`valuePropositionId`) and is refused until
+ours is aimed, so write ours first (`add_entry` on `VP`, then `aim_value_proposition`).
+`get_value_proposition` answers the fit check; `reach_fit` records the kind of fit reached,
+problem–solution fit with the reason to switch from what they use today.
+
+## The idea
+
+The project's idea is not a block: the founder's starting point, the candidates weighed with their
+signals, and every statement of the idea are read with `get_ideation` and written with the idea
+tools, each taking `ideationVersion`. Never write the idea as a block entry. The statement names its
+riskiest part as a hypothesis: `create_hypothesis` on the block that part belongs to first, then
+`propose_ideation_revision` with its id. An agent's statement is proposed; a person accepts it on the
+decisions tab.
 
 ## Status says how true an entry is, so choose it honestly
 
@@ -122,7 +176,7 @@ on blocks the canvas gates, which is the point. Verbs and states are in
 
 ## The roadmap and operation runs
 
-A project's **roadmap** is the plan it runs: forty-six operations from the method, in order, banded by
+A project's **roadmap** is the plan it runs: forty-seven operations from the method, in order, banded by
 tier, plus the moves it has decided to make. Start with `get_roadmap` — it answers the thesis, every
 row with its id, tier, status and prerequisites, the gate line above the plan, and the `roadmapVersion`
 every change to the plan carries. **That version is not the canvas version.** Changing the plan and
@@ -138,22 +192,25 @@ Each answers the whole plan with the version it produced; carry that into the ne
 **Running an operation** is `mentat-operation`'s loop; these are the calls it is made of:
 
 1. `get_operation_package` with the row's id. It answers the method text as this project has it, the
-   procedures in order with their ids, the places on the canvas the operation writes to, what it waits
-   on, and any run left paused.
+   procedures in order with their ids and what each asks the founder, the places on the canvas or the
+   idea the operation writes to, the operations it goes back to, on an `Experiment` operation its
+   hand-over and the steps it shares, what it waits on, and any run left paused.
 2. `start_run` with `operationId` set to the row. A refusal naming operations that have not run is the
    prerequisite check: report which ones and ask whether to run them first or to force past them.
    Ask the user directly to clarify what you cannot infer. Never set `forcePastPrerequisites` on your own judgement. Keep the run id it
    answered: every write for the rest of the run carries it as `runId`.
 3. Do the procedures. Write what they produce with the canvas tools above — `add_entry`,
    `create_hypothesis`, `add_question` — each carrying `runId`, and keep the ids those writes answered.
-4. `checkpoint_run` after **each** procedure, naming the procedure and those ids. A run interrupted
-   between checkpoints resumes from the last one; an uncheckpointed procedure is one somebody repeats.
-   `observe_run` records what belongs to no procedure.
+4. `checkpoint_run` after **each** procedure, naming the procedure and those ids, with the founder's
+   words as `founderAnswer` when the procedure asked them, and `revisitOperationIds` when it sends the
+   project back to earlier operations. A run interrupted between checkpoints resumes from the last
+   one; an uncheckpointed procedure is one somebody repeats. `observe_run` records what belongs to no
+   procedure.
 5. `end_run` with `outcome: "Completed"` and a summary written for whoever reads this project later,
    and a verdict **only when the package says the validation level is `Checkpoint`** — an `Experiment`
    operation is judged by its experiment and a `None` operation by nothing, and a verdict on either is
-   refused. `Invalidated` appends the revisit the operation names to the end of the plan; say so when
-   you report it. A run that could not be carried out at all is `end_run` with `outcome: "Failed"` and
+   refused. `Invalidated` sends the project back to the operations the package lists, the first of
+   them when none is named: the server puts them right after the row; say so when you report it. A run that could not be carried out at all is `end_run` with `outcome: "Failed"` and
    the reason, not an invalidated verdict.
 
 Pause with `pause_run` and continue by starting the next run with `resumedFromRunId` set to the paused
@@ -188,6 +245,8 @@ the recovery says rather than resending.
 - `CONFLICT` naming a roadmap version — somebody else changed the plan: re-read it with `get_roadmap`,
   check that the row you meant is still where you thought, then resend with the version the refusal
   names. Row positions may have moved.
+- `CONFLICT` naming an ideation version — somebody else changed the idea: re-read it with
+  `get_ideation`, then resend with the version the refusal names.
 - `CONFLICT` naming `runId` — the run you are working inside cannot be worked any more. Nothing was
   written. Open a new one with `start_run` and send the write again; do not resend it unchanged.
 - `CONFLICT` quoting a rule of the business model — the call is not allowed in the canvas's current
@@ -203,13 +262,18 @@ with `add_metric`, `add_criterion`, `update_evidence` or `add_data_point` rather
 ## Rules that are easy to get wrong
 
 - Never invent a tenant, a portfolio or a project. Lists answer what exists.
-- `get_canvas` is the whole model and large; reach for `get_block` unless the task spans blocks.
+- `get_canvas` is large: every block's cards and the segments in short, never what is written inside
+  a segment or a value proposition, which comes through `get_customer_segment` and
+  `get_value_proposition`. Reach for `get_block` unless the task spans blocks.
 - Retire what was once believed (`retire_entry`, `retire_hypothesis`); delete only what should never
   have existed. Deletes cascade to hypotheses and contradictions about the entry.
 - One `update_*` call per changed thing; each takes the version the previous answered.
-- Changes to the plan take `roadmapVersion`; writes on the canvas take `canvasVersion`; writes to a
-  run take neither. Sending the wrong one is refused, not silently accepted.
-- `runId` is not a version and is not one of those two: it says which run a write was made from
+- Changes to the plan take `roadmapVersion`; writes on the canvas take `canvasVersion`; writes to the
+  idea take `ideationVersion`; writes to a run take none of them. Sending the wrong one is refused, not
+  silently accepted.
+- A nested kind is added inside its owner, with `ownerId`; a part is written with its own tool,
+  never in `fields`.
+- `runId` is not a version and is not one of those three: it says which run a write was made from
   inside, and it is sent on every write of a run including the canvas ones.
 - Do not cache what a read answered across turns: another person in the same organisation may have
   written since.

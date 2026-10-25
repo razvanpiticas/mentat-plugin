@@ -2,7 +2,7 @@
 name: "mentat-advance"
 description: "Do the next row of the plan of a Mentat project — read where the plan stands, pick the one thing that comes next by the next-action rule, do it through the skill that owns it, and stop at every point that is a person's, leaving what waits in their inbox. Use when the Heartbeat routine fires, when the person says \"advance\", \"do the next one\" or \"what's next, do it\", and when a run paused on a person's answer has its answer."
 argument-hint: "<project name or id>"
-allowed-tools: "mcp__mentat__get_project, mcp__mentat__get_project_state, mcp__mentat__get_roadmap, mcp__mentat__get_gate_status, mcp__mentat__list_runs, mcp__mentat__get_run, mcp__mentat__start_run, mcp__mentat__pause_run, mcp__mentat__list_work_items, mcp__mentat__get_work_item, mcp__mentat__create_work_item, mcp__mentat__transition_work_item, mcp__mentat__comment_on_work_item, mcp__mentat__set_roadmap_move_work_item, mcp__mentat__observe_run"
+allowed-tools: "mcp__mentat__get_project, mcp__mentat__get_project_state, mcp__mentat__get_roadmap, mcp__mentat__get_gate_status, mcp__mentat__list_runs, mcp__mentat__get_run, mcp__mentat__start_run, mcp__mentat__pause_run, mcp__mentat__list_work_items, mcp__mentat__get_work_item, mcp__mentat__create_work_item, mcp__mentat__transition_work_item, mcp__mentat__comment_on_work_item, mcp__mentat__set_roadmap_move_work_item, mcp__mentat__observe_run, mcp__mentat__end_run, mcp__mentat__start_experiment"
 ---
 
 # Mentat advance
@@ -70,6 +70,7 @@ A run this skill resumes is `Paused`; a `Running` one is another session's and i
 
 - the line for that id is in `resolvedSinceLastRun` → the answer is in. An attempt at a row: `mentat-operation` resumes it (`get_run`, `start_run` with `resumedFromRunId`, on from the last checkpoint); when the ask was a Checkpoint verdict, the answered verdict goes on `end_run`; when it was a start that spends or needs the person's hands, the operation hands the answer to `mentat-experiment`, which calls `start_experiment` (or leaves the card designed on "do not"), and the operation then ends the row run. An experiment run of its own: `mentat-experiment` resumes it with the answer's line. Either way the firing's run is paused around it first, as the section above says, and the answered line travels with the handover.
 - no line → still waiting. Leave the run paused; one `Waiting:` line in the digest; **this call does nothing else** (rule 2a of the reference: a paused row is the next row, and the person's answer is the bottleneck).
+- an attempt at a row paused on a step's question to the founder names no ask in its events — the raise itself paused it — and `get_run` shows the step that asked: holding the founder's answer, the answer is in and `mentat-operation` resumes the run from it; without one, still waiting, as above, its inbox row id read from the digest's `Waiting:` line.
 - a run on the project itself whose events name no ask is the paused half of an earlier firing, or a person's session: it waits on nobody. Leave it and say nothing of it.
 
 The answer is read as `mentat-inbox` says: a note is the answer; acknowledged without a note, the proposed answer stands — except a pivot, which is applied only on a note saying so, and only by `mentat-gate-check`.

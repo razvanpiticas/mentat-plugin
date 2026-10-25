@@ -16,7 +16,7 @@ The arrow shows the direction as typed; `~` an untyped pair. The number is the c
 embedder gave. The clause after the dash is your sentence, so the person can disagree with it in
 one read. Report what `type_link` answered, by code.
 
-## Nightly — the digest, for the summary `mentat-agent` writes at `end_run`
+## Nightly — the digest, for the summary `mentat-agent` writes at end_run
 
 Counts first, then the lists:
 

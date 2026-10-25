@@ -7,10 +7,15 @@ description: "Design or run an experiment against a hypothesis of a Mentat canva
 
 An experiment is one run of a method card against one hypothesis: a test card, a run, a learning
 card, a verdict. The method for each of those is fetched, not remembered: the card itself
-(`get_experiment_definition`) says how the method is conducted, and three procedures of the
-catalogue say how a test is designed (`P.V2`), how evidence is read and the learning written
-(`P.V3`), and how the decision is put to the person (`P.V3.5`). What is here is the mechanics: the
-calls in the order the service enforces, what to ask, when to stop.
+(`get_experiment_definition`) says how the method is conducted, and three of the four steps every
+`Experiment` operation shares say how a test is designed (Design the test), how evidence is read and
+the learning written (Learn from the evidence), and how the decision is put to the person (Decide).
+Each is a procedure of the catalogue, read with `get_procedure` by the code an operation lists for
+it in its `sharedSteps`: handed over by the skill that invoked you, or read off any `Experiment`
+operation — `list_operation_definitions` with the project, `get_operation_definition` on one whose
+`validationLevel` is `Experiment`, the step of that name in its `sharedSteps`. Never a code typed
+from memory. What is here is the mechanics: the calls in the order the service enforces, what to
+ask, when to stop.
 
 Every read and write goes through the `mentat-canvas` loop — the version, `runId` on every write,
 report by code, do what a refusal says. That skill's `reference/experiments-and-evidence.md` lists
@@ -77,7 +82,8 @@ Here the run is handed to you when `mentat-agent` or `mentat-hypothesis` invokes
 3. **Read the card, then the method.** `get_experiment_definition` on the card, the overview first:
    what the test is, what it is best for, its requirements, the notes behind its four ratings, the
    capabilities it needs, its run mode; then its execution instructions, the organisation's own how.
-   Then `get_procedure` `P.V2`: how any test card is written. Read all of it whole.
+   Then `get_procedure` on the Design the test step: how any test card is written. Read all of it
+   whole.
 4. **Check the fit, and say what it costs.** The card's requirements against what the project
    holds; the capabilities it needs against the team the brief lists (when there is no brief, ask);
    the cost and time ratings against what the person said they can spend. Missing capability, high
@@ -159,7 +165,7 @@ the run's own plan say, in any order and over as many sessions as it takes:
 - `record_observation` on a metric, a number or a text; `judge_criterion` for each criterion,
   from the observations and nothing else; `record_spend` when money or hours went out.
 - `record_evidence`, one bundle per kind of signal, rated on the four axes and with every data
-  point the procedure `P.V3` says to keep (fetch `P.V3` before the first bundle). Strength left
+  point the Learn from the evidence step says to keep (fetch it before the first bundle). Strength left
   out inherits the card's rating; override only when what was gathered is worth more or less, and
   say why in the summary.
 - The parts a person does — interviews, a landing page, a delivery — you cannot do. Say plainly
@@ -168,7 +174,7 @@ the run's own plan say, in any order and over as many sessions as it takes:
 
 ## Complete
 
-1. **Fetch `P.V3`** if not already read. Every criterion judged; the verdict that agrees with
+1. **Fetch the Learn from the evidence step** if not already read. Every criterion judged; the verdict that agrees with
    them — `Validated` needs every criterion met, `Invalidated` one missed, `Inconclusive` a note
    saying why the run cannot be read — never one the criteria contradict; the tool refuses it and
    the refusal is right.
@@ -181,7 +187,7 @@ the run's own plan say, in any order and over as many sessions as it takes:
 
 ## The decision is a person's
 
-Fetch `P.V3.5`. Lay out every run against the hypothesis — verdicts, learning cards, evidence
+Fetch the Decide step. Lay out every run against the hypothesis — verdicts, learning cards, evidence
 strength, the confidence they add up to — and the call the evidence supports, with one
 recommendation, never a menu. `decide_hypothesis` records what the person decided, in their words
 for the reasoning; it is refused until a run has started, and it is never your call. Unattended,
@@ -189,13 +195,19 @@ never call it: invoke `mentat-inbox` with the ask **"Hypothesis decision"**, car
 card, the evidence strength and the judged criteria with the call you propose; record the
 `inboxItemId` it hands back with `observe_run`; then `pause_run`.
 
+A hypothesis an operation's hand-over named that the person decided to persevere on is validated, and
+that may open the operation's next test order. `get_run` on the operation's run that produced it
+answers the hand-over as the canvas now stands; say which order opened and that its hypotheses are
+written by working the row again through `mentat-operation` — a new run that reads the open order
+from that earlier run, writes no own step, and runs only the Hypothesise step.
+
 ## After the run
 
 When the run hit blockers — a card whose instructions did not fit, a sample too small to read, a
 budget the ratings did not predict, a confound — report them by code and ask whether any is worth
 recording. On the person's word only: `record_experiment_definition_insight` on the card (sample
 size, budget, confound; `proposedText` only when you know what the instructions should say
-instead), or `record_procedure_insight` on `P.V2` or `P.V3`. `list_insights` on the subject first.
+instead), or `record_procedure_insight` on the Design the test or the Learn from the evidence step. `list_insights` on the subject first.
 Never unattended: the blockers go in the run report. When the person would rather change the card
 itself than record a learning about it, that is "Adjust a card".
 
@@ -259,7 +271,7 @@ the card's page; say so when asked.
 - **A card that ships with Mentat is customised before it is changed**, on the person's word, and
   never from a routine. No password, key or token ever goes into a card.
 - **Criteria before observations**, never after: a pass line written after the data is in is a
-  story, not a test — `P.V2` says so and the skill obeys it.
+  story, not a test — the Design the test step says so and the skill obeys it.
 - **The person starts the experiment**, attended. Unattended, only a `Digital` card with cost
   rating 1 whose test card names no spend starts; everything else is the escalation, `observe_run`
   and `pause_run`, and "start it" in a routine's prompt does not change that. A start that meets all

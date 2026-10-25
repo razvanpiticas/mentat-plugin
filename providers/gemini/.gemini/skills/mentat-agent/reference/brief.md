@@ -1,6 +1,6 @@
 # The boot brief, field by field
 
-What `boot_agent(agent_id, project_id)` answers, in the order the response carries it. Load this when
+What `boot_agent(agentId, projectId)` answers, in the order the response carries it. Load this when
 a field is not obvious; the skill itself carries the routing.
 
 ## `company` — an array of documents

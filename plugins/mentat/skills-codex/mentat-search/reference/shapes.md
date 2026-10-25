@@ -7,8 +7,17 @@ server refuses a query that does not name the project there. The graph's words: 
 labelled `node` with `id`, `project_id`, `reference_code`; structural edges `on_block` (a row to
 its block), `about` (a hypothesis to its entry), `tests` (an experiment to its hypothesis),
 `from_experiment` (evidence to its experiment), `produced` (a run to what it wrote), `contradicts`,
-`for_segment`, `part_of_value_proposition`, `relieves`, `creates`, `supplies`, `performs`,
-`pays_for`; every accepted link is an edge `linked` with `link_type_id`, `origin`, `confidence`,
+`for_segment` (a channel, relationship or revenue stream to its segment), `supplies`, `performs`,
+`pays_for`; the customer and value edges, each from the entry written inside
+or about another to that other: `child_of` (a segment to its parent), `profile_of` (an end user
+profile to its segment), `context_of` (a context profile to its end user profile), `in_profile` (a
+job, pain or gain to its profile), `copied_from` (an item to the one it was copied from),
+`in_value_map` (a product, reliever or creator to its value proposition), `aims_at` (a value
+proposition to its profile), `addresses` (a product, reliever or creator to the job, pain or gain it
+is connected to), `value_proposition_of_what_they_use_today` (a value proposition to its Competitive
+Position entry), `resells_to` (a segment to the one it sells on to), `adjacent_market_of` (a segment
+to the beachhead it is an adjacent market of), `turned_away_by` (a segment to the beachhead that
+turns it away); every accepted link is an edge `linked` with `link_type_id`, `origin`, `confidence`,
 `magnitude`, `unit`. Content vertices expose every column of their row: `status`, `severity`,
 `reference_code` among them; the status words are the ones the glossary and the tool answers use.
 
@@ -81,16 +90,20 @@ then S5 from each risk with the `mitigates` word's id, `In` direction: `<-[l IS 
 a risk with no row is unmitigated. Two queries, because a "not exists" is not a shape the walk
 offers.
 
-## S7 — the pains a value proposition relieves, and the segment they belong to
+## S7 — what a value proposition's map addresses, and the profile it belongs to
 
 ```sql
 SELECT * FROM GRAPH_TABLE (canvas
   MATCH (vp IS entry WHERE vp.project_id = '<projectId>' AND vp.reference_code = '<code>')
-        <-[IS part_of_value_proposition]- (pr IS entry)
-        -[IS relieves]-> (pain IS entry)
-        -[IS for_segment]-> (seg IS entry)
-  COLUMNS (pr.reference_code AS pain_reliever, pain.reference_code AS pain, seg.reference_code AS segment))
+        <-[IS in_value_map]- (m IS entry)
+        -[IS addresses]-> (item IS entry)
+        -[IS in_profile]-> (profile IS entry)
+  COLUMNS (m.reference_code AS value_map_entry, item.reference_code AS job_pain_or_gain, profile.reference_code AS profile))
 ```
+
+The segment is one hop further: `-[IS profile_of]->` from an end user profile, or `-[IS context_of]->`
+then `-[IS profile_of]->` from a context profile — a second shape run from the profile codes this
+one answered.
 
 ## S8 — contradictions still open on one block
 

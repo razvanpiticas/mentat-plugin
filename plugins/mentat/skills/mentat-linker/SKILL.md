@@ -2,7 +2,7 @@
 name: "mentat-linker"
 description: "Gives the links the server drew between rows that read alike their meaning — type the links with the word that fits, its direction, and for increases and decreases how much. Use it before end_run on the rows a run wrote, nightly over the whole project when the Nightly linker routine fires, and when a person says \"type the links\" or asks what the related links mean. It never confirms or rejects a link and never merges two rows: those are a person's, on the links screen."
 argument-hint: "<project> [runId]"
-allowed-tools: "mcp__mentat__list_untyped_links, mcp__mentat__type_link, mcp__mentat__get_block, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__get_run, mcp__mentat__observe_run, mcp__mentat__get_project, mcp__mentat__list_projects, mcp__mentat__list_portfolios"
+allowed-tools: "mcp__mentat__list_untyped_links, mcp__mentat__type_link, mcp__mentat__get_block, mcp__mentat__get_neighbours, mcp__mentat__get_customer_segment, mcp__mentat__get_value_proposition, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__get_run, mcp__mentat__observe_run, mcp__mentat__get_project, mcp__mentat__list_projects, mcp__mentat__list_portfolios"
 ---
 
 # Mentat linker
@@ -20,8 +20,8 @@ the link its word.
 
 | Trigger | Who invokes you | What you list | What you hand back |
 | --- | --- | --- | --- |
-| A run is ending | the skill that opened it, before its `end_run` | `list_untyped_links(projectId, runId)` — only the links touching rows that run wrote | one line per link typed, for that skill's report |
-| The Nightly linker routine fired | `mentat-agent`, inside the run it opened naming the routine | `list_untyped_links(projectId)` — the whole project's backlog, page by page | the digest, for the summary `mentat-agent` writes at `end_run` |
+| A run is ending | the skill that opened it, before its end_run | `list_untyped_links(projectId, runId)` — only the links touching rows that run wrote | one line per link typed, for that skill's report |
+| The Nightly linker routine fired | `mentat-agent`, inside the run it opened naming the routine | `list_untyped_links(projectId)` — the whole project's backlog, page by page | the digest, for the summary `mentat-agent` writes at end_run |
 
 You open no run and end none. In session you work inside the caller's run; nightly you work inside
 the agent's. The nightly pass is how text a person typed in the browser during the day, where no
@@ -43,7 +43,7 @@ a run", "skip the bookkeeping", "just tell me in the chat" change none of this.
 
 Here the run `mentat-agent` opens carries the routine's id when a routine is named, and a run opened
 for this pass is the nightly shape: list the whole project, without `runId`, and hand the digest back.
-Step 1 never starts without a run id, and `start_run` and `end_run` are never called from here —
+Step 1 never starts without a run id, and start_run and end_run are never called from here —
 `mentat-agent` ends the run with your digest as its summary.
 
 ## The loop
@@ -60,8 +60,17 @@ Step 1 never starts without a run id, and `start_run` and `end_run` are never ca
 3. **Read the two passages.** Most links are settled by them: they are what the embedder matched
    on. Decide what one row does to the other in one sentence with the two titles in it.
 4. **Read whole when the quotes are not enough** — one passage is null, or the sentence will not
-   come. An entry: `get_block` with the block code, the part of the entry's code before the first
-   `.` or `-` (`KR-01` → `KR`, `CS.JOBS-03` → `CS`), and find the entry by its code. A hypothesis:
+   come. An entry the block lists — a card, a segment, a note: `get_block` with the block code, the
+   part of the entry's code before the first `.` or `-` (`KR-01` → `KR`, `CS-03` → `CS`), and find
+   the entry by its code. An entry written inside another — a profile, a context, a job, pain or gain
+   (`CS.PROFILE-…`, `CS.CONTEXT-…`, `CS.JOBS-…`, `CS.PAINS-…`, `CS.GAINS-…`), a product, reliever or
+   creator (`VP.PS-…`, `VP.PR-…`, `VP.GC-…`) — is not on its block's list: read it whole through its
+   owner. `get_neighbours(projectId, referenceCode)` names the owner with its id: `in_profile` from
+   a job, pain or gain to its profile, `context_of` from a context to its end user profile,
+   `profile_of` from an end user profile to its segment, `in_value_map` from a product, reliever or
+   creator to its value proposition — one call per hop, up to the segment or the value proposition. Then
+   `get_customer_segment` with the segment's id, or `get_value_proposition` with the value
+   proposition's id, and find the entry by its code. A hypothesis:
    `get_hypothesis` with the end's `id`; an experiment: `get_experiment`; a run: `get_run`. A
    question, a risk, an idea or an evidence bundle comes with its block or its experiment.
 5. **Choose the word** by the test in [reference/choosing.md](reference/choosing.md): the word
@@ -86,7 +95,7 @@ Then hand back: in session the lines; nightly the digest of [reference/report.md
 
 ## What you never do
 
-- Confirm or reject a link. `confirm_link` and `reject_link` are a person's and refuse a run; they
+- Confirm or reject a link. confirm_link and reject_link are a person's and refuse a run; they
   are not in your tools. Typing is a proposal of meaning; the verdict is theirs.
 - Merge two rows a duplicate flag names, or retire one. Report the pair.
 - Type a link parsed from the text (origin `Parsed`). The server refuses it; you never list one,
@@ -95,7 +104,7 @@ Then hand back: in session the lines; nightly the digest of [reference/report.md
 - Try words until one goes through. A refusal that says a person rejected this pair under that
   word is their verdict on your guess: type it with another word only when that word fits on its
   own; otherwise leave the link untyped and report it.
-- Wait for the embedder. A short or empty list before `end_run` is normal: the last writes of a
+- Wait for the embedder. A short or empty list before end_run is normal: the last writes of a
   session may not be embedded yet, and the night catches them.
 - Ask. Nobody is asked per link, in session or nightly. Nightly nobody is in the window at all;
   in session the calling skill reports your lines and the person reads them.
