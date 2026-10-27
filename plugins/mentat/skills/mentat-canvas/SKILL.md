@@ -38,8 +38,12 @@ write carries its id.
    entry it accepts (each with the `kindDefinitionId` and `storage` a write needs), everything already
    written on it, and the canvas version. Reading first is how you avoid writing a duplicate of an
    entry that already exists and how you learn which ids to address. On Customer Segments it answers
-   the trees in short, without what is written inside a segment: `get_customer_segment` reads one
-   segment whole, `get_value_proposition` one value proposition whole, `get_ideation` the idea.
+   the trees under `customerSegments`, not in `block.entries`: an `outline` row per live segment, the
+   `beachheads` in full with their adjacent markets in short, the `shortlisted` segments of a tree with
+   no beachhead in short, and `retiredCount`. It leaves out the kinds' schemas unless you send
+   `includeSchemas: true`, the retired segments unless `includeRetired: true`, and every segment as a
+   whole entry unless `allInFull: true`. `get_customer_segment` reads one segment whole,
+   `get_value_proposition` one value proposition whole, `get_ideation` the idea.
 3. **Write with the version you read.** Every write takes `canvasVersion` and answers with the new
    one. Carry the answered version into the next write. Two writes in a row against the same version
    means the second is refused as stale — that is the canvas protecting itself from a decision made on
@@ -72,8 +76,9 @@ project may hold custom blocks with codes of their own. Writes take **ids** a re
 
 Every kind `get_block` lists carries its `schema`: the columns a write of that kind takes, each with
 its type, whether it is required, what it points at and the words it accepts with what each word
-means. Read the schema of the kind you are about to write; it is the only source of its columns and
-words.
+means. On Customer Segments the schema comes only with `includeSchemas: true`; send it before writing
+an entry there. Read the schema of the kind you are about to write; it is the only source of its
+columns and words.
 
 - A kind whose schema has no columns is free-form: `add_entry` takes `title` and `body` (markdown)
   only.

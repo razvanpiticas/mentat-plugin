@@ -91,7 +91,8 @@ what was raised, never the place the question is asked.
    with the tool that answers it — `get_project`, `get_ideation`, `get_block`, `get_customer_segment`,
    `get_value_proposition`. Make every one of those reads before the first step, on the segments and
    value propositions it names. Then `get_block` on every block a target slot names: the block's
-   description says what belongs on it, a kind's schema says what a write must send. An idea slot is
+   description says what belongs on it, a kind's schema says what a write must send — on Customer
+   Segments, send `includeSchemas: true` to get the schemas. An idea slot is
    read with `get_ideation`, which answers the idea's `version`: every idea write sends it as
    `ideationVersion`, and each write answers the next `version`.
 4. **Open the run.** `start_run(projectId, operationId, forcePastPrerequisites: false, agentId,

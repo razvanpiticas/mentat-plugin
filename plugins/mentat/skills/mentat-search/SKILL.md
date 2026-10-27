@@ -70,9 +70,11 @@ has the rule with examples and the answer's shape.
 
 ## Exact
 
-`get_block` answers the block: its kinds with their shape, the entries it lists — the cards, every
-segment of the Customer Segments trees in short, the notes — and the hypotheses, questions, risks
-and ideas on it. A listed entry's code names its block before the first `.` or `-` (`KR-01` → `KR`,
+`get_block` answers the block: its kinds with their shape, the entries it lists — the cards, the
+notes — and the hypotheses, questions, risks and ideas on it. On Customer Segments the segments are
+under `customerSegments`: an outline row per live segment with its reasons, the beachheads in full
+with their adjacent markets, the shortlisted segments of a tree with no beachhead, and the retired
+count (`includeRetired: true` lists them). A listed entry's code names its block before the first `.` or `-` (`KR-01` → `KR`,
 `CS-03` → `CS`). An entry written inside an owner is not on its block's list — a profile, a context,
 a job, pain or gain, a product, reliever or creator — and is read through that owner:
 `get_customer_segment` with the segment's id for a profile and its items, `get_value_proposition`

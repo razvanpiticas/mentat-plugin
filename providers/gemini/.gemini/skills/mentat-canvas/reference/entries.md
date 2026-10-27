@@ -4,9 +4,10 @@
 kind — `fields`; for a kind written inside another entry, the owner's id as `ownerId`; for a
 confirmed or reported customer or value entry, its `source`. All of it comes from `get_block`: its
 `kinds` list carries each kind's `definitionId`, `code`, `storage`, its `schema` — the columns and the
-words — and, for a custom kind, the `attributes` it declares. The owner's id comes from the read that
-answered the owner: `get_block` for a segment, `get_customer_segment` for a profile,
-`get_value_proposition` for a value proposition.
+words — and, for a custom kind, the `attributes` it declares. On Customer Segments `get_block` answers
+the schemas only with `includeSchemas: true`. The owner's id comes from the read that answered the
+owner: `get_block` for a segment, `get_customer_segment` for a profile, `get_value_proposition` for a
+value proposition.
 
 ## Typed kinds: the `fields` object
 
@@ -48,8 +49,20 @@ sending an empty string, and use `retire_entry` when the entry no longer holds.
 | `VP.PS`, `VP.PR`, `VP.GC` | a value proposition | the value proposition's id |
 
 `CS.NOTES`, `VP`, `VP.NOTES` and the kinds of every other block are written on the block itself and
-refuse an `ownerId`. On CS, `get_block` lists every segment of every tree in short (id, code, state,
-parent, order, flags, `isCard`) and the notes. On VP, it lists our value propositions and the notes.
+refuse an `ownerId`. On CS, `get_block` lists the notes in `block.entries` and the segments under
+`customerSegments`:
+
+| Member | What it holds |
+| --- | --- |
+| `outline` | Every live segment, parent before child: id, code, title, status, display order, and only what holds a value — parent code, state, score, the segment it resells to, `whySplitIntoChildSegments`, `whyDropped`, `whyNotBeachhead`, and the true flags of `isRoot`, `isLeaf`, `isBeachhead`, `isProposedBeachhead`, `isServed`, `isOutOfTheRunning` |
+| `retiredCount` | How many segments are retired. `includeRetired: true` lists them in the outline with `isRetired`, `retirementReason` and `supersededByReferenceCode` |
+| `beachheads` | Each accepted or proposed beachhead with what `get_customer_segment` answers but the end user profile — the whole entry, ratings, market conditions, comparison, customers today, TAM, market share, the beachhead part, offers tried — and `adjacentMarkets`: each live adjacent market's title, body, state, score and parts, in the order of the beachhead part, which says what changes to win each |
+| `shortlisted` | On a tree with no beachhead yet, its shortlisted segments still in the running: title, body, state, score, parts and `whyNotBeachhead` |
+
+`allInFull: true` adds every live segment as a whole entry to `block.entries` — body, source,
+timestamps, and `fields` with its card, parts and the refusals of a beachhead or an end user profile
+on it. Read one segment whole with `get_customer_segment` instead. On VP, `get_block` lists our value
+propositions and the notes.
 Profiles, their items and value map entries are read through their owner with
 `get_customer_segment` / `get_value_proposition`. A first child
 of a segment is refused until the segment says why it is split: `split_customer_segment` writes both.

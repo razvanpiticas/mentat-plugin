@@ -87,8 +87,8 @@ or only where to work — open the run, then read it before you suggest, route o
   few lines: what the block's definition says must be true for it to hold; the kinds it accepts, each
   with what it is for; what it holds — entries by code with their status, hypotheses by status, open
   questions, risks and ideas; its coverage and confidence. On Customer Segments and Value Proposition
-  `get_block` lists the segments in short and our value propositions, never what is written inside
-  them: before the account, read each segment the account needs with `get_customer_segment` (its
+  `get_block` lists the segments as an outline with the beachheads in full but their end user
+  profile, and our value propositions, never what is written inside the rest: before the account, read each segment the account needs with `get_customer_segment` (its
   profiles, jobs, pains and gains) and each value proposition with `get_value_proposition` (its
   products, relievers and creators). Then propose the work, one recommendation first, from what that
   definition asks for and what the block is missing — never from general knowledge of the subject.

@@ -33,7 +33,8 @@ For each of the operation's own steps, in `executionOrder`:
    so: ask before anything else — in the chat in a session, through the inbox unattended (the body
    below), and stop there until the answer comes.
 4. Draft what the step produces, as the entries and parts it asks for, on the kinds the target slots
-   name, with the fields the kind's schema lists (`get_block` carries it). A step that produces a
+   name, with the fields the kind's schema lists (`get_block` carries it; on Customer Segments only
+   with `includeSchemas: true`). A step that produces a
    hypothesis drafts it in the "We believe that" form; a step that opens a question drafts the
    question.
 5. In a session: show the draft, ask, write. Unattended: write.
