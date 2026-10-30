@@ -76,7 +76,7 @@ The other two are read from this session, not the machine: Treg is here when the
 | Treg | "Treg answers what no page shows: search volumes, search results, company and people data, ad libraries. Each call spends your own Treg credit." |
 | last30days | "last30days shows what people are saying now on Reddit, X, YouTube, TikTok, Instagram and Hacker News, freshest first." |
 
-Close with three lines: with them, canvas entries carry quoted, linked evidence and can be `Reported`
+Close with three lines: with them, canvas entries carry quoted, linked citations and can be `Reported`
 instead of `Inferred`; "Research still works without any of them, through my own web search and
 fetch: they only add depth, such as quoted posts, transcripts, comments and counts."; "Mentat has no
 affiliation with any of these tools or their providers: they are third-party options you may choose

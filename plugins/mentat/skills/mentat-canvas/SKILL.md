@@ -95,9 +95,10 @@ columns and words.
   job, pain or gain inside a profile, end user or context, a product, reliever or creator inside a
   value proposition. Sent without one: "CS.PAINS is written inside a profile: send the profile's id
   as ownerId." A kind written on the block itself refuses an `ownerId`.
-- **A customer or value entry that is `Confirmed` or `Reported` carries its `source`**: where it came
-  from, so anyone can check it — the link, the interview, the business's own data. Without one: "A
-  Reported entry needs its source, so anyone can check it."
+- **A customer or value entry that is `Confirmed` or `Reported` carries at least one citation** in
+  `citations`: each with its `reference` (the link, the interview, the business's own data), and, for
+  a quote, `who`, their `words`, `seenOn` and its counts. A fact inside a part carries its own the
+  same way. Without one: "A Reported entry needs at least one citation, so anyone can check it."
 - A `Pointer` column takes the id of an entry of the storage its `pointer.targetStorages` names, on
   the same block when `pointer.scope` is `SameBlock` and anywhere on the canvas when it is
   `SameCanvas`. Write the entry pointed at first; the document answers its reference code beside the
@@ -106,7 +107,8 @@ columns and words.
   naming the column and the words that would have worked, so it costs a round trip, not a wrong row.
 
 When the kind you want does not exist on the block, write to the block's free-form Notes kind and say
-in the body what it is; do not force content into a kind it does not fit. Worked examples, the
+in the body what it is; do not force content into a kind it does not fit. A quote or a source is never
+a note: it is a citation on the statement it backs. Worked examples, the
 statuses and every tool of the segments, profiles, value maps and the idea are in
 [reference/entries.md](reference/entries.md).
 

@@ -2,7 +2,8 @@
 
 `add_entry` needs the block's id, the kind's `kindDefinitionId`, a title, a status, and — for a typed
 kind — `fields`; for a kind written inside another entry, the owner's id as `ownerId`; for a
-confirmed or reported customer or value entry, its `source`. All of it comes from `get_block`: its
+confirmed or reported customer or value entry, at least one citation in `citations`. All of it comes
+from `get_block`: its
 `kinds` list carries each kind's `definitionId`, `code`, `storage`, its `schema` — the columns and the
 words — and, for a custom kind, the `attributes` it declares. On Customer Segments `get_block` answers
 the schemas only with `includeSchemas: true`. The owner's id comes from the read that answered the
@@ -27,7 +28,10 @@ kind's schema and the profile's id from `get_customer_segment`:
   "ownerId": "<id of CS-03's end user profile>",
   "title": "Waiting more than 10 minutes for a client reply",
   "body": "Said unprompted by 7 of 10 interviewees; they refresh the inbox between sessions.",
-  "source": "Interviews with ten gym owners, 12–19 October, notes in the shared folder.",
+  "citations": [
+    { "reference": "Interview with Ana Pop, owner of FitHub Cluj", "who": "Ana Pop", "words": "I refresh my inbox between every session, and still they answer after ten minutes.", "seenOn": "2026-10-14" },
+    { "reference": "https://www.reddit.com/r/gymowners/comments/…", "who": "u/liftlocal", "words": "Ten minutes waiting on a client reply is ten minutes I'm not coaching.", "seenOn": "2026-09-30", "upvotes": 212, "comments": 48 }
+  ],
   "status": "Reported",
   "fields": { "kind": "CustomerPain", "painKind": "Obstacle", "severity": "High", "measure": "more than 10 minutes" }
 }
@@ -37,6 +41,29 @@ A new item lands last among its kind inside its owner; `rerank_entries` with eve
 the new order, moves it. `update_entry` on a typed kind takes the whole new `fields` object; leave
 `fields` out to keep the current columns. A blank body is refused; leave `body` out rather than
 sending an empty string, and use `retire_entry` when the entry no longer holds.
+
+## Citations: why we believe it
+
+Evidence sits on the statement it backs. Every entry carries `citations`, a list; every fact inside a
+part carries its own (below); a signal of the idea carries exactly one, `citation`.
+
+| Member | What it holds |
+| --- | --- |
+| `reference` | Required. Where it came from, so anyone can check it: a link, "interview with Ana, 12 Oct", the business's own data, an experiment, the founder's starting point |
+| `who` | Who said or did it: "u/indiedev42", "Starter Story" |
+| `words` | What they said, quoted exactly, transcripts included; markdown |
+| `seenOn` | The day it was said or measured, `YYYY-MM-DD` |
+| `upvotes`, `comments`, `views` | The counts where it was posted, 0 or more; left out where the place counts none |
+
+- One citation per quote or figure: ten quotes behind a pain are ten citations, never one reference
+  holding ten links.
+- A `Confirmed` or `Reported` customer or value entry, and a `Confirmed` or `Reported` fact inside a
+  part, needs at least one: "A Reported entry needs at least one citation, so anyone can check it."
+  Customers today need at least one.
+- `update_entry` with `citations` replaces the whole list; leave it out to keep the list; `[]` clears
+  it. Send the ones you keep along with the new one.
+- A quote or a source is never a note. Write it on the statement it backs: the entry, or the fact
+  inside a part.
 
 ## Inside an owner
 
@@ -59,7 +86,7 @@ refuse an `ownerId`. On CS, `get_block` lists the notes in `block.entries` and t
 | `beachheads` | Each accepted or proposed beachhead with what `get_customer_segment` answers but the end user profile — the whole entry, ratings, market conditions, comparison, customers today, TAM, market share, the beachhead part, offers tried — and `adjacentMarkets`: each live adjacent market's title, body, state, score and parts, in the order of the beachhead part, which says what changes to win each |
 | `shortlisted` | On a tree with no beachhead yet, its shortlisted segments still in the running: title, body, state, score, parts and `whyNotBeachhead` |
 
-`allInFull: true` adds every live segment as a whole entry to `block.entries` — body, source,
+`allInFull: true` adds every live segment as a whole entry to `block.entries` — body, citations,
 timestamps, and `fields` with its card, parts and the refusals of a beachhead or an end user profile
 on it. Read one segment whole with `get_customer_segment` instead. On VP, `get_block` lists our value
 propositions and the notes.
@@ -84,6 +111,12 @@ part is sent in `fields`.
 | the TAM | `write_total_addressable_market` | on a beachhead only |
 | the beachhead part | `choose_beachhead` | on a leaf; why not on every other shortlisted segment; offers to try first is at least 1 |
 | the segments it turns away | `write_turned_away_segments` | on a beachhead, the whole list |
+
+Every fact inside a part (a rating's reason, a condition's evidence, a cell of the comparison, a level
+of the TAM, a characteristic, a criterion's why, a fact of the persona) is `text`, `status` and its own
+`citations`, the same shape as an entry's. The text is left out only when the status is `Unknown`.
+Customers today carry their `citations` beside the figures. `get_block` on CS answers how many
+citations each entry has, not the citations; `get_customer_segment` answers them whole.
 
 **The beachhead is proposed.** `choose_beachhead` takes the leaf segment, the part — why this one,
 what it gives up, when to switch, the offers to try first, whether it is the hardest side of a
@@ -130,7 +163,7 @@ never deleted.
 | --- | --- |
 | the founder's starting point, and the route the first time | `write_starting_point` |
 | an idea weighed, its statement and ratings, why it was not chosen | `add_ideation_candidate`, `update_ideation_candidate`, `drop_ideation_candidate` |
-| a fact read for an idea, with its link unless it is a hypothesis | `add_ideation_signal`, `update_ideation_signal` |
+| a fact read for an idea, with its one `citation`: who, their words, the day, and a web address as its `reference` (bare or `[Reddit](https://…)`) unless it is a hypothesis | `add_ideation_signal`, `update_ideation_signal` |
 | a statement of the idea, with its riskiest hypothesis | `propose_ideation_revision` |
 
 The route is set once: "The route is set once, and this project's is Idea." A dropped idea says why
@@ -148,8 +181,8 @@ pass untouched. The schema of a custom kind lists the same columns as its declar
 
 | Status | Use it when |
 | --- | --- |
-| `Confirmed` | Evidence is in hand: an experiment, a document, a number from a source you can cite. Send the `source`. |
-| `Reported` | A person said so: an interviewee, the founder, a review. Send the `source`. |
+| `Confirmed` | Evidence is in hand: an experiment, a document, a number you can cite. Send at least one citation. |
+| `Reported` | A person said so: an interviewee, the founder, a review. Send at least one citation. |
 | `Inferred` | You reasoned it from other entries. Most of what a step writes before validation is this. |
 | `Hypothesis` | A guess written to be tested; usually paired with `create_hypothesis`. |
 | `Unknown` | The slot is acknowledged and empty; the body says what is missing. |

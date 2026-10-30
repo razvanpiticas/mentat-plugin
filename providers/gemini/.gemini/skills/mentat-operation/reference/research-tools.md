@@ -3,7 +3,7 @@
 Load this when a step needs desk research. It lists tools this machine may have: what each is good
 for, how to tell it is here, and the shape of a call. They are options, never a required procedure.
 Use them, other tools, or better techniques you know: whatever finds the fact the step asks for with
-a source anyone can check. A tool that is missing is no reason to skip the research.
+a citation anyone can check. A tool that is missing is no reason to skip the research.
 
 Research works without any of them, through your own web search and fetch; they only add depth:
 quoted posts, transcripts, comments, counts. Mentat has no affiliation with any of these tools or
@@ -15,11 +15,14 @@ step needs.
 ## What the findings become
 
 Write what you find into the entries the step writes: the segment's ratings and comparison, the end
-user profile's fields, the jobs, pains and gains. Each carries its source, the link and the date it
-was published or read, and its status: `Reported` when an outside source says it, `Confirmed` when
-the founder's own data shows it or you checked it first-hand, `Inferred` when reasoned from other
-facts. Quote people's own words exactly, transcripts included. Never park findings in a note entry.
-Why: the next operations and the gate read the entries; a finding left in a note never reaches them.
+user profile's fields, the jobs, pains and gains. Each quote or figure is a citation on the statement
+it backs, the entry or the fact inside a part: its `reference` (the link), `who` said it, their
+`words` quoted exactly (transcripts included), `seenOn` (the day it was published or read), and its
+`upvotes`, `comments` and `views` where the place shows them. Ten quotes behind a pain are ten
+citations. The statement carries its status: `Reported` when an outside source says it, `Confirmed`
+when the founder's own data shows it or you checked it first-hand, `Inferred` when reasoned from
+other facts. Never park findings in a note entry. Why: the next operations and the gate read the
+statements and what backs them; a finding left in a note never reaches them.
 
 ## The tools
 

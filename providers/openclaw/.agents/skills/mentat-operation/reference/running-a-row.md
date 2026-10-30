@@ -50,7 +50,8 @@ that is a blocker (below) only when nothing at all can be produced.
 
 Desk research: the tools in [research-tools.md](research-tools.md) may be at your disposal. Use them,
 or better tools and techniques you know; they are options, never a required procedure. What they find
-goes into the entries the step writes, each with its source and status, never into a note.
+goes into the entries the step writes, each with its status and every quote or figure as a citation
+on the statement it backs (the entry, or the fact inside a part), never into a note.
 
 ## The hand-over to `mentat-hypothesis` (the Hypothesise step)
 
