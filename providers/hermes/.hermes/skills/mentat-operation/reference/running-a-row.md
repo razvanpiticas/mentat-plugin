@@ -48,6 +48,10 @@ A step whose text says to interview, to search the web, to compute from data the
 do what can be done from what is in hand and say in the checkpoint note what was not; unattended,
 that is a blocker (below) only when nothing at all can be produced.
 
+Desk research: the tools in [research-tools.md](research-tools.md) may be at your disposal. Use them,
+or better tools and techniques you know; they are options, never a required procedure. What they find
+goes into the entries the step writes, each with its source and status, never into a note.
+
 ## The hand-over to `mentat-hypothesis` (the Hypothesise step)
 
 The contract is `mentat-hypothesis`'s own (`reference/handoffs.md` there); hand over, in this order

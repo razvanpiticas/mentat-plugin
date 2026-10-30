@@ -107,6 +107,12 @@ what was raised, never the place the question is asked.
    - **It asks the founder?** Its `founderInputNeeded` says: `Always`, or `WhenInstructionsSay` with
      the instructions saying when. Then ask before you do the step —
      [Asking the founder](#asking-the-founder). `None`: it asks nothing.
+   - **It needs desk research?** These tools may be at your disposal: agent-reach, ScrapeCreators,
+     Firecrawl, Treg and last30days. What each is good for, how to tell it is here and the shape of a
+     call are in [reference/research-tools.md](reference/research-tools.md). Use them, or better tools
+     and techniques you know: they are options, never a required procedure. Write what you find into
+     the entries the step writes (the ratings and comparison, the profile's fields, the jobs, pains
+     and gains), each with its source and status, never into a note.
    - Propose what it produces — the entries, the parts, the hypotheses, the questions — on the
      kinds and parts the target slots name. In a session, show the proposal and ask before writing.
      STOP and call the AskUserQuestion tool to clarify. Then write through `mentat-canvas`, each call with `runId`: an entry with

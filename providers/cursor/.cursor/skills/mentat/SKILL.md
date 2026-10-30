@@ -35,11 +35,12 @@ and the call was refused".
 ## The front door
 
 `the mentat skill` with nothing after it is the way in for somebody who does not know what to ask.
-Named with a task instead — after the command, or as the answer to step 2 or step 6 — the task skips
+Named with a task instead — after the command, or as the answer to step 2 or step 7 — the task skips
 the status and the menu and goes one way, whatever it is: through `mentat-agent`. Pick the project as
 step 2 says when it is not known, boot the CEO as step 3 says, and hand it the task as it was made.
 A skill whose description seems to match the task is not the route: that skill is reached from
-inside `mentat-agent`.
+inside `mentat-agent`. The research tools are still checked after sign-in; the offer to set up the
+missing ones waits until the task is done.
 
 - **A question** — "what is KR-01 tied to", "what do we know about pricing", "is there already a
   hypothesis like this" — `mentat-agent` hands to `mentat-search` inside the booted session. Do not
@@ -55,11 +56,12 @@ inside `mentat-agent`.
 A skill invoked from here instead works with no agent booted: a write is recorded as the person's,
 outside the agent's run, and nothing types its links.
 
-Six steps, in this order, and every one of them reads before it says anything.
+Seven steps, in this order, and every one of them reads before it says anything.
 
 1. **Sign in.** Call `list_portfolios`. A 401 means sign in again, as [Connecting](#connecting) says;
    a 403 is explained, not retried; any other refusal — `server_info` first, then
-   [Reading a refusal](#reading-a-refusal). Nothing else is called until this answers.
+   [Reading a refusal](#reading-a-refusal). Nothing else is called until this answers. Then check
+   which research tools this session has, as [Research tools](#research-tools) says.
 2. **Pick the project.** One portfolio with one project: take it, say which. More than one: list them
    by name with their tier and ask. Ask the user directly to clarify what you cannot infer. Never pick for the person; a status of the
    wrong venture is worse than a question. Keep both identifiers the reads answered: the portfolio's
@@ -83,16 +85,43 @@ Six steps, in this order, and every one of them reads before it says anything.
      the last run;
    - what is open on the canvas: which blocks are still empty, open questions, top risks, hypotheses by
      status, running experiments, open contradictions — counts, from the brief.
-5. **The next action.** One sentence, from the next-action rule in
+5. **The research tools.** When some are missing and not set aside, say what they would add and offer
+   to set them up, as [Research tools](#research-tools) says.
+6. **The next action.** One sentence, from the next-action rule in
    [reference/front-door.md](reference/front-door.md), naming the skill that does it and asking whether
    to do it now.
-6. **The menu.** The lines in [reference/front-door.md](reference/front-door.md), verbatim, then do
+7. **The menu.** The lines in [reference/front-door.md](reference/front-door.md), verbatim, then do
    what the person picks the way a named task goes, above: through the CEO booted in step 3, a
    question as much as a write. A line marked "not in this version yet" answers one
    sentence and shows the menu again.
 
-The whole thing is read-only. Nothing is written, no run is opened, until the person picks something;
-then the run is opened through `mentat-agent`, never by a method skill invoked from here.
+The whole thing is read-only on Mentat. Nothing is written there, no run is opened, until the person
+picks something; then the run is opened through `mentat-agent`, never by a method skill invoked from
+here. The one file it may write is the local one that remembers a "not now" on the research tools.
+
+## Research tools
+
+Desk research turns guesses into quoted, linked evidence, so canvas entries can be `Reported` instead
+of `Inferred`. Five tools help with it: agent-reach, ScrapeCreators, Firecrawl, Treg and last30days;
+what each is good for is in `mentat-operation`'s research-tools reference. Research works without
+any of them, through the agent's own web search and fetch; they only add depth: quoted posts,
+transcripts, comments, counts. Mentat has no affiliation with any of these tools or their providers:
+they are third-party options the founder may choose to install and pay for.
+
+1. **Check every session.** Run the check in [reference/front-door.md](reference/front-door.md) and
+   look at this session's own tools and skills for the rest. Never store what was found. Why: a tool
+   installed or removed since the last session makes a stored answer wrong.
+2. **Offer what is missing.** For each missing tool the person has not set aside in the last 30 days,
+   one line on what it adds, from [reference/front-door.md](reference/front-door.md); say that
+   ScrapeCreators, Treg and Firecrawl spend the person's own credits; offer to set them up.
+   Ask the user directly to clarify what you cannot infer.
+3. **Set up on yes**, with the steps in [reference/front-door.md](reference/front-door.md). A key is
+   typed by the person into their own environment or file, never pasted into the chat.
+4. **On "not now"**, record the date for each tool offered, and nothing else, in the local file the
+   reference names. Ask again about that tool after 30 days, or at once when the person asks.
+5. **A session a routine fired never asks.** It uses what is there.
+
+Pass what was found to the skill that does the work, so it does not check again.
 
 ## What access means here
 

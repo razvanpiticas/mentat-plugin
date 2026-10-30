@@ -1,7 +1,7 @@
 # The front door, field by field
 
-Load this when writing the status, choosing the next action, or printing the menu. The skill carries
-the six steps; this carries what each line is read from.
+Load this when checking the research tools, writing the status, choosing the next action, or printing
+the menu. The skill carries the seven steps; this carries what each line is read from.
 
 ## The five status lines
 
@@ -52,3 +52,55 @@ harnesses with no command the line names the skill in words. A line carrying the
 its skill, so a person knows what is coming and the build can tell when it has arrived: when a skill's
 story lands, its author deletes the suffix from that line, and the build refuses a stale one the same
 day.
+
+## The research tools
+
+**The check.** One line, the same on Windows, macOS and Linux. It prints what this machine has and
+the "not now" dates; it never prints a key:
+
+```
+node -p "const fs=require('fs'),p=require('path'),os=require('os');const win=process.platform==='win32';const onPath=(n,extra)=>[...process.env.PATH.split(p.delimiter),...extra].some(d=>d&&['',...(win?process.env.PATHEXT.split(';'):[])].some(e=>fs.existsSync(p.join(d,n+e))));const env=p.join(os.homedir(),'.config','last30days','.env');const f=p.join(win?p.join(process.env.LOCALAPPDATA,'Mentat'):p.join(os.homedir(),'.local','state','mentat'),'research-tools.json');JSON.stringify({agentReach:onPath('agent-reach',[p.join(os.homedir(),'.local','bin')]),firecrawl:onPath('firecrawl',[]),ytDlp:onPath('yt-dlp',[]),scrapeCreatorsKey:Boolean(process.env.SCRAPECREATORS_API_KEY)||(fs.existsSync(env)&&/^SCRAPECREATORS_API_KEY=\S+/m.test(fs.readFileSync(env,'utf8'))),notNow:fs.existsSync(f)?JSON.parse(fs.readFileSync(f,'utf8')).notNow:{}})"
+```
+
+The other two are read from this session, not the machine: Treg is here when the session has the
+`treg` tools; last30days when a `last30days` skill is listed. Firecrawl also counts as here when a
+`firecrawl` skill is listed.
+
+**What each adds**, one line each, only for the missing ones:
+
+| Tool | Say |
+| --- | --- |
+| agent-reach | "agent-reach reads Reddit, YouTube with subtitles, GitHub, X and the web for free, so I can quote what people say, with the link." |
+| ScrapeCreators | "ScrapeCreators reaches the best Reddit threads of all time and their comments, YouTube transcripts and comments, TikTok, Instagram, X, LinkedIn, competitors' ads and creators' audiences by age and gender. It is paid per request, on your own key." |
+| Firecrawl | "Firecrawl searches the web and reads whole pages and sites, such as competitors' pricing. It spends your own credits after a free allowance." |
+| Treg | "Treg answers what no page shows: search volumes, search results, company and people data, ad libraries. Each call spends your own Treg credit." |
+| last30days | "last30days shows what people are saying now on Reddit, X, YouTube, TikTok, Instagram and Hacker News, freshest first." |
+
+Close with three lines: with them, canvas entries carry quoted, linked evidence and can be `Reported`
+instead of `Inferred`; "Research still works without any of them, through my own web search and
+fetch: they only add depth, such as quoted posts, transcripts, comments and counts."; "Mentat has no
+affiliation with any of these tools or their providers: they are third-party options you may choose
+to install and pay for." Then ask whether to set up the missing ones, all, some, or not now.
+
+**Setting up**, on yes, one tool at a time, saying what each command does before running it:
+
+| Tool | Set up |
+| --- | --- |
+| agent-reach | `uv tool install https://github.com/Panniantong/Agent-Reach/releases/latest/download/agent-reach.zip`, then `agent-reach setup`, and show the installation report it prints. Never the package of the same name on the Python package index: it is not this tool. Needs uv |
+| ScrapeCreators | The person makes an account at scrapecreators.com and puts the key in their environment as `SCRAPECREATORS_API_KEY`, or as that line in `~/.config/last30days/.env`. They type it there themselves |
+| Firecrawl | `pnpm add -g firecrawl-cli`, then `firecrawl config` to sign in |
+| Treg | The person signs up at treg.to and adds its server, `https://treg.to/mcp/`, to this harness with their own key, as Treg's setup page says; the tools appear in the next session |
+| last30days | On Claude Code: `claude plugin marketplace add mvanhorn/last30days-skill`, then `claude plugin install last30days@last30days-skill`. Elsewhere: as https://github.com/mvanhorn/last30days-skill says. Needs Python 3.12 or later |
+
+yt-dlp, the program that fetches YouTube subtitles: agent-reach's setup brings its own. Offer
+`pip install yt-dlp` only when last30days is set up and agent-reach is not.
+
+**Not now.** Record the date for each tool offered, in `research-tools.json`: under
+`%LOCALAPPDATA%\Mentat\` on Windows, the folder `mentat schedule` keeps its scripts in, and under
+`~/.local/state/mentat/` on macOS and Linux. Name the tools in the list:
+
+```
+node -p "const fs=require('fs'),p=require('path'),os=require('os');const win=process.platform==='win32';const f=p.join(win?p.join(process.env.LOCALAPPDATA,'Mentat'):p.join(os.homedir(),'.local','state','mentat'),'research-tools.json');const s=fs.existsSync(f)?JSON.parse(fs.readFileSync(f,'utf8')):{notNow:{}};for(const t of ['agent-reach','scrapecreators','firecrawl','treg','last30days'])s.notNow[t]=new Date().toISOString().slice(0,10);fs.mkdirSync(p.dirname(f),{recursive:true});fs.writeFileSync(f,JSON.stringify(s,null,2));f"
+```
+
+The file holds nothing else. Which tools are here is never written down.
