@@ -103,20 +103,35 @@ part is sent in `fields`.
 | Part | Tool | Rule the server holds |
 | --- | --- | --- |
 | state: candidate, shortlisted or dropped | `set_customer_segment_state` | dropping says why; shortlisting needs the seven ratings; a dropped segment takes its branch out of the running |
-| children | `split_customer_segment` | why it is split, then the children in order |
+| children | `split_customer_segment` | why it is split, then the children in order, each with `gatheringPlacesKept`: the names of the parent's gathering places it keeps, `[]` for none |
 | the seven ratings, each with its reason | `rate_customer_segment` | the score is worked out from them |
 | the three conditions of a market | `test_market_conditions` | each holds or not, with its evidence |
-| the comparison | `write_comparison` | on a shortlisted segment only; a row of the founder's own is named once |
+| the comparison | `write_comparison` | on a shortlisted segment, a beachhead or a beachhead's adjacent market; a row of the founder's own is named once. Where they gather is not a row: it is the segment's gathering places |
+| the gathering places | `write_gathering_places` | the whole list; each name once; every measurement a kept place had is sent again; a place the persona uses stays |
 | customers today | `write_customers_today` | marks the segment served |
 | the TAM | `write_total_addressable_market` | on a beachhead only |
 | the beachhead part | `choose_beachhead` | on a leaf; why not on every other shortlisted segment; offers to try first is at least 1 |
 | the segments it turns away | `write_turned_away_segments` | on a beachhead, the whole list |
 
 Every fact inside a part (a rating's reason, a condition's evidence, a cell of the comparison, a level
-of the TAM, a characteristic, a criterion's why, a fact of the persona) is `text`, `status` and its own
+of the TAM, a characteristic, a criterion's why, a fact of the persona, how a place's end users were
+measured) is `text`, `status` and its own
 `citations`, the same shape as an entry's. The text is left out only when the status is `Unknown`.
 Customers today carry their `citations` beside the figures. `get_block` on CS answers how many
 citations each entry has, not the citations; `get_customer_segment` answers them whole.
+
+**The gathering places are the segment's own.** Each segment holds its own list; nothing is shared
+with its parent or read from it. A place is `platform` (free text: "Reddit", "Hacker News",
+"Substack", "the local gym"; reuse the spelling already on the segment, because the tally groups by
+it), `name` ("r/ClaudeCode", "Show HN"), `link` or none, `measurements` (`count`, `unit` in words such
+as "members" or "posters a year", `seenOn`, at least one citation), `whyTheyAreThere` (one or more of
+`TalkToEachOther`, `ReadThere`, `ShowTheBehaviourThere`, `BuyThere`), `endUsersThere` once measured,
+and `howMeasured`, a fact with its sample, citations and status. `write_gathering_places` replaces the
+whole list, so read the segment with `get_customer_segment` first and send every place back. A new
+count is a new measurement added to the place's list: the earlier ones are sent again unchanged, never
+edited or dropped, and a list that leaves one out is refused. The latest audience, the growth between
+two counts in the same unit, and the tally by platform are worked out by the server, never sent. The
+tally adds places up before overlap: one person can be in several places.
 
 **The beachhead is proposed.** `choose_beachhead` takes the leaf segment, the part — why this one,
 what it gives up, when to switch, the offers to try first, whether it is the hardest side of a
@@ -131,15 +146,16 @@ is chosen to replace it.
 
 | Part | Tool |
 | --- | --- |
-| who the end user is: the fifteen characteristics and any added | `describe_end_user` |
+| who the end user is: the twelve characteristics and any added. Where they gather, what they read and where they are counted are the segment's gathering places | `describe_end_user` |
 | the team member who fits it, who else decides, other patterns and outliers, the gaps left by what they use today | `update_entry` on the profile, in its `fields` |
 | the purchasing criteria, in order, each pointing at one of the profile's own jobs, pains or gains | `write_purchasing_criteria` |
-| the persona: how it was made, its fact sheet in the profile's characteristic names, its words for the top pain, its picture prompt | `write_persona` |
+| the persona: how it was made, its fact sheet in the profile's characteristic names, which of its segment's gathering places the person uses (`gatheringPlacesTheyUse`, by name), its words for the top pain, its picture prompt | `write_persona` |
 | the persona's picture: a PNG, JPEG, WebP or SVG of at most 25 MB, its bytes in base64 | `upload_persona_picture`, `remove_persona_picture` |
 | a real end user's persona, erased on their request | `erase_persona` |
 | the profile moved onto a leaf when the beachhead moves | `move_end_user_profile` |
 
-A real end user's persona says what the person agreed to be kept. A move is refused while one of our
+A real end user's persona says what the person agreed to be kept. The places it uses are names on
+its segment's list. A move is refused while one of our
 value propositions aimed at the profile has reached a fit: a new offer starts from the moved profile.
 
 ## Value propositions

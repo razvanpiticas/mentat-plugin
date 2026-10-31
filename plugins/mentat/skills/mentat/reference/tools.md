@@ -5,7 +5,7 @@ file carries what the schema cannot say: which permission each tool demands, whe
 anything, and which take and answer a canvas version. How to use them well is the `mentat-canvas`
 skill's job.
 
-One hundred and sixty-eight tools: forty-four reads and one hundred and twenty-four writes.
+One hundred and sixty-nine tools: forty-four reads and one hundred and twenty-five writes.
 
 ## Reads — `mcp:tools.read`
 
@@ -18,7 +18,7 @@ One hundred and sixty-eight tools: forty-four reads and one hundred and twenty-f
 | `get_project_state` | BusinessIntelligence | Where a project stands: the canvas in summary with every block's counts, the plan position and whether it has a thesis, the decisions, your open jobs, what a person answered while you were away, how many inbox rows still wait for the person you work for, and what changed since your last run ended |
 | `get_canvas` | BusinessIntelligence | The canvas document and its version: every block whole, every segment as a whole entry with its card, parts and refusals — large. What is written inside a segment or a value proposition comes through `get_customer_segment` and `get_value_proposition` |
 | `get_block` | BusinessIntelligence | One block by code, its kinds with each kind's schema, everything on it, the version. On Customer Segments, its trees under `customerSegments`: an outline row per live segment (id, code, title, status, order, and only what holds a value: parent, state, score, reasons, the true flags), the retired count, every beachhead in full but its end user profile with its adjacent markets in short, and the shortlisted segments of a tree with no beachhead in short. `includeSchemas`, `includeRetired` and `allInFull` add the kinds' schemas, the retired segments and every segment as a whole entry. On Value Proposition, our value propositions and the notes |
-| `get_customer_segment` | BusinessIntelligence | One customer segment whole: its ratings and score, the three conditions of a market, its comparison, its customers today, its TAM with the total and the market share, its beachhead part with the adjacent markets and the segments it turns away, and its end user profile — who they are, the jobs, pains and gains in rank order, the purchasing criteria in order, the persona with its picture's address and its picture prompt, the context profiles with their items — with the canvas version |
+| `get_customer_segment` | BusinessIntelligence | One customer segment whole: its ratings and score, the three conditions of a market, its comparison, its customers today, its TAM with the total and the market share, its gathering places with each one's latest audience and growth worked out from its measurements, the tally of those places by platform (a sum before overlap), its beachhead part with the adjacent markets and the segments it turns away, and its end user profile — who they are, the jobs, pains and gains in rank order, the purchasing criteria in order, the persona with the gathering places the person uses, its picture's address and its picture prompt, the context profiles with their items — with the canvas version |
 | `get_value_proposition` | BusinessIntelligence | One value proposition whole: the profile it aims at, its products and services, pain relievers and gain creators in rank order with what each is connected to, the value propositions of what they use today aimed at the same profile, and the fit check, with the canvas version |
 | `get_hypothesis` | BusinessIntelligence | One hypothesis with its runs |
 | `get_experiment` | BusinessIntelligence | One run with metric and criterion ids, evidence |
@@ -76,17 +76,18 @@ carries its own version and a conflict names which of them moved.
 | `add_entry`, `update_entry`, `retire_entry`, `delete_entry` | Entries. A kind written inside another entry takes its owner's id as `ownerId` when it is added: a child segment its parent, an end user profile its segment, a context profile its end user profile, a job, pain or gain its profile, a product, reliever or creator its value proposition. A confirmed or reported customer or value entry carries at least one citation in `citations` (`reference`, `who`, `words`, `seenOn`, `upvotes`, `comments`, `views`); `update_entry` replaces the whole list. `update_entry` on our value proposition also writes what it forgoes and why |
 | `rerank_entries` | Puts every entry of one kind inside one owner in a new order, top first: the order is the rank |
 | `set_customer_segment_state` | Shortlists a segment, drops it with why, or makes it a candidate again |
-| `split_customer_segment` | Adds child segments under a segment, with why it is split |
+| `split_customer_segment` | Adds child segments under a segment, with why it is split and which of the parent's gathering places each child keeps |
 | `rate_customer_segment` | Writes a segment's seven ratings, each with its reason, in one call |
 | `test_market_conditions` | Writes the three conditions of a market, each with whether it holds and its evidence |
-| `write_comparison` | Writes a shortlisted segment's whole comparison, the founder's own rows included |
+| `write_comparison` | Writes the whole comparison of a shortlisted segment, a beachhead or a beachhead's adjacent market, the founder's own rows included |
+| `write_gathering_places` | Writes a segment's whole list of gathering places: each place's platform, name, link, measurements (count, unit, day seen, citations; the earlier ones sent again, never changed), why the end users are there, how many of them are there and how that was measured |
 | `write_customers_today` | Writes the customers an existing business has in a segment, which marks it served |
 | `write_total_addressable_market` | Writes a beachhead's TAM: the end users counted bottom up and top down, the annual revenue per end user and how it was worked out, the growth rate |
 | `choose_beachhead` | Proposes a leaf segment as a beachhead with its part — why this one, what it gives up, when to switch, the offers to try first, whether it is the hardest side of a platform, the adjacent markets in order, the beachhead it replaces, and why not on every other shortlisted segment — with its decision in the ledger: an agent's is proposed and a person accepts it on the decisions tab, a person's is accepted as written |
 | `write_turned_away_segments` | Writes the whole list of segments a beachhead turns away, each with how to tell them and what to refer them to |
-| `describe_end_user` | Writes who the end user is: the end user profile's fifteen characteristics and any added ones, in one call |
+| `describe_end_user` | Writes who the end user is: the end user profile's twelve characteristics and any added ones, in one call |
 | `write_purchasing_criteria` | Writes an end user profile's whole list of purchasing criteria, in order, each pointing at one of its jobs, pains or gains |
-| `write_persona` | Writes or replaces the persona of an end user profile: how it was made, its fact sheet, its words for the top pain and its picture prompt |
+| `write_persona` | Writes or replaces the persona of an end user profile: how it was made, its fact sheet, the segment's gathering places the person uses, its words for the top pain and its picture prompt |
 | `upload_persona_picture`, `remove_persona_picture` | Puts a picture on the persona — a PNG, JPEG, WebP or SVG file of at most 25 MB, its bytes sent in base64 — or takes it off |
 | `erase_persona` | Erases a real end user's persona when they ask: its facts and its picture, and their values in the history |
 | `move_end_user_profile` | Moves an end user profile, with its context profiles and persona, onto a leaf segment |

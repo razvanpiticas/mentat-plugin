@@ -117,11 +117,18 @@ beachhead or a shortlisted segment its end user profile with its jobs, pains and
 criteria, its persona and its context profiles. A segment's parts have tools of their own, each
 taking the segment's or the profile's id and `canvasVersion`: `set_customer_segment_state`,
 `split_customer_segment`, `rate_customer_segment`, `test_market_conditions`, `write_comparison`,
-`write_customers_today`, `write_total_addressable_market`, `choose_beachhead`,
+`write_gathering_places`, `write_customers_today`, `write_total_addressable_market`, `choose_beachhead`,
 `write_turned_away_segments`; `describe_end_user`, `write_purchasing_criteria`, `write_persona`,
 `upload_persona_picture`, `remove_persona_picture`, `erase_persona`, `move_end_user_profile`. Each
 writes its part whole: send everything the part holds, not the change. `rerank_entries` puts every
 entry of one kind inside one owner in a new order; the order is the rank.
+
+Where a segment's end users gather is one list on the segment, its gathering places, and nowhere else:
+not a row of the comparison, not a characteristic of the end user or of the persona. Each segment holds
+its own; a split names the places each child keeps (`gatheringPlacesKept`), copied onto the child, and
+the persona names the places the person uses (`gatheringPlacesTheyUse`). `write_gathering_places`
+replaces the whole list: read it with `get_customer_segment`, send every place back, and add a new count
+as a new measurement beside the earlier ones, which are never edited or dropped.
 
 A beachhead is proposed, never marked: `choose_beachhead` writes its part and its decision, and an
 agent's decision waits on the decisions tab for a person to accept it. A beachhead is replaced by

@@ -109,15 +109,16 @@ what was raised, never the place the question is asked.
      Firecrawl, Treg and last30days. What each is good for, how to tell it is here and the shape of a
      call are in [reference/research-tools.md](reference/research-tools.md). Use them, or better tools
      and techniques you know: they are options, never a required procedure. Write what you find into
-     the entries the step writes (the ratings and comparison, the profile's fields, the jobs, pains
-     and gains), each with its status and every quote or figure as a citation on the statement it
+     the entries the step writes (the ratings and comparison, the segment's gathering places, the
+     profile's fields, the jobs, pains and gains), each with its status and every quote or figure as a citation on the statement it
      backs, never into a note.
    - Propose what it produces — the entries, the parts, the hypotheses, the questions — on the
      kinds and parts the target slots name. In a session, show the proposal and ask before writing.
      STOP and call the question tool to clarify. Then write through `mentat-canvas`, each call with `runId`: an entry with
      `add_entry`, carrying `ownerId` when its kind is written inside another entry; a segment's,
      profile's or value proposition's part with its own tool (`rate_customer_segment`,
-     `describe_end_user`, `write_persona`, `connect_value_map_entry` and the rest); the idea with the
+     `write_gathering_places`, `describe_end_user`, `write_persona`, `connect_value_map_entry` and
+     the rest); the idea with the
      idea tools and `ideationVersion`, never as a block entry. Keep the ids the writes answered.
    - **It sends the project back?** When the instructions say the work of an earlier operation no
      longer holds — the beachhead moved, the profile narrowed — the project goes back mid-way:
