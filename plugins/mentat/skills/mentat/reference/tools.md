@@ -88,7 +88,7 @@ carries its own version and a conflict names which of them moved.
 | `describe_end_user` | Writes who the end user is: the end user profile's twelve characteristics and any added ones, in one call |
 | `write_purchasing_criteria` | Writes an end user profile's whole list of purchasing criteria, in order, each pointing at one of its jobs, pains or gains |
 | `write_persona` | Writes or replaces the persona of an end user profile: how it was made, its fact sheet, the segment's gathering places the person uses, its words for the top pain and its picture prompt |
-| `upload_persona_picture`, `remove_persona_picture` | Puts a picture on the persona — a PNG, JPEG, WebP or SVG file of at most 25 MB, its bytes sent in base64 — or takes it off |
+| `request_persona_picture_upload`, `remove_persona_picture` | Puts a picture on the persona — a link the file (PNG, JPEG, WebP or SVG, at most 25 MB) is sent to from disk with one PUT — or takes it off |
 | `erase_persona` | Erases a real end user's persona when they ask: its facts and its picture, and their values in the history |
 | `move_end_user_profile` | Moves an end user profile, with its context profiles and persona, onto a leaf segment |
 | `aim_value_proposition` | Aims a value proposition at a profile |

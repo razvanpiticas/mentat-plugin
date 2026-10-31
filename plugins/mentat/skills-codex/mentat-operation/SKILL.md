@@ -249,39 +249,37 @@ wrong. A real end user gets a picture only when what the person agreed to be kep
 the picture, which depends on what this agent can do:
 
 Codex has an image tool. Draw the picture with it (`image_gen`) from the saved prompt: square,
-1024×1024, in the style the step names, saved as `persona.png` in the working directory. The bytes
-travel inside the call as base64 — a 1024×1024 PNG is 1 to 3 MB, millions of characters — so never
-send the PNG. Shrink it first, with commands that run the same on Windows, macOS and Linux:
-
-1. Re-encode it as a 384×384 WebP:
-   `pnpm dlx sharp-cli@6.1.0 -i persona.png -o persona.webp -f webp -q 60 resize 384 384`
-2. Check the size against the budget, **32,768 bytes**:
-   `node -p "require('fs').statSync('persona.webp').size"`. Over it: run step 1 again with `-q 40`;
-   still over, with `-q 40` and `resize 256 256`; still over after that, draw the SVG below instead.
-   Never send a file over the budget.
-3. Read its bytes in base64 — `node -p "require('fs').readFileSync('persona.webp').toString('base64')"`
-   — and send them with `upload_persona_picture(projectId, canvasVersion, endUserProfileId,
-   fileName: "persona.webp", pictureBase64, runId)`. Never encode the bytes in your head.
-4. The answer is the segment with the persona's `pictureContentPath` set: the picture is on the
-   Persona section. Report it.
-
-No pnpm on this machine, so step 1 cannot run: draw the persona as the SVG below instead, which is
-small by nature. Otherwise the SVG is for an agent with no image tool, not for you.
+1024×1024, in the style the step names, saved as `persona.png` in the working directory. Send it as it
+is, by the link below: the bytes go from the file, so its size costs nothing in the conversation.
 
 **With no image tool, an SVG written from the prompt.** The same prompt, drawn in code. The file
 opens with `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">` — the root is `svg` in
 the SVG namespace, or it is not read as an image — with no DOCTYPE, flat shapes and gradients only,
-no text, no script, no event handler, no external link or font. Write it to a file, read its bytes
-in base64 with the shell —
-`node -p "require('fs').readFileSync('persona.svg').toString('base64')"` reads them the same way on
-Windows, macOS and Linux — and send them with `upload_persona_picture`, `fileName` ending in `.svg`.
-Never encode the bytes in your head: one wrong character and the file is not an image.
+no text, no script, no event handler, no external link or font. Write it to a file, `persona.svg`.
+
+**Send the file to an upload link, never as text.** The picture's bytes never pass through the
+conversation: one wrong character copied by hand and the file is not an image, and a photo is
+millions of characters.
+
+1. Ask for the link: `request_persona_picture_upload(projectId, canvasVersion, endUserProfileId,
+   fileName, runId)` — `fileName` the name it is kept under, such as `dana-whitfield.png`; the
+   `canvasVersion` the `write_persona` call answered. The answer is `uploadUrl`, `expiresAtUtc`
+   (fifteen minutes on) and `maxBytes`. Asking does not move the canvas version.
+2. Send the file as the whole body of one PUT, with no token and nothing else:
+   `curl -sS -X PUT --data-binary @persona.png "<uploadUrl>"` — the same on Windows, macOS and Linux;
+   quote the address. The answer is `{"canvasVersion": N}`: the next write sends `N`.
+3. Report that the picture is on the Persona section.
+
+The link takes one picture, recorded as yours inside this run. A refused PUT leaves it usable until it
+expires: fix the file and send it to the same link.
 
 A refusal says what to change: "The picture is 30.0 MB; the limit is 25 MB.", "A persona picture is a
 PNG, JPEG, WebP or SVG image.", "An SVG picture holds no script, event handler or external link." The
 second, on an `.svg`, means the file is not an SVG drawing: its root is not `svg`, or not in the
-`http://www.w3.org/2000/svg` namespace, or the XML is malformed or declares a DOCTYPE. Fix the file
-and send it again; the prompt is already saved.
+`http://www.w3.org/2000/svg` namespace, or the XML is malformed or declares a DOCTYPE. A `CONFLICT`
+naming the canvas version means the canvas moved after the link was issued: ask for a new link at
+the version the refusal names and send the file again. A link that expired, or whose run ended, is
+refused the same way: ask for a new one, inside an open run. The prompt is already saved.
 
 ## When a routine fired this run
 

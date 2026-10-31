@@ -151,7 +151,7 @@ is chosen to replace it.
 | the team member who fits it, who else decides, other patterns and outliers, the gaps left by what they use today | `update_entry` on the profile, in its `fields` |
 | the purchasing criteria, in order, each pointing at one of the profile's own jobs, pains or gains | `write_purchasing_criteria` |
 | the persona: how it was made, its fact sheet in the profile's characteristic names, which of its segment's gathering places the person uses (`gatheringPlacesTheyUse`, by name), its words for the top pain, its picture prompt | `write_persona` |
-| the persona's picture: a PNG, JPEG, WebP or SVG of at most 25 MB, its bytes in base64 | `upload_persona_picture`, `remove_persona_picture` |
+| the persona's picture: a PNG, JPEG, WebP or SVG of at most 25 MB, sent from its file with one PUT to the link `request_persona_picture_upload` answers | `request_persona_picture_upload`, `remove_persona_picture` |
 | a real end user's persona, erased on their request | `erase_persona` |
 | the profile moved onto a leaf when the beachhead moves | `move_end_user_profile` |
 

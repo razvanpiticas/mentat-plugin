@@ -119,8 +119,9 @@ taking the segment's or the profile's id and `canvasVersion`: `set_customer_segm
 `split_customer_segment`, `rate_customer_segment`, `test_market_conditions`, `write_comparison`,
 `write_gathering_places`, `write_customers_today`, `write_total_addressable_market`, `choose_beachhead`,
 `write_turned_away_segments`; `describe_end_user`, `write_purchasing_criteria`, `write_persona`,
-`upload_persona_picture`, `remove_persona_picture`, `erase_persona`, `move_end_user_profile`. Each
-writes its part whole: send everything the part holds, not the change. `rerank_entries` puts every
+`request_persona_picture_upload`, `remove_persona_picture`, `erase_persona`, `move_end_user_profile`. Each
+writes its part whole: send everything the part holds, not the change. The picture is the exception:
+`request_persona_picture_upload` answers a link, and the file goes to it from disk with one `curl` PUT. `rerank_entries` puts every
 entry of one kind inside one owner in a new order; the order is the rank.
 
 Where a segment's end users gather is one list on the segment, its gathering places, and nowhere else:

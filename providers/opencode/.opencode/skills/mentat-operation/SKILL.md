@@ -253,17 +253,31 @@ OpenCode has no image tool here: write the picture yourself as an SVG, as below.
 **With no image tool, an SVG written from the prompt.** The same prompt, drawn in code. The file
 opens with `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">` — the root is `svg` in
 the SVG namespace, or it is not read as an image — with no DOCTYPE, flat shapes and gradients only,
-no text, no script, no event handler, no external link or font. Write it to a file, read its bytes
-in base64 with the shell —
-`node -p "require('fs').readFileSync('persona.svg').toString('base64')"` reads them the same way on
-Windows, macOS and Linux — and send them with `upload_persona_picture`, `fileName` ending in `.svg`.
-Never encode the bytes in your head: one wrong character and the file is not an image.
+no text, no script, no event handler, no external link or font. Write it to a file, `persona.svg`.
+
+**Send the file to an upload link, never as text.** The picture's bytes never pass through the
+conversation: one wrong character copied by hand and the file is not an image, and a photo is
+millions of characters.
+
+1. Ask for the link: `request_persona_picture_upload(projectId, canvasVersion, endUserProfileId,
+   fileName, runId)` — `fileName` the name it is kept under, such as `dana-whitfield.png`; the
+   `canvasVersion` the `write_persona` call answered. The answer is `uploadUrl`, `expiresAtUtc`
+   (fifteen minutes on) and `maxBytes`. Asking does not move the canvas version.
+2. Send the file as the whole body of one PUT, with no token and nothing else:
+   `curl -sS -X PUT --data-binary @persona.png "<uploadUrl>"` — the same on Windows, macOS and Linux;
+   quote the address. The answer is `{"canvasVersion": N}`: the next write sends `N`.
+3. Report that the picture is on the Persona section.
+
+The link takes one picture, recorded as yours inside this run. A refused PUT leaves it usable until it
+expires: fix the file and send it to the same link.
 
 A refusal says what to change: "The picture is 30.0 MB; the limit is 25 MB.", "A persona picture is a
 PNG, JPEG, WebP or SVG image.", "An SVG picture holds no script, event handler or external link." The
 second, on an `.svg`, means the file is not an SVG drawing: its root is not `svg`, or not in the
-`http://www.w3.org/2000/svg` namespace, or the XML is malformed or declares a DOCTYPE. Fix the file
-and send it again; the prompt is already saved.
+`http://www.w3.org/2000/svg` namespace, or the XML is malformed or declares a DOCTYPE. A `CONFLICT`
+naming the canvas version means the canvas moved after the link was issued: ask for a new link at
+the version the refusal names and send the file again. A link that expired, or whose run ended, is
+refused the same way: ask for a new one, inside an open run. The prompt is already saved.
 
 ## When a routine fired this run
 

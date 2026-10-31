@@ -2,7 +2,7 @@
 name: "mentat-operation"
 description: "Run one operation of a Mentat project's plan end to end — read its package and what its description says to read first, follow its steps in order, ask the founder where a step asks them, write what the steps produce on the canvas or on the project's idea inside a run, checkpoint after every step, send the project back to earlier operations where a step or the ending says so, hand the entries an Experiment operation names to the hypothesis and experiment skills, end with a verdict only where the operation's level asks for one, and hand to the gate check when the tier's work is done. Use when the person names a row of the plan, says \"run the next one\" or \"run the next operation\", or asks for an operation of the method to be done; and when the heartbeat routine advances the plan. A person's request for a row reaches it through mentat-agent, which boots the agent the row's run is recorded under."
 argument-hint: "<project name or id> <row slug, position or \"next\">"
-allowed-tools: "mcp__mentat__server_info, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_project_state, mcp__mentat__get_roadmap, mcp__mentat__get_operation_package, mcp__mentat__get_operation_definition, mcp__mentat__get_gate_status, mcp__mentat__get_block, mcp__mentat__get_canvas, mcp__mentat__get_hypothesis, mcp__mentat__start_run, mcp__mentat__checkpoint_run, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__end_run, mcp__mentat__get_run, mcp__mentat__list_runs, mcp__mentat__add_entry, mcp__mentat__update_entry, mcp__mentat__choose_beachhead, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__add_question, mcp__mentat__add_risk, mcp__mentat__record_operation_insight, mcp__mentat__record_procedure_insight, mcp__mentat__list_insights, mcp__mentat__get_insight, mcp__mentat__supersede_insight, mcp__mentat__boot_agent, mcp__mentat__raise_escalation, mcp__mentat__get_ideation, mcp__mentat__get_customer_segment, mcp__mentat__get_value_proposition, mcp__mentat__rate_customer_segment, mcp__mentat__describe_end_user, mcp__mentat__write_persona, mcp__mentat__connect_value_map_entry, mcp__mentat__upload_persona_picture, mcp__mentat__get_procedure, mcp__mentat__retire_entry, mcp__mentat__rerank_entries, mcp__mentat__set_customer_segment_state, mcp__mentat__split_customer_segment, mcp__mentat__test_market_conditions, mcp__mentat__write_comparison, mcp__mentat__write_gathering_places, mcp__mentat__write_customers_today, mcp__mentat__write_total_addressable_market, mcp__mentat__write_turned_away_segments, mcp__mentat__write_purchasing_criteria, mcp__mentat__remove_persona_picture, mcp__mentat__move_end_user_profile, mcp__mentat__aim_value_proposition, mcp__mentat__disconnect_value_map_entry, mcp__mentat__add_what_they_use_today, mcp__mentat__reach_fit, mcp__mentat__write_starting_point, mcp__mentat__add_ideation_candidate, mcp__mentat__update_ideation_candidate, mcp__mentat__drop_ideation_candidate, mcp__mentat__add_ideation_signal, mcp__mentat__update_ideation_signal, mcp__mentat__propose_ideation_revision, Bash(node -p *)"
+allowed-tools: "mcp__mentat__server_info, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_project_state, mcp__mentat__get_roadmap, mcp__mentat__get_operation_package, mcp__mentat__get_operation_definition, mcp__mentat__get_gate_status, mcp__mentat__get_block, mcp__mentat__get_canvas, mcp__mentat__get_hypothesis, mcp__mentat__start_run, mcp__mentat__checkpoint_run, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__end_run, mcp__mentat__get_run, mcp__mentat__list_runs, mcp__mentat__add_entry, mcp__mentat__update_entry, mcp__mentat__choose_beachhead, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__add_question, mcp__mentat__add_risk, mcp__mentat__record_operation_insight, mcp__mentat__record_procedure_insight, mcp__mentat__list_insights, mcp__mentat__get_insight, mcp__mentat__supersede_insight, mcp__mentat__boot_agent, mcp__mentat__raise_escalation, mcp__mentat__get_ideation, mcp__mentat__get_customer_segment, mcp__mentat__get_value_proposition, mcp__mentat__rate_customer_segment, mcp__mentat__describe_end_user, mcp__mentat__write_persona, mcp__mentat__connect_value_map_entry, mcp__mentat__request_persona_picture_upload, mcp__mentat__get_procedure, mcp__mentat__retire_entry, mcp__mentat__rerank_entries, mcp__mentat__set_customer_segment_state, mcp__mentat__split_customer_segment, mcp__mentat__test_market_conditions, mcp__mentat__write_comparison, mcp__mentat__write_gathering_places, mcp__mentat__write_customers_today, mcp__mentat__write_total_addressable_market, mcp__mentat__write_turned_away_segments, mcp__mentat__write_purchasing_criteria, mcp__mentat__remove_persona_picture, mcp__mentat__move_end_user_profile, mcp__mentat__aim_value_proposition, mcp__mentat__disconnect_value_map_entry, mcp__mentat__add_what_they_use_today, mcp__mentat__reach_fit, mcp__mentat__write_starting_point, mcp__mentat__add_ideation_candidate, mcp__mentat__update_ideation_candidate, mcp__mentat__drop_ideation_candidate, mcp__mentat__add_ideation_signal, mcp__mentat__update_ideation_signal, mcp__mentat__propose_ideation_revision, Bash(curl -sS -X PUT --data-binary *)"
 ---
 
 # Mentat operation
@@ -255,17 +255,31 @@ Claude Code has no image tool: write the picture yourself as an SVG, as below.
 **With no image tool, an SVG written from the prompt.** The same prompt, drawn in code. The file
 opens with `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">` — the root is `svg` in
 the SVG namespace, or it is not read as an image — with no DOCTYPE, flat shapes and gradients only,
-no text, no script, no event handler, no external link or font. Write it to a file, read its bytes
-in base64 with the shell —
-`node -p "require('fs').readFileSync('persona.svg').toString('base64')"` reads them the same way on
-Windows, macOS and Linux — and send them with `upload_persona_picture`, `fileName` ending in `.svg`.
-Never encode the bytes in your head: one wrong character and the file is not an image.
+no text, no script, no event handler, no external link or font. Write it to a file, `persona.svg`.
+
+**Send the file to an upload link, never as text.** The picture's bytes never pass through the
+conversation: one wrong character copied by hand and the file is not an image, and a photo is
+millions of characters.
+
+1. Ask for the link: `request_persona_picture_upload(projectId, canvasVersion, endUserProfileId,
+   fileName, runId)` — `fileName` the name it is kept under, such as `dana-whitfield.png`; the
+   `canvasVersion` the `write_persona` call answered. The answer is `uploadUrl`, `expiresAtUtc`
+   (fifteen minutes on) and `maxBytes`. Asking does not move the canvas version.
+2. Send the file as the whole body of one PUT, with no token and nothing else:
+   `curl -sS -X PUT --data-binary @persona.png "<uploadUrl>"` — the same on Windows, macOS and Linux;
+   quote the address. The answer is `{"canvasVersion": N}`: the next write sends `N`.
+3. Report that the picture is on the Persona section.
+
+The link takes one picture, recorded as yours inside this run. A refused PUT leaves it usable until it
+expires: fix the file and send it to the same link.
 
 A refusal says what to change: "The picture is 30.0 MB; the limit is 25 MB.", "A persona picture is a
 PNG, JPEG, WebP or SVG image.", "An SVG picture holds no script, event handler or external link." The
 second, on an `.svg`, means the file is not an SVG drawing: its root is not `svg`, or not in the
-`http://www.w3.org/2000/svg` namespace, or the XML is malformed or declares a DOCTYPE. Fix the file
-and send it again; the prompt is already saved.
+`http://www.w3.org/2000/svg` namespace, or the XML is malformed or declares a DOCTYPE. A `CONFLICT`
+naming the canvas version means the canvas moved after the link was issued: ask for a new link at
+the version the refusal names and send the file again. A link that expired, or whose run ended, is
+refused the same way: ask for a new one, inside an open run. The prompt is already saved.
 
 ## When a routine fired this run
 
