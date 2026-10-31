@@ -131,7 +131,8 @@ whole list, so read the segment with `get_customer_segment` first and send every
 count is a new measurement added to the place's list: the earlier ones are sent again unchanged, never
 edited or dropped, and a list that leaves one out is refused. The latest audience, the growth between
 two counts in the same unit, and the tally by platform are worked out by the server, never sent. The
-tally adds places up before overlap: one person can be in several places.
+tally adds each place's latest count in every unit it was counted in, one sum per unit, before
+overlap: one person can be in several places.
 
 **The beachhead is proposed.** `choose_beachhead` takes the leaf segment, the part — why this one,
 what it gives up, when to switch, the offers to try first, whether it is the hardest side of a
