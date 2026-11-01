@@ -117,6 +117,16 @@ Every fact inside a part (a rating's reason, a condition's evidence, a cell of t
 of the TAM, a characteristic, a criterion's why, a fact of the persona, how a place's end users were
 measured) is `text`, `status` and its own
 `citations`, the same shape as an entry's. The text is left out only when the status is `Unknown`.
+A fact also carries `breakdowns` and `figures`, the numbers its text quotes, both `[]` when it has none
+and always on an `Unknown` fact. The text is then the conclusion, one or two sentences on what the evidence means, and the numbers go beside it, not in it. A
+breakdown is one source's buckets: `title` (what is counted, among whom, by whom, once per fact),
+`measure` (`Percent` with no `unit`; `Number` with the `unit` it counts in; `Amount` with the currency
+code as its `unit`), `sampleSize` or none, `bucketsAreOrderedRanges` (true for ages and incomes, false
+for countries and job titles), at least two `buckets` (`label` once each, `value`, a percent 0 to 100,
+and `fitWithSegment`: `InSegment`, `PartlyInSegment`, `OutsideSegment` or none), and its one
+`citation`. A gender breakdown is labelled only `Men`, `Women` and `Other`. A figure is one number:
+`label` once per fact, `value`, `measure`, `unit` and its one `citation`. The screen draws them as
+charts and works out which chart from the numbers; nothing about a chart is sent.
 Customers today carry their `citations` beside the figures. `get_block` on CS answers how many
 citations each entry has, not the citations; `get_customer_segment` answers them whole.
 
