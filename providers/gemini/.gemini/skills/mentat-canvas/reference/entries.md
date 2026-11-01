@@ -124,9 +124,14 @@ breakdown is one source's buckets: `title` (what is counted, among whom, by whom
 code as its `unit`), `sampleSize` or none, `bucketsAreOrderedRanges` (true for ages and incomes, false
 for countries and job titles), at least two `buckets` (`label` once each, `value`, a percent 0 to 100,
 and `fitWithSegment`: `InSegment`, `PartlyInSegment`, `OutsideSegment` or none), and its one
-`citation`. A gender breakdown is labelled only `Men`, `Women` and `Other`. A figure is one number:
-`label` once per fact, `value`, `measure`, `unit` and its one `citation`. The screen draws them as
-charts and works out which chart from the numbers; nothing about a chart is sent.
+`citation`, and its `chart`: `Columns` for ranges in order, `Bars` for names, `StackedBar` or `Donut`
+for shares of a whole (`Percent` only), `DotPlot` for the same buckets in several sources, `Line` for
+a number over time (its buckets the dates oldest first, `bucketsAreOrderedRanges` true). A gender
+breakdown is labelled only `Men`, `Women` and `Other`. A figure is one number: `label` once per fact,
+`value`, `measure`, `unit`, its one `citation` and its `display`, `Tile` or `Ring` (a share from 0 to
+100%). `steps` tell a path as a timeline, at least two, each a `lead` and its `text`; `tags` are the
+short labels it names, each once. All four are `[]` when the fact has none. `measure`, `chart` and `display` are
+required: a breakdown or figure sent without one is refused, naming it.
 Customers today carry their `citations` beside the figures. `get_block` on CS answers how many
 citations each entry has, not the citations; `get_customer_segment` answers them whole.
 
