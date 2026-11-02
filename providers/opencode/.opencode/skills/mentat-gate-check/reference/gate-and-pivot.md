@@ -40,14 +40,14 @@ gate) has no table: "This gate checks no block; a person passes it by saying so.
 
 A segment to win — an accepted beachhead, or a segment that resells to one — is won by our value
 proposition aimed at its end user profile, or at one of its context profiles, at problem–solution
-fit. `value-map` writes that value proposition; `fit` reaches the fit.
+fit. `value-map` writes that value proposition and reaches the fit.
 
 1. The segment is the first line of `fitPairShortfalls`.
 2. `get_customer_segment` with its `segmentId`: the ids of its end user profile and context profiles.
    `get_block` VP lists our value propositions; `get_value_proposition` on each answers the profile
    it aims at and, in its fit check, `nextKindOfFit`.
-3. None of ours aims at one of those profiles: the operation is `value-map`. One does, and its
-   `nextKindOfFit` is still `ProblemSolution`: the operation is `fit`.
+3. None of ours aims at one of those profiles, or one does and its `nextKindOfFit` is still
+   `ProblemSolution`: the operation is `value-map` either way.
 4. Candidates: `get_roadmap` rows that are operations whose `operation.slug` is that operation, not
    skipped, whose `tier` is the project's tier or earlier. Pick as step 4 above; its row id is
    `nextOperationId`.
@@ -105,10 +105,10 @@ Title: `The {gate name} gate failed: {CS code} has no value proposition of ours 
 
 Body:
 > {the scores table, with its "Not passed" lines} Recorded: evaluation {id}, {consecutive failures}
-> consecutive failure(s) at this boundary. Next row proposed and recorded on the evaluation: {value-map
-> or fit slug}, because {CS code} {has no value proposition of ours aimed at its end user profile |
+> consecutive failure(s) at this boundary. Next row proposed and recorded on the evaluation: value-map,
+> because {CS code} {has no value proposition of ours aimed at its end user profile |
 > has our {VP code} short of problem–solution fit}. Every block cleared its bar, so no pivot is
-> proposed. Reply with what to do instead, or acknowledge: I would run {slug} for {CS code} — write
+> proposed. Reply with what to do instead, or acknowledge: I would run value-map for {CS code} — write
 > its value proposition and reach problem–solution fit — then evaluate the gate again.
 
 ## Reading the answer, next firing

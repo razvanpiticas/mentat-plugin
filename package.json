@@ -1,6 +1,6 @@
 {
   "name": "mentat",
-  "version": "0.5.0+6fe034233cab",
+  "version": "0.5.0+bfee65225ab0",
   "description": "Installs the Mentat skill and MCP server into a project, for harnesses with no plugin system.",
   "type": "module",
   "engines": {

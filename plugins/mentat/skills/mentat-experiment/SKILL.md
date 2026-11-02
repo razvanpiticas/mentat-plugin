@@ -2,7 +2,7 @@
 name: "mentat-experiment"
 description: "Design or run an experiment against a hypothesis of a Mentat canvas — the test card from the method card and the design procedure, the run with its observations, judged criteria, spend and evidence, the learning card and a verdict that agrees with the facts, and the decision laid out for the person — from the card and the procedures it fetches at the moment of use. Use when the person wants to test a hypothesis, design a test card, record what a test showed, or close a test; when they want to change how the organisation runs a kind of test (a card's texts, its execution instructions, its ratings); and from mentat-hypothesis when the person says to test now. It writes through the mentat-canvas loop; the decision on the hypothesis is the person's."
 argument-hint: "<project> <hypothesis code> [card slug] | <experiment code> | <test name to adjust>"
-allowed-tools: "mcp__mentat__get_project, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__get_block, mcp__mentat__get_run, mcp__mentat__get_procedure, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__recommend_experiment_definition, mcp__mentat__design_experiment, mcp__mentat__add_metric, mcp__mentat__add_criterion, mcp__mentat__start_experiment, mcp__mentat__record_observation, mcp__mentat__judge_criterion, mcp__mentat__record_spend, mcp__mentat__record_evidence, mcp__mentat__update_evidence, mcp__mentat__add_data_point, mcp__mentat__complete_experiment, mcp__mentat__abort_experiment, mcp__mentat__decide_hypothesis, mcp__mentat__link_to_goal, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__list_insights, mcp__mentat__record_experiment_definition_insight, mcp__mentat__record_procedure_insight, mcp__mentat__customise_experiment_definition, mcp__mentat__update_experiment_definition, mcp__mentat__list_operation_definitions, mcp__mentat__get_operation_definition"
+allowed-tools: "mcp__mentat__get_project, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__get_block, mcp__mentat__get_run, mcp__mentat__get_procedure, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__recommend_experiment_definition, mcp__mentat__design_experiment, mcp__mentat__add_metric, mcp__mentat__add_criterion, mcp__mentat__start_experiment, mcp__mentat__record_observation, mcp__mentat__judge_criterion, mcp__mentat__record_spend, mcp__mentat__record_evidence, mcp__mentat__update_evidence, mcp__mentat__add_data_point, mcp__mentat__complete_experiment, mcp__mentat__abort_experiment, mcp__mentat__decide_hypothesis, mcp__mentat__get_value_proposition, mcp__mentat__reach_fit, mcp__mentat__link_to_goal, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__list_insights, mcp__mentat__record_experiment_definition_insight, mcp__mentat__record_procedure_insight, mcp__mentat__customise_experiment_definition, mcp__mentat__update_experiment_definition, mcp__mentat__list_operation_definitions, mcp__mentat__get_operation_definition"
 ---
 
 # Mentat experiment
@@ -202,6 +202,12 @@ that may open the operation's next test order. `get_run` on the operation's run 
 answers the hand-over as the canvas now stands; say which order opened and that its hypotheses are
 written by working the row again through `mentat-operation` — a new run that reads the open order
 from that earlier run, writes no own step, and runs only the Hypothesise step.
+
+When that hand-over is `product-market-fit`'s and the decision leaves no order open on the pair —
+every hypothesis of both test orders validated, the call to action included — the pair's value
+proposition has reached product–market fit. `get_value_proposition` on it: its `nextKindOfFit` is
+`ProductMarket`. Record it with `reach_fit` (`ProductMarket`) inside this run, attended or not: the
+evidence is the person's decisions, already made. Say which value proposition reached it.
 
 ## After the run
 
