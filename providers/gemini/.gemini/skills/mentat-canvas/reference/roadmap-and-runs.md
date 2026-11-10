@@ -55,7 +55,7 @@ refused as firmly as omitting one where it does:
 | `Experiment` | **Send no verdict.** The hypothesis is tested by a real experiment, and the verdict lives on that experiment (`complete_experiment`), not on the run |
 | `None` | **Send no verdict.** The operation produces work rather than a conclusion |
 
-Of the forty-seven operations the method ships, thirty-one are `Checkpoint`, seven are `Experiment`
+Of the forty-eight operations the method ships, thirty-two are `Checkpoint`, seven are `Experiment`
 and nine are `None` — so most rows take a verdict and a good few do not. Read the level from the
 package rather than assuming: a verdict on an `Experiment` or a `None` operation comes back
 "A `<level>` operation carries no verdict on its run. Pass null.", the run stays `Running`, and a

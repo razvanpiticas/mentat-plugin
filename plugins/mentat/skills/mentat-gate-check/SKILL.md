@@ -113,9 +113,9 @@ this run, unattended, with nobody asked — see
    without asking, and a gate that is not due is an escalation — both in
    [When a routine fired this run](#when-a-routine-fired-this-run). `evaluate_gate(projectId,
    nextOperationId?, notes?, runId)`: on an expected fail, `nextOperationId` is the row that fills the
-   weakest block, or, on a fail on the pairs alone, the `value-map` row that gives the first segment
-   of `fitPairShortfalls` its value proposition at problem–solution fit
-   ([reference/gate-and-pivot.md](reference/gate-and-pivot.md)); on an expected pass, leave it out —
+   weakest block, or, on a fail on the pairs alone, the `concept-and-use-case` or `value-proposition`
+   row that gives the first segment of `fitPairShortfalls` its value proposition at problem–solution
+   fit ([reference/gate-and-pivot.md](reference/gate-and-pivot.md)); on an expected pass, leave it out —
    it is refused there. Report the evaluation: passed or not, the weakest block or the segments short
    of a pair, the next row, and what the project's status is now (`get_project`).
 6. **On a fail, the pivots — never on the pairs alone.** A fail on the pairs alone proposes no pivot:
@@ -167,8 +167,8 @@ reply:
   `apply_pivot` is never called in this run. The person answers "apply {pivot} to {tier}", applies it
   on the roadmap screen, or answers "no pivot"; the next firing that finds the answer "apply …" calls
   `apply_pivot` with exactly the values the escalation proposed, and nothing else.
-- **On a fail on the pairs alone**: `evaluate_gate` with the `value-map` row for the first
-  segment short of a pair; then one escalation, "the gate failed on the pairs alone" in
+- **On a fail on the pairs alone**: `evaluate_gate` with the `concept-and-use-case` or
+  `value-proposition` row for the first segment short of a pair; then one escalation, "the gate failed on the pairs alone" in
   [reference/gate-and-pivot.md](reference/gate-and-pivot.md), naming each segment by code and
   proposing to write its value proposition and reach problem–solution fit — never a pivot.
 - Nothing is recorded as an insight; `end_run`'s digest is the report.
@@ -220,8 +220,9 @@ The `mentat` skill's table and `mentat-canvas`'s, plus:
 - **A pivot is never applied without a person's instruction**, in the chat or in an answer to the
   escalation. Proposing it is yours; applying it is theirs.
 - **The next row on a fail is the one that fills the weakest block** — on a fail on the pairs alone,
-  the `value-map` row for the first segment short of a pair — computed before the evaluation
-  and sent on it; the evaluation stores it and `mentat-advance` runs it.
+  the `concept-and-use-case` or `value-proposition` row for the first segment short of a pair —
+  computed before the evaluation and sent on it; the evaluation stores it and `mentat-advance` runs
+  it.
 - **Kill and unlock are on the screens.** Never suggest a tool for either; say where they are.
 - **Report by code**, and the numbers as the tool answered them: a confidence is two decimals, a
   threshold is the project's, a shortfall is theirs to read.

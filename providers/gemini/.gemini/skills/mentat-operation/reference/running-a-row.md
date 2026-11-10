@@ -11,7 +11,8 @@ of what each part of the package is for, the exact escalation bodies, and the sh
 | `definition.description`, `themeQuestion` | Read first; the framing every step is done under. The description opens with "Read first:" and the reads it names, each with its tool |
 | `definition.summary.validationLevel` | Which ending: verdict, hand-over, or neither |
 | `definition.validatedWhen`, `ifNot` | The Checkpoint judgement; the pass sentence the hand-over repeats; which operations an ending goes back to |
-| `definition.procedures[]` (`procedureId`, `code`, `name`, `instructions`, `executionOrder`, `source`, `founderInputNeeded`, `founderInputPurpose`) | The operation's own steps, in order; `procedureId` is what `checkpoint_run` names; a step's founder input says whether it asks the founder and what |
+| `definition.procedures[]` (`procedureId`, `code`, `name`, `instructions`, `executionOrder`, `source`, `founderInputNeeded`, `founderInputPurpose`, `explainer`) | The operation's own steps, in order; `procedureId` is what `checkpoint_run` names; a step's founder input says whether it asks the founder and what; a step's explainer is what the founder is sent as it starts |
+| `definition.explainer` (`text`, `webUrl`, `media[]`), `outputWebUrl` | The first message of a run in a session: what the operation is, the page where its video plays (`webUrl`), and where what the run writes is read (`outputWebUrl`). `media[]` says what each video or picture is: its `kind`, `alternativeText`, `caption`, and on a video its `durationInSeconds` and `transcript`. Null when none is written |
 | `definition.founderInput` | The operation's founder input in short: the strongest a step asks (`Always`, then `WhenInstructionsSay`, then `None`) and which steps |
 | `revisits` | The operations this one may send the project back to, in order: the only ones `revisitOperationIds` may name |
 | `handOver` | On an `Experiment` operation: the entry kinds it hands to hypotheses, how many of each from the top, in test orders, and its instruction. The checkpoint of the last own step answers it resolved: the entries themselves. No lines: the checkpoint answers no test order, and Hypothesise works from the "validated when" sentence and the entries the run wrote |
@@ -26,7 +27,9 @@ of what each part of the package is for, the exact escalation bodies, and the sh
 
 For each of the operation's own steps, in `executionOrder`:
 
-1. Read `instructions` whole.
+1. `get_procedure` with the step's code, and read the `instructions` it answers whole, before the
+   step's first read or write — never from the package read at the start of the run alone. When it
+   answers an `explainer`, give the founder its `text` and `webUrl` as the step starts, in a session.
 2. Read what the step reads: the target blocks (`get_block`), the segments and value propositions it
    names (`get_customer_segment`, `get_value_proposition`), the idea (`get_ideation`).
 3. A step whose `founderInputNeeded` is `Always`, or `WhenInstructionsSay` when its instructions say

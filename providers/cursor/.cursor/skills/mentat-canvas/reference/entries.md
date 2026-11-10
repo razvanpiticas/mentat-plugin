@@ -33,7 +33,7 @@ kind's schema and the profile's id from `get_customer_segment`:
     { "reference": "https://www.reddit.com/r/gymowners/comments/…", "who": "u/liftlocal", "words": "Ten minutes waiting on a client reply is ten minutes I'm not coaching.", "seenOn": "2026-09-30", "upvotes": 212, "comments": 48 }
   ],
   "status": "Reported",
-  "fields": { "kind": "CustomerPain", "painKind": "Obstacle", "severity": "High", "measure": "more than 10 minutes" }
+  "fields": { "kind": "CustomerPain", "painKind": "Obstacle", "severity": "High", "measure": "more than 10 minutes", "isMeasureNumberMissing": false, "barrierToAdoptionAtUseCaseFactor": null }
 }
 ```
 
@@ -163,9 +163,11 @@ is chosen to replace it.
 | Part | Tool |
 | --- | --- |
 | who the end user is: the twelve characteristics and any added. Where they gather, what they read and where they are counted are the segment's gathering places | `describe_end_user` |
-| the team member who fits it, who else decides, other patterns and outliers, the gaps left by what they use today | `update_entry` on the profile, in its `fields` |
+| the team member who fits it, who else decides, other patterns and outliers | `update_entry` on the profile, in its `fields` |
 | the purchasing criteria, in order, each pointing at one of the profile's own jobs, pains or gains | `write_purchasing_criteria` |
-| the persona: how it was made, its fact sheet in the profile's characteristic names, which of its segment's gathering places the person uses (`gatheringPlacesTheyUse`, by name), its words for the top pain, its picture prompt | `write_persona` |
+| the gaps left by what they use today, on the end user profile and on each context profile | `write_gaps` |
+| a job's high-value score, on either profile | `score_high_value_job` |
+| the persona: how it was made, its fact sheet in the profile's characteristic names, which of its segment's gathering places the person uses (`gatheringPlacesTheyUse`, by name), its words for the top pain, the last purchase for the top job (`lastPurchaseForTheTopJob`: what they bought, why that one, what else they looked at and who had a say, a fact with its citations, or none), its picture prompt | `write_persona` |
 | the persona's picture: a PNG, JPEG, WebP or SVG of at most 25 MB, sent from its file with one PUT to the link `request_picture_upload` answers for the slot `PersonaPicture`, with the end user profile's id as `ownerId`; taken off, its prompt kept, by `remove_picture` with the same slot and owner | `request_picture_upload`, `remove_picture` |
 | a real end user's persona, erased on their request | `erase_persona` |
 | the profile moved onto a leaf when the beachhead moves | `move_end_user_profile` |
@@ -173,6 +175,59 @@ is chosen to replace it.
 A real end user's persona says what the person agreed to be kept. The places it uses are names on
 its segment's list. A move is refused while one of our
 value propositions aimed at the profile has reached a fit: a new offer starts from the moved profile.
+
+**The gaps are a ranked list, written whole.** `write_gaps` takes the profile's id (`profileId`, an
+end user or a context profile: each holds its own) and `gaps` in rank order, the one that matters most
+first, replacing the list there was; `[]` clears it. Each gap is `pointsAtProfileEntryId`, a live
+top-ranked item of that same profile — its top job, or one of its first three pains or gains —
+`coverageByWhatTheyUseToday` (`NothingAddressesIt` or `AllAddressItBadly`) and `inTheirUsersWords`, a
+fact with its citations, link and date seen. One gap per item. `get_customer_segment` answers each
+profile's `gaps` in rank order, each with the code and title of the item it points at. The free-text
+gaps field of a profile is kept only for older plugins: never write it.
+
+**A high-value job is scored, its sum worked out.** `score_high_value_job` takes the profile's id, the
+job's id (`jobId`) and its marks, each a rating from `VeryLow` (1) to `High` (4) with its `reason`, a
+fact with its citations; the call replaces the score there was.
+
+| Mark | Sent as | Rule the server holds |
+| --- | --- | --- |
+| Important | read from the job's importance: 5 gives 4, 4 gives 3, 3 gives 2, lower gives 1; `importanceRaisedByItsPainsOrGains` only when a pain or gain of the job matters more, its reason naming it | a raise not above the job's own mark is refused |
+| Tangible | `tangible`, always | 1 to 4 |
+| Unsatisfied | read from the gap that points at the job: `NothingAddressesIt` gives 4, `AllAddressItBadly` 3; `unsatisfiedWhenNoGapPointsAtTheJob` exactly when no gap points at it | sent beside a gap, or left out without one, is refused; a gap written later on the job drops the written mark |
+| Lucrative | `lucrative`, always | 1 to 4 |
+
+The score is the sum, 4 to 16, never sent. `get_customer_segment` answers each scored job's
+`highValueScore` (each mark, whether it was read from the profile, its reason, and the `score`) and
+each profile's `highValueJobs`, highest sum first, ties in rank order. Write the gaps first: a job's
+Unsatisfied mark comes from them. When a rewrite of the gaps takes away the gap that gave a job its
+mark, that job reads no score until it is scored again.
+
+**The openings sit beside the gaps.** Each profile some value proposition of what they use today aims
+at answers `openings`: its top pains no alternative's value map relieves, each with the complaints in
+the competitor records that name it and `isOpeningWithoutAGap` when no gap points at it — the field
+and the gaps disagree, so look at both before writing the gaps again. Nothing writes them; they are
+worked out.
+
+**A pain's measure and its barrier.** A pain's `fields` carry `isMeasureNumberMissing`, true when the
+measure is known and no source gives its number (the web reads "Number not found", not "Measure
+missing"), and `barrierToAdoptionAtUseCaseFactor`, the step of the full life cycle use case at which
+it stops them adopting the product (`DeterminesTheyHaveANeed` … `BuysMoreOrSpreadsTheWord`, the ten
+factors of `write_use_case`), or none. Send both on every rewrite of a pain.
+
+| Refused | Because |
+| --- | --- |
+| "A high-value job mark is 1 to 4." | a mark sent as `VeryHigh` |
+| "Job <code>'s importance gives it Important <n>; a pain or gain raises the mark only above that." | `importanceRaisedByItsPainsOrGains` not above what the job's importance gives |
+| "Gap <n> of <profile code> gives job <code> its Unsatisfied mark; leave the mark out of the score." | `unsatisfiedWhenNoGapPointsAtTheJob` sent while a gap points at the job |
+| "No gap points at job <code>, so its score says how unsatisfied they are, with why." | no gap points at the job and the mark was left out |
+| "Gap <n> points at no top-ranked job, pain or gain of profile <code>. …" | the item is not live and top-ranked on that same profile |
+| "Two gaps point at <code>. Write one gap per item." | two gaps on one item |
+| "A pain's number can be missing only when its measure is written." | `isMeasureNumberMissing` true with no `measure` |
+| "Only an obstacle or a risk can be a barrier to adoption." | a barrier on an `UndesiredOutcome` pain |
+
+**What a gap points at is not deleted.** `delete_entry` on a job, pain or gain a gap points at is
+refused "<code> cannot be removed: gap <n> of <profile code> points at it." Write the gaps without it
+first.
 
 ## Value propositions
 
@@ -182,13 +237,65 @@ value propositions aimed at the profile has reached a fit: a new offer starts fr
 | its products, relievers and creators | `add_entry` with `ownerId` the value proposition |
 | a connection to the job, pain or gain addressed | `connect_value_map_entry`, `disconnect_value_map_entry` |
 | what they use today, mapped against a profile before or after ours aims at it, on a Competitive Position entry that exists or a new one | `add_what_they_use_today` with the profile's id (`profileId`) and exactly one of `competitivePositionEntryId` or `newCompetitivePosition` (`title`, `alternativeKind`, `targetsSegmentIds`) |
-| what ours forgoes and why | `update_entry` on our value proposition |
+| our business as it is today, the offer an existing business sells now, one per profile | `add_our_business_as_it_is_today` with the profile's id (`profileId`), `title`, `body` and `citations` (empty while nothing shows it yet); its products, relievers and creators then with `add_entry` and `ownerId` it, connected as ours are |
+| what ours forgoes and why, its brochure | `update_entry` on our value proposition, `whatItForgoesAndWhy` and `brochure` in its `fields` |
+| where a pain reliever or gain creator comes from when not the products and services ("30-day money-back guarantee", "the price") | `offerPartItComesFrom` in its `fields` |
 | the kind of fit reached | `reach_fit`: problem–solution fit with the reason to switch from what they use today, then product–market, then business model, one at a time |
 
 A draft connects nothing until it is aimed; a value proposition with connections or a fit is not
 retargeted. A new Competitive Position named by `add_what_they_use_today` needs at least one segment:
 "Pick at least one segment this alternative targets." A Competitive Position entry a value
-proposition maps as what they use today is retired, never deleted.
+proposition maps as what they use today is retired, never deleted. A rewrite with `update_entry`
+replaces every field: send the profile it aims at now, what it forgoes and the brochure back with
+the one that changes.
+
+`get_value_proposition` answers which of the three a value proposition is: ours to design
+(`isOursToDesign`), our business as it is today (`isOurBusinessAsItIsToday`), or what they use today
+(neither). Our business as it is today and what they use today carry a value map and sit in the fit
+check of ours on the same profile; neither is designed nor reaches a fit, and a design write on either
+is refused "<code> is not ours to design." "Profile <code> already has our business as it is today,
+<code>." means it is mapped: write inside the one there.
+
+## Our value proposition's design
+
+Each part is its own tool and is written whole: it replaces the part there was, so read it first with
+`get_value_proposition` and `sections` naming it, and send back what stays. Every one takes the value
+proposition's id (`valuePropositionId`), `canvasVersion` and `runId`.
+
+| Part | Tool | What it takes |
+| --- | --- | --- |
+| the concept chosen | `write_concept` | `name`, `coreIdea`, `sketch` (`caption`, `whatTheDrawingShows`, `picturePrompt`), `whatStrengthensIt`, `whatUnderminesIt`, and `changeToTheCurrentValueProposition` (`Improve`, `Extend` or `Invent`) exactly when our business as it is today aims at the same profile |
+| the full life cycle use case | `write_use_case` | `factors`: one row for each of the ten — `DeterminesTheyHaveANeed`, `FindsOutAboutIt`, `AnalysesIt`, `AcquiresIt`, `InstallsIt`, `UsesIt`, `DeterminesTheValueGained`, `PaysForIt`, `ReceivesSupport`, `BuysMoreOrSpreadsTheWord` — each with `today` and `withOurs`, facts with their citations, the `UsesIt` row telling the use in its steps; `visualPrompt` |
+| the features | `add_entry` on `VP.FEAT`, `ownerId` a product or service of ours | `fields`: `kind: Feature`, `whatItDoes`, `howItWorks`, `isBuilt`, `servesUseCaseFactor` (one of the ten), `servesSupportingJobId` (a live supporting job of the aimed profile), `whereElseItShows`, `candidateToCutReason` (null while it is not one), `producesIds` (pain relievers and gain creators of the same value proposition it produces). Ranked with `rerank_entries` on the product; changed with `update_entry`, every field sent back |
+| the drawing | `draw_product` | `form` (`SoftwareStoryboard`, `ServiceStoryboard`, `HardwareDiagram`), `frames` in order, at least one — each `id` (the one read, or none for a new frame), `title`, `whatHappens`, `showsFeatureIds`, `wireframePrompt` — and `diagramPrompt` on a `HardwareDiagram` only |
+| the value quantified | `quantify_value_proposition` | `measuredOnProfileEntryId` (a live job, pain or gain of the aimed profile), `asIs` and `possible` (facts with their numbers and citations; `possible` stays `Hypothesis` until a pilot or a customer shows it), `difference`, `sentence`, `benefitCategory` (`Better`, `Faster`, `Cheaper`), `stageRows` (`stage`, `today`, `withOurs`, `change`; empty when there is no table) |
+| the brochure | `update_entry` on the value proposition | `brochure` in its `fields`, markdown |
+| the promise | `write_promise` | `adLibs` in rank order, at least one — each `sentence`, `painRelieverId`, `gainCreatorId` and `unlikeWhatTheyUseTodayValuePropositionId` (none when it names no alternative) — `finalNapkinSketch` shaped as the concept's sketch, and `objections`, each `inTheirWords` (a fact with its citations) and exactly one of `answer` or `writtenAsRiskId` (a risk of this canvas, written first with `add_risk`) |
+
+A concept, use case, drawing and promise carry their pictures through their prompts: the part is
+written first with the prompt, then the picture goes up through `request_picture_upload` with the
+slot `ConceptNapkinSketch`, `UseCaseVisual`, `ProductDiagram`, `DrawingFrameWireframe` (naming the
+frame's id from the drawing just written) or `PromiseNapkinSketch`, and the value proposition's id as
+`ownerId`. A part written again with the same prompt keeps its picture; another prompt drops it.
+
+| Refused | Because |
+| --- | --- |
+| "<code> is not ours to design." | the value proposition is what they use today or our business as it is today |
+| "Say whether this concept improves, extends or replaces the current offer." | our business as it is today aims at the same profile, and the concept left `changeToTheCurrentValueProposition` out |
+| "No current offer aims at this profile, so the concept changes nothing of it." | the concept named a change, and no business of ours as it is today aims at that profile |
+| "The use case has no row for <factor>. It holds one row for each of the 10 factors." | a factor is missing; a factor sent twice is refused the same way |
+| "Job <code> is not a supporting job of the profile <code> aims at; …" | the feature's job is another kind of job, or on another profile |
+| "Only a HardwareDiagram has a diagram of the whole, …" | a diagram prompt on a storyboard |
+| "An objection is either answered or written as a risk, …" | an objection sent with both, or with neither |
+
+**What the design holds up is not deleted.** `delete_entry` is refused, naming every row that points
+at the entry: "<code> cannot be removed: it holds features <codes>." on a product with features; "…
+feature <code> produces it." on a reliever or creator; "… ad-lib <n> of the promise of <code> names
+it." and "… frame '<title>' of the drawing of <code> shows it." on what they name; "… the quantified
+value of <code> is measured on it." and "… feature <code> serves it." on a profile item. A risk an
+objection became is held the same way: deleting it in the web is refused "<code> cannot be removed: an
+objection in the promise of <code> became this risk." until the promise is written with that
+objection answered instead.
 
 ## The Competitive Landscape
 

@@ -12,6 +12,21 @@ their providers: they are third-party options the founder may choose to install 
 ScrapeCreators, Treg and Firecrawl spend the founder's own credits. Spend in proportion to what the
 step needs.
 
+## Say what it will cost, before calling
+
+Before the first paid call of a step, list the paid calls it will make and their rough cost, then
+ask, and call nothing paid until the person says which. A step that says so in its own words, such as
+`list-the-competitors`, writes the answer in its checkpoint.
+
+- One line per call: the service, what it fetches, for which competitors or segments, how many
+  requests, and the rough cost: Treg's `catalog_get` answers each call's price; ScrapeCreators is
+  about one credit a request; Firecrawl spends credits after its free allowance. A total at the end,
+  in money where the price says it, else in credits.
+- In a session, the person chooses. Ask the user directly to clarify what you cannot infer. Offer the full list, a smaller one, or
+  none: research without paid calls is still research.
+- Unattended, nobody can approve: call only the paid services the routine's instructions name, and
+  leave the rest waiting, named in the summary with what they would cost.
+
 ## What the findings become
 
 Write what you find into the entries the step writes: the segment's ratings and comparison, the end

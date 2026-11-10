@@ -13,9 +13,16 @@ current tool costs, whether a channel is reachable. A question on the block is w
 | --- | --- | --- |
 | `add_question` | `blockId`, `text`, `ownerUserId` or `assignToMe` | Open, optionally handed to someone. |
 | `update_question` | `text`; one of `ownerUserId`, `assignToMe`, `unassign` | Rewords, hands over, or takes back. |
+| `add_what_was_learned` | `questionId`, `fact` (text, status, citations) | Appends one thing learned to its "What was learned" list, dated the day it is written. Open questions only. |
 | `resolve_question` | `resolution` Answered (+ `answer`), Dropped, Reopened | The answer is recorded as the caller's. |
 
 Statuses: Open, Answered, Dropped.
+
+What was learned is not the answer. A step that learns something towards an open question — what
+customers value most, what the business does best — appends it with `add_what_was_learned`, and the
+list grows run by run; `resolve_question` with `Answered` closes the question when the list settles
+it. A question that is no longer open takes nothing more: "Cannot add what was learned to question
+<code>: it is Answered. Reopen it first."
 
 ## Risks
 

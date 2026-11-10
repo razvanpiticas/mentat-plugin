@@ -1,6 +1,6 @@
 ---
 name: "mentat-canvas"
-description: "Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks and inside other entries, the customer segments' trees with their parts, end user profiles and personas, value propositions with their value maps and fit, the Competitive Landscape's competitor records, Strategy Canvases and Core, the project's idea, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows, the run tools, the method gates and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it."
+description: "Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks and inside other entries, the customer segments' trees with their parts, end user and context profiles with their gaps and high-value jobs, personas, value propositions with their value maps, fit and design — concept, use case, features, drawing, quantified value, brochure and promise — and our business as it is today, the Competitive Landscape's competitor records, Strategy Canvases and Core, the project's idea, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows, the run tools, the method gates and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it."
 ---
 
 # Mentat canvas
@@ -32,6 +32,10 @@ write carries its id.
 
 1. **Find the project.** `list_portfolios`, then `list_projects` with the portfolio's id, or
    `get_project` when you hold the project id. `get_project` also answers the current canvas version.
+   A new one is `create_project`, and it needs `isExistingBusiness`: ask the person "New idea or
+   existing business?" and send their answer, true for a business that sells today; never guess it
+   from the name or the description. An existing business starts on the `ExistingBusiness` route,
+   and every later session maps the business as it is first.
 2. **Read before you write.** `get_block` with the block's code answers the block's id, the kinds of
    entry it accepts (each with the `kindDefinitionId` and `storage` a write needs), everything already
    written on it, and the canvas version. Reading first is how you avoid writing a duplicate of an
@@ -41,7 +45,8 @@ write carries its id.
    no beachhead in short, and `retiredCount`. It leaves out the kinds' schemas unless you send
    `includeSchemas: true`, the retired segments unless `includeRetired: true`, and every segment as a
    whole entry unless `allInFull: true`. `get_customer_segment` reads one segment whole,
-   `get_value_proposition` one value proposition whole, `get_ideation` the idea.
+   `get_value_proposition` one value proposition, whole or only the `sections` named, `get_ideation`
+   the idea.
 3. **Write with the version you read.** Every write takes `canvasVersion` and answers with the new
    one. Carry the answered version into the next write. Two writes in a row against the same version
    means the second is refused as stale — that is the canvas protecting itself from a decision made on
@@ -120,7 +125,8 @@ taking the segment's or the profile's id and `canvasVersion`: `set_customer_segm
 `split_customer_segment`, `rate_customer_segment`, `test_market_conditions`, `write_comparison`,
 `write_gathering_places`, `write_customers_today`, `write_total_addressable_market`, `choose_beachhead`,
 `write_turned_away_segments`; `describe_end_user`, `write_purchasing_criteria`, `write_persona`,
-`erase_persona`, `move_end_user_profile`. Each writes its part whole: send everything the part holds,
+`erase_persona`, `move_end_user_profile`; on an end user or a context profile, `write_gaps` and
+`score_high_value_job`. Each writes its part whole: send everything the part holds,
 not the change. A picture is the exception, the persona's as every other: `request_picture_upload`
 names the slot and its owner and answers a link, the file goes to it from disk with one `curl` PUT, and
 `remove_picture` takes it off, keeping its prompt. `rerank_entries` puts every
@@ -132,6 +138,18 @@ its own; a split names the places each child keeps (`gatheringPlacesKept`), copi
 the persona names the places the person uses (`gatheringPlacesTheyUse`). `write_gathering_places`
 replaces the whole list: read it with `get_customer_segment`, send every place back, and add a new count
 as a new measurement beside the earlier ones, which are never edited or dropped.
+
+The gaps left by what they use today are one ranked list on each profile, end user or context, and
+nowhere else: `write_gaps` replaces the whole list, each gap pointing at a live top-ranked job, pain or
+gain of that profile — its top job, its first three pains or gains — saying whether nothing they use
+today addresses it or all address it badly, in their users' words. A job is scored as a high-value job
+with `score_high_value_job`: four marks of 1 to 4, of which Important is read from the job's
+importance and Unsatisfied from the gap that points at it, so only Tangible and Lucrative are always
+sent; the sum is worked out, and `get_customer_segment` lists the high-value jobs highest first beside
+the gaps and the openings. A pain says when its measure is known and no source gives the number
+(`isMeasureNumberMissing`), and an obstacle or a risk the use case step it stops them adopting at
+(`barrierToAdoptionAtUseCaseFactor`); the persona carries the last purchase for the top job. The rules
+and the refusals are in [reference/entries.md](reference/entries.md).
 
 A beachhead is proposed, never marked: `choose_beachhead` writes its part and its decision, and an
 agent's decision waits on the decisions tab for a person to accept it. A beachhead is replaced by
@@ -149,6 +167,24 @@ exactly once — an existing one by its entry id (`competitivePositionEntryId`),
 (`targetsSegmentIds`, at least one). `get_value_proposition` answers the fit check; `reach_fit`
 records the kind of fit reached, problem–solution fit with the reason to switch from what they use
 today.
+
+An existing business maps the offer it sells now with `add_our_business_as_it_is_today`: the
+profile's id, its title, body and citations, one per profile. Its products, relievers and creators
+are written inside it and connected as ours are, and the fit check of ours on that profile shows it
+beside what they use today; it is never designed and never reaches a fit. Only a value proposition
+whose `isOursToDesign` is true is designed: every design write on what they use today or on our
+business as it is today is refused "<code> is not ours to design."
+
+**Our value proposition's design** is written part by part, each part whole, replacing what was
+there: `write_concept` the concept chosen with its napkin sketch, `write_use_case` the ten rows of
+its full life cycle use case, `draw_product` the drawing frame by frame, `quantify_value_proposition`
+the value quantified, `write_promise` the ad-libs, final napkin sketch and objections. Its features
+are entries (`VP.FEAT`) written with `add_entry` inside a product or service of ours (`ownerId` the
+product's id) and put in order with `rerank_entries` on that product; its brochure is a field of the
+value proposition, written with `update_entry`. `get_value_proposition` with `sections` reads only the
+parts named — `Promise` and `Features`, say — beside the header; before a part is rewritten, read it,
+so what is kept is sent back. The shapes, the pictures each part carries and the refusals are in
+[reference/entries.md](reference/entries.md).
 
 ## The Competitive Landscape
 
@@ -209,16 +245,18 @@ STOP and call the question tool to clarify.
 ## Questions, risks, ideas, contradictions
 
 When you cannot write an entry with confidence because something is unknown, `add_question` on the
-block rather than guessing. When you notice something that could go wrong, `add_risk` with likelihood
-and severity. When you have a thought that is not yet an entry, `add_idea` with effort and impact.
+block rather than guessing; what a later step learns towards an open question is appended to it with
+`add_what_was_learned`, and the answer that closes it is `resolve_question`. When you notice
+something that could go wrong, `add_risk` with likelihood and severity. When you have a thought
+that is not yet an entry, `add_idea` with effort and impact.
 When two entries cannot both be true, `record_contradiction`; a Critical one that nobody has ruled
 on blocks the canvas gates, which is the point. Verbs and states are in
 [reference/ledgers.md](reference/ledgers.md).
 
 ## The roadmap and operation runs
 
-A project's **roadmap** is the plan it runs: forty-seven operations from the method, in order, banded by
-tier, plus the moves it has decided to make. Start with `get_roadmap` — it answers the thesis, every
+A project's **roadmap** is the plan it runs: forty-eight operations from the method, in order, banded
+by tier, plus the moves it has decided to make. Start with `get_roadmap` — it answers the thesis, every
 row with its id, tier, status and prerequisites, the gate line above the plan, and the `roadmapVersion`
 every change to the plan carries. **That version is not the canvas version.** Changing the plan and
 writing on the canvas are two different aggregates with two different numbers; send each where it
@@ -232,7 +270,9 @@ Each answers the whole plan with the version it produced; carry that into the ne
 
 **Running an operation** is `mentat-operation`'s loop; these are the calls it is made of:
 
-1. `get_operation_package` with the row's id. It answers the method text as this project has it, the
+1. `get_operation_package` with the row's id, or with `operationSlug` when the operation is named by
+   its slug: a slug the plan does not hold, a retired one among them, is refused naming the
+   operations it does hold. It answers the method text as this project has it, the
    procedures in order with their ids and what each asks the founder, the places on the canvas or the
    idea the operation writes to, the operations it goes back to, on an `Experiment` operation its
    hand-over and the steps it shares, what it waits on, and any run left paused.

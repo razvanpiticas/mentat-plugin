@@ -201,9 +201,9 @@ answers the hand-over as the canvas now stands; say which order opened and that 
 written by working the row again through `mentat-operation` — a new run that reads the open order
 from that earlier run, writes no own step, and runs only the Hypothesise step.
 
-When that hand-over is `product-market-fit`'s and the decision leaves no order open on the pair —
-every hypothesis of both test orders validated, the call to action included — the pair's value
-proposition has reached product–market fit. `get_value_proposition` on it: its `nextKindOfFit` is
+When that hand-over is `product-market-fit-hypotheses-and-tests`'s and the decision leaves no order
+open on the pair — every hypothesis of both test orders validated, the call to action included — the
+pair's value proposition has reached product–market fit. `get_value_proposition` on it: its `nextKindOfFit` is
 `ProductMarket`. Record it with `reach_fit` (`ProductMarket`) inside this run, attended or not: the
 evidence is the person's decisions, already made. Say which value proposition reached it.
 

@@ -34,9 +34,19 @@ agent.
 | `mission` | The one `Mission` goal: its code, its metric, its target, its deadline, its latest measurement with the as-of date and the source | The one number the work is judged against. |
 | `objectives` | The tree under the mission, each marked whether **you** own it | Your goals are the ones you plan from. Somebody else's are context. |
 | `team` | Every `Human` and `Agent` entry of the Key Resources block: reference code, role, responsibilities, who it reports to, and which entry is you | Whom to ask about what. The chart is the answer to "who knows this". |
-| `project` | Where the venture stands: the canvas in summary, the row of the plan last finished and the one to pick up next, the decisions it is working to, the work open on the board, what a person answered while you were away, and what changed since your last run ended | This is the state you plan from. `changesTruncated` true means the log held more than the brief carries — read `list_activity` for the rest. Do not call `get_project_state` as well at a boot; this is the same section. |
+| `project` | Where the venture stands: how it began (`overview.origin.route`), the canvas in summary, the row of the plan last finished and the one to pick up next, the decisions it is working to, the work open on the board, what a person answered while you were away, and what changed since your last run ended | This is the state you plan from. `changesTruncated` true means the log held more than the brief carries — read `list_activity` for the rest. Do not call `get_project_state` as well at a boot; this is the same section. |
 | `person` | The `MemberProfile` of whoever is signed in, when they wrote one | How to work with them. When the response says there is none, **ask** rather than assume. |
 | `agent` and `agentDocuments` | Your own row and your instructions, `AgentInstructions` first, then `Custom` by title | Your name, your voice, what you own, your standing orders and your hard boundaries. Follow them over your own defaults. |
+
+**A business that already sells is mapped as it is before anything new is researched.** The
+brief's `project.overview.origin.route` (`boot_agent`, `get_project_state`) says how the project
+began; the person answered "New idea or existing business?" when it was created. `ExistingBusiness`
+is a business that runs today: every operation does its existing-business lines first, as its
+procedures word them — the customer segments it serves today written before the researched ones,
+its own customers, offer and data read in aggregate before any desk research, its current offer
+mapped as our business as it is today before ours is designed — and never copies a customer's
+personal data onto the canvas. Any other route, or none yet, is a new idea, and those lines are
+skipped. Read the route from the brief; never guess it from the project's name or description.
 
 Deliberately not in the brief: the rest of the canvas, other agents' documents, any row of a sibling
 project, and the routines. Read the canvas with `mentat-canvas` when the work needs it, and the

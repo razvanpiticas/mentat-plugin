@@ -1,8 +1,8 @@
 ---
 name: "mentat-canvas"
-description: "Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks and inside other entries, the customer segments' trees with their parts, end user profiles and personas, value propositions with their value maps and fit, the Competitive Landscape's competitor records, Strategy Canvases and Core, the project's idea, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows, the run tools, the method gates and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it."
+description: "Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks and inside other entries, the customer segments' trees with their parts, end user and context profiles with their gaps and high-value jobs, personas, value propositions with their value maps, fit and design — concept, use case, features, drawing, quantified value, brochure and promise — and our business as it is today, the Competitive Landscape's competitor records, Strategy Canvases and Core, the project's idea, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows, the run tools, the method gates and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it."
 argument-hint: "<project name or id> <what to read or write>"
-allowed-tools: "mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_canvas, mcp__mentat__get_block, mcp__mentat__get_neighbours, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__create_project, mcp__mentat__record_project_insight, mcp__mentat__add_entry, mcp__mentat__update_entry, mcp__mentat__retire_entry, mcp__mentat__delete_entry, mcp__mentat__choose_beachhead, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__recommend_experiment_definition, mcp__mentat__withdraw_experiment_definition, mcp__mentat__park_hypothesis, mcp__mentat__unpark_hypothesis, mcp__mentat__retire_hypothesis, mcp__mentat__decide_hypothesis, mcp__mentat__delete_hypothesis, mcp__mentat__design_experiment, mcp__mentat__add_metric, mcp__mentat__add_criterion, mcp__mentat__start_experiment, mcp__mentat__record_observation, mcp__mentat__judge_criterion, mcp__mentat__complete_experiment, mcp__mentat__abort_experiment, mcp__mentat__record_spend, mcp__mentat__delete_experiment, mcp__mentat__record_evidence, mcp__mentat__update_evidence, mcp__mentat__add_data_point, mcp__mentat__delete_evidence, mcp__mentat__add_question, mcp__mentat__update_question, mcp__mentat__resolve_question, mcp__mentat__add_risk, mcp__mentat__update_risk, mcp__mentat__resolve_risk, mcp__mentat__add_idea, mcp__mentat__update_idea, mcp__mentat__resolve_idea, mcp__mentat__record_contradiction, mcp__mentat__rule_contradiction, mcp__mentat__get_roadmap, mcp__mentat__get_operation_package, mcp__mentat__get_gate_status, mcp__mentat__list_gate_evaluations, mcp__mentat__get_run, mcp__mentat__list_runs, mcp__mentat__list_operation_definitions, mcp__mentat__get_operation_definition, mcp__mentat__list_pivot_definitions, mcp__mentat__set_roadmap_thesis, mcp__mentat__place_roadmap_item, mcp__mentat__skip_roadmap_item, mcp__mentat__include_roadmap_item, mcp__mentat__annotate_roadmap_item, mcp__mentat__append_roadmap_operation, mcp__mentat__add_roadmap_move, mcp__mentat__remove_roadmap_move, mcp__mentat__apply_pivot, mcp__mentat__start_run, mcp__mentat__checkpoint_run, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__end_run, mcp__mentat__cancel_run, mcp__mentat__evaluate_gate, mcp__mentat__get_customer_segment, mcp__mentat__get_value_proposition, mcp__mentat__get_ideation, mcp__mentat__set_customer_segment_state, mcp__mentat__split_customer_segment, mcp__mentat__rate_customer_segment, mcp__mentat__test_market_conditions, mcp__mentat__write_comparison, mcp__mentat__write_gathering_places, mcp__mentat__write_customers_today, mcp__mentat__write_total_addressable_market, mcp__mentat__write_turned_away_segments, mcp__mentat__describe_end_user, mcp__mentat__write_purchasing_criteria, mcp__mentat__write_persona, mcp__mentat__request_picture_upload, mcp__mentat__remove_picture, mcp__mentat__erase_persona, mcp__mentat__move_end_user_profile, mcp__mentat__rerank_entries, mcp__mentat__aim_value_proposition, mcp__mentat__connect_value_map_entry, mcp__mentat__disconnect_value_map_entry, mcp__mentat__add_what_they_use_today, mcp__mentat__reach_fit, mcp__mentat__get_competitor_record, mcp__mentat__classify_competitive_position, mcp__mentat__record_competitor_observation, mcp__mentat__read_the_field, mcp__mentat__draw_strategy_canvas, mcp__mentat__correct_strategy_canvas_score, mcp__mentat__read_strategy_canvas_lead, mcp__mentat__make_core, mcp__mentat__lock_core, mcp__mentat__propose_ideation_revision, mcp__mentat__write_starting_point, mcp__mentat__add_ideation_candidate, mcp__mentat__update_ideation_candidate, mcp__mentat__drop_ideation_candidate, mcp__mentat__add_ideation_signal, mcp__mentat__update_ideation_signal, mcp__mentat__raise_escalation"
+allowed-tools: "mcp__mentat__server_info, mcp__mentat__list_portfolios, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_canvas, mcp__mentat__get_block, mcp__mentat__get_neighbours, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__create_project, mcp__mentat__record_project_insight, mcp__mentat__add_entry, mcp__mentat__update_entry, mcp__mentat__retire_entry, mcp__mentat__delete_entry, mcp__mentat__choose_beachhead, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__recommend_experiment_definition, mcp__mentat__withdraw_experiment_definition, mcp__mentat__park_hypothesis, mcp__mentat__unpark_hypothesis, mcp__mentat__retire_hypothesis, mcp__mentat__decide_hypothesis, mcp__mentat__delete_hypothesis, mcp__mentat__design_experiment, mcp__mentat__add_metric, mcp__mentat__add_criterion, mcp__mentat__start_experiment, mcp__mentat__record_observation, mcp__mentat__judge_criterion, mcp__mentat__complete_experiment, mcp__mentat__abort_experiment, mcp__mentat__record_spend, mcp__mentat__delete_experiment, mcp__mentat__record_evidence, mcp__mentat__update_evidence, mcp__mentat__add_data_point, mcp__mentat__delete_evidence, mcp__mentat__add_question, mcp__mentat__update_question, mcp__mentat__resolve_question, mcp__mentat__add_what_was_learned, mcp__mentat__add_risk, mcp__mentat__update_risk, mcp__mentat__resolve_risk, mcp__mentat__add_idea, mcp__mentat__update_idea, mcp__mentat__resolve_idea, mcp__mentat__record_contradiction, mcp__mentat__rule_contradiction, mcp__mentat__get_roadmap, mcp__mentat__get_operation_package, mcp__mentat__get_gate_status, mcp__mentat__list_gate_evaluations, mcp__mentat__get_run, mcp__mentat__list_runs, mcp__mentat__list_operation_definitions, mcp__mentat__get_operation_definition, mcp__mentat__list_pivot_definitions, mcp__mentat__set_roadmap_thesis, mcp__mentat__place_roadmap_item, mcp__mentat__skip_roadmap_item, mcp__mentat__include_roadmap_item, mcp__mentat__annotate_roadmap_item, mcp__mentat__append_roadmap_operation, mcp__mentat__add_roadmap_move, mcp__mentat__remove_roadmap_move, mcp__mentat__apply_pivot, mcp__mentat__start_run, mcp__mentat__checkpoint_run, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__end_run, mcp__mentat__cancel_run, mcp__mentat__evaluate_gate, mcp__mentat__get_customer_segment, mcp__mentat__get_value_proposition, mcp__mentat__get_ideation, mcp__mentat__set_customer_segment_state, mcp__mentat__split_customer_segment, mcp__mentat__rate_customer_segment, mcp__mentat__test_market_conditions, mcp__mentat__write_comparison, mcp__mentat__write_gathering_places, mcp__mentat__write_customers_today, mcp__mentat__write_total_addressable_market, mcp__mentat__write_turned_away_segments, mcp__mentat__describe_end_user, mcp__mentat__write_purchasing_criteria, mcp__mentat__write_gaps, mcp__mentat__score_high_value_job, mcp__mentat__write_persona, mcp__mentat__request_picture_upload, mcp__mentat__remove_picture, mcp__mentat__erase_persona, mcp__mentat__move_end_user_profile, mcp__mentat__rerank_entries, mcp__mentat__aim_value_proposition, mcp__mentat__connect_value_map_entry, mcp__mentat__disconnect_value_map_entry, mcp__mentat__add_what_they_use_today, mcp__mentat__reach_fit, mcp__mentat__add_our_business_as_it_is_today, mcp__mentat__write_concept, mcp__mentat__write_use_case, mcp__mentat__draw_product, mcp__mentat__quantify_value_proposition, mcp__mentat__write_promise, mcp__mentat__get_competitor_record, mcp__mentat__classify_competitive_position, mcp__mentat__record_competitor_observation, mcp__mentat__read_the_field, mcp__mentat__draw_strategy_canvas, mcp__mentat__correct_strategy_canvas_score, mcp__mentat__read_strategy_canvas_lead, mcp__mentat__make_core, mcp__mentat__lock_core, mcp__mentat__propose_ideation_revision, mcp__mentat__write_starting_point, mcp__mentat__add_ideation_candidate, mcp__mentat__update_ideation_candidate, mcp__mentat__drop_ideation_candidate, mcp__mentat__add_ideation_signal, mcp__mentat__update_ideation_signal, mcp__mentat__raise_escalation"
 ---
 
 # Mentat canvas
@@ -34,6 +34,10 @@ write carries its id.
 
 1. **Find the project.** `list_portfolios`, then `list_projects` with the portfolio's id, or
    `get_project` when you hold the project id. `get_project` also answers the current canvas version.
+   A new one is `create_project`, and it needs `isExistingBusiness`: ask the person "New idea or
+   existing business?" and send their answer, true for a business that sells today; never guess it
+   from the name or the description. An existing business starts on the `ExistingBusiness` route,
+   and every later session maps the business as it is first.
 2. **Read before you write.** `get_block` with the block's code answers the block's id, the kinds of
    entry it accepts (each with the `kindDefinitionId` and `storage` a write needs), everything already
    written on it, and the canvas version. Reading first is how you avoid writing a duplicate of an
@@ -43,7 +47,8 @@ write carries its id.
    no beachhead in short, and `retiredCount`. It leaves out the kinds' schemas unless you send
    `includeSchemas: true`, the retired segments unless `includeRetired: true`, and every segment as a
    whole entry unless `allInFull: true`. `get_customer_segment` reads one segment whole,
-   `get_value_proposition` one value proposition whole, `get_ideation` the idea.
+   `get_value_proposition` one value proposition, whole or only the `sections` named, `get_ideation`
+   the idea.
 3. **Write with the version you read.** Every write takes `canvasVersion` and answers with the new
    one. Carry the answered version into the next write. Two writes in a row against the same version
    means the second is refused as stale — that is the canvas protecting itself from a decision made on
@@ -122,7 +127,8 @@ taking the segment's or the profile's id and `canvasVersion`: `set_customer_segm
 `split_customer_segment`, `rate_customer_segment`, `test_market_conditions`, `write_comparison`,
 `write_gathering_places`, `write_customers_today`, `write_total_addressable_market`, `choose_beachhead`,
 `write_turned_away_segments`; `describe_end_user`, `write_purchasing_criteria`, `write_persona`,
-`erase_persona`, `move_end_user_profile`. Each writes its part whole: send everything the part holds,
+`erase_persona`, `move_end_user_profile`; on an end user or a context profile, `write_gaps` and
+`score_high_value_job`. Each writes its part whole: send everything the part holds,
 not the change. A picture is the exception, the persona's as every other: `request_picture_upload`
 names the slot and its owner and answers a link, the file goes to it from disk with one `curl` PUT, and
 `remove_picture` takes it off, keeping its prompt. `rerank_entries` puts every
@@ -134,6 +140,18 @@ its own; a split names the places each child keeps (`gatheringPlacesKept`), copi
 the persona names the places the person uses (`gatheringPlacesTheyUse`). `write_gathering_places`
 replaces the whole list: read it with `get_customer_segment`, send every place back, and add a new count
 as a new measurement beside the earlier ones, which are never edited or dropped.
+
+The gaps left by what they use today are one ranked list on each profile, end user or context, and
+nowhere else: `write_gaps` replaces the whole list, each gap pointing at a live top-ranked job, pain or
+gain of that profile — its top job, its first three pains or gains — saying whether nothing they use
+today addresses it or all address it badly, in their users' words. A job is scored as a high-value job
+with `score_high_value_job`: four marks of 1 to 4, of which Important is read from the job's
+importance and Unsatisfied from the gap that points at it, so only Tangible and Lucrative are always
+sent; the sum is worked out, and `get_customer_segment` lists the high-value jobs highest first beside
+the gaps and the openings. A pain says when its measure is known and no source gives the number
+(`isMeasureNumberMissing`), and an obstacle or a risk the use case step it stops them adopting at
+(`barrierToAdoptionAtUseCaseFactor`); the persona carries the last purchase for the top job. The rules
+and the refusals are in [reference/entries.md](reference/entries.md).
 
 A beachhead is proposed, never marked: `choose_beachhead` writes its part and its decision, and an
 agent's decision waits on the decisions tab for a person to accept it. A beachhead is replaced by
@@ -151,6 +169,24 @@ exactly once — an existing one by its entry id (`competitivePositionEntryId`),
 (`targetsSegmentIds`, at least one). `get_value_proposition` answers the fit check; `reach_fit`
 records the kind of fit reached, problem–solution fit with the reason to switch from what they use
 today.
+
+An existing business maps the offer it sells now with `add_our_business_as_it_is_today`: the
+profile's id, its title, body and citations, one per profile. Its products, relievers and creators
+are written inside it and connected as ours are, and the fit check of ours on that profile shows it
+beside what they use today; it is never designed and never reaches a fit. Only a value proposition
+whose `isOursToDesign` is true is designed: every design write on what they use today or on our
+business as it is today is refused "<code> is not ours to design."
+
+**Our value proposition's design** is written part by part, each part whole, replacing what was
+there: `write_concept` the concept chosen with its napkin sketch, `write_use_case` the ten rows of
+its full life cycle use case, `draw_product` the drawing frame by frame, `quantify_value_proposition`
+the value quantified, `write_promise` the ad-libs, final napkin sketch and objections. Its features
+are entries (`VP.FEAT`) written with `add_entry` inside a product or service of ours (`ownerId` the
+product's id) and put in order with `rerank_entries` on that product; its brochure is a field of the
+value proposition, written with `update_entry`. `get_value_proposition` with `sections` reads only the
+parts named — `Promise` and `Features`, say — beside the header; before a part is rewritten, read it,
+so what is kept is sent back. The shapes, the pictures each part carries and the refusals are in
+[reference/entries.md](reference/entries.md).
 
 ## The Competitive Landscape
 
@@ -211,16 +247,18 @@ STOP and call the AskUserQuestion tool to clarify.
 ## Questions, risks, ideas, contradictions
 
 When you cannot write an entry with confidence because something is unknown, `add_question` on the
-block rather than guessing. When you notice something that could go wrong, `add_risk` with likelihood
-and severity. When you have a thought that is not yet an entry, `add_idea` with effort and impact.
+block rather than guessing; what a later step learns towards an open question is appended to it with
+`add_what_was_learned`, and the answer that closes it is `resolve_question`. When you notice
+something that could go wrong, `add_risk` with likelihood and severity. When you have a thought
+that is not yet an entry, `add_idea` with effort and impact.
 When two entries cannot both be true, `record_contradiction`; a Critical one that nobody has ruled
 on blocks the canvas gates, which is the point. Verbs and states are in
 [reference/ledgers.md](reference/ledgers.md).
 
 ## The roadmap and operation runs
 
-A project's **roadmap** is the plan it runs: forty-seven operations from the method, in order, banded by
-tier, plus the moves it has decided to make. Start with `get_roadmap` — it answers the thesis, every
+A project's **roadmap** is the plan it runs: forty-eight operations from the method, in order, banded
+by tier, plus the moves it has decided to make. Start with `get_roadmap` — it answers the thesis, every
 row with its id, tier, status and prerequisites, the gate line above the plan, and the `roadmapVersion`
 every change to the plan carries. **That version is not the canvas version.** Changing the plan and
 writing on the canvas are two different aggregates with two different numbers; send each where it
@@ -234,7 +272,9 @@ Each answers the whole plan with the version it produced; carry that into the ne
 
 **Running an operation** is `mentat-operation`'s loop; these are the calls it is made of:
 
-1. `get_operation_package` with the row's id. It answers the method text as this project has it, the
+1. `get_operation_package` with the row's id, or with `operationSlug` when the operation is named by
+   its slug: a slug the plan does not hold, a retired one among them, is refused naming the
+   operations it does hold. It answers the method text as this project has it, the
    procedures in order with their ids and what each asks the founder, the places on the canvas or the
    idea the operation writes to, the operations it goes back to, on an `Experiment` operation its
    hand-over and the steps it shares, what it waits on, and any run left paused.

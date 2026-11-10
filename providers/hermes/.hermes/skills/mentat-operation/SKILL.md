@@ -69,6 +69,22 @@ question, `observe_run` with the `inboxItemId` and `pause_run` for a run with wo
 nothing to close for a `start_run` that refused, because no run was opened. The reply is a record of
 what was raised, never the place the question is asked.
 
+## A new idea or a running business
+
+**A business that already sells is mapped as it is before anything new is researched.** The
+brief's `project.overview.origin.route` (`boot_agent`, `get_project_state`) says how the project
+began; the person answered "New idea or existing business?" when it was created. `ExistingBusiness`
+is a business that runs today: every operation does its existing-business lines first, as its
+procedures word them — the customer segments it serves today written before the researched ones,
+its own customers, offer and data read in aggregate before any desk research, its current offer
+mapped as our business as it is today before ours is designed — and never copies a customer's
+personal data onto the canvas. Any other route, or none yet, is a new idea, and those lines are
+skipped. Read the route from the brief; never guess it from the project's name or description.
+
+The brief is the one `mentat-agent` booted with; with none in hand, `get_project_state` answers the
+same `overview`. A procedure whose instructions start "Existing business:" is done that way on an
+`ExistingBusiness` route and skipped on any other.
+
 ## The loop
 
 1. **Find the row.** The person named a slug: `get_operation_package(projectId, operationSlug)` reads
@@ -104,16 +120,32 @@ what was raised, never the place the question is asked.
    checkpoint sent the project back here. Keep the run id: every write from here carries it as
    `runId`. A refusal naming operations that have not run is the prerequisite check — see
    [Refusals](#reading-a-refusal).
+
+   **Then tell the founder what this operation is, before its first step.** In a session, your first
+   message of the run gives the operation's explainer from the package — `definition.explainer.text`,
+   and its `webUrl`, the page where its video plays and its pictures show — and `outputWebUrl`, where
+   what the run writes will be read. With no explainer written (`definition.explainer` is null), say in
+   one line what the operation does, from its description, and still give `outputWebUrl`. Why: most
+   founders have never met the method; the explainer says what the operation does, why, and where to
+   find what it wrote. Unattended, nobody reads the reply: send nothing.
 5. **Do the operation's own steps, in order, one at a time.** For each step of
    `definition.procedures`:
-   - Read its instructions in full.
+   - **Read the step first, always.** `get_procedure` with the step's code, just before its first
+     read or write, and read the instructions it answers in full. Why: the package was read at the
+     start, and by the fourth step of a long run its words are far behind; `get_procedure` answers
+     the wording this organisation reads now, and the read shows the step was done from its text.
+   - **The step has an explainer?** `get_procedure` answers it as `explainer` when the platform wrote
+     one. In a session, give the founder its `text` and `webUrl` as the step starts. None: say nothing
+     of it. Unattended: send nothing.
    - **It asks the founder?** Its `founderInputNeeded` says: `Always`, or `WhenInstructionsSay` with
      the instructions saying when. Then ask before you do the step —
      [Asking the founder](#asking-the-founder). `None`: it asks nothing.
    - **It needs desk research?** These tools may be at your disposal: agent-reach, ScrapeCreators,
      Firecrawl, Treg and last30days. What each is good for, how to tell it is here and the shape of a
      call are in [reference/research-tools.md](reference/research-tools.md). Use them, or better tools
-     and techniques you know: they are options, never a required procedure. Write what you find into
+     and techniques you know: they are options, never a required procedure. Before the first paid
+     call, list the paid calls and their rough cost and ask; unattended, call only what the routine's
+     instructions allow. Write what you find into
      the entries the step writes (the ratings and comparison, the segment's gathering places, the
      profile's fields, the jobs, pains and gains), each with its status and every quote or figure as a citation on the statement it
      backs, never into a note.
@@ -123,9 +155,23 @@ what was raised, never the place the question is asked.
      `add_entry`, carrying `ownerId` when its kind is written inside another entry; a segment's,
      profile's or value proposition's part with its own tool (`rate_customer_segment`,
      `write_gathering_places`, `describe_end_user`, `write_persona`, `connect_value_map_entry` and
-     the rest); the idea with the
-     idea tools and `ideationVersion`, never as a block entry. Keep the ids the writes answered. A
-     step that draws a picture: [Drawing a picture](#drawing-a-picture).
+     the rest; a profile's gaps with `write_gaps`, the whole ranked list, and a job's high-value marks
+     with `score_high_value_job`, after the gaps; our value proposition's design with `write_concept`,
+     `write_use_case`, `draw_product`, `quantify_value_proposition` and `write_promise`, each part
+     whole, and an existing business's current offer with `add_our_business_as_it_is_today`); the idea
+     with the idea tools and `ideationVersion`, never as a block entry. What the step learns towards
+     an open question — what customers value most, what the business does best — is appended to that
+     question with `add_what_was_learned`, never written as its answer. Keep the ids the writes
+     answered. A step that draws a picture: [Drawing a picture](#drawing-a-picture).
+   - **It leaves work that outlives the run?** A task the step writes — a founder check on a
+     competitor, the Core kept in view — is `create_work_item` with `aboutKind: "BlockEntries"` and
+     `aboutId` the entry it is about, the three ratings and `runId`: written inside this run, it is
+     the agent's work and lands `Proposed` for a person to approve. The open question beside it is
+     `add_question`, its text naming the entry's code as the entry carries it (`CL.MOAT-03`), never its
+     title. Why: the service links a question to every code its text names, and that link is what shows
+     the question on the entry's card. Routines the step proposes are the person's
+     schedule: after the person chooses, hand them to `mentat-routines`, which creates them switched
+     off and switches them on with the person; never create one inside this run.
    - **It sends the project back?** When the instructions say the work of an earlier operation no
      longer holds — the beachhead moved, the profile narrowed — the project goes back mid-way:
      [Going back](#going-back).
@@ -269,7 +315,10 @@ does not hold.
 **1. The prompt first, always.** Build the one prompt the step's text says, and save it with the
 owner's own write before any picture: `write_persona` (`picturePrompt`) for the persona, `add_idea` or
 `update_idea` (`picturePrompt`) for an idea, and for our value proposition the write of the part the
-picture belongs to, as the step names it. The prompt is what a person or another agent draws from
+picture belongs to, as the step names it: `write_concept` (the sketch's `picturePrompt`),
+`write_use_case` (`visualPrompt`), `draw_product` (`diagramPrompt`, and each frame's
+`wireframePrompt`, the frame's id then read from the drawing it answers) or `write_promise` (the final
+napkin sketch's `picturePrompt`). The prompt is what a person or another agent draws from
 when the picture is missing or wrong, and without a picture the step's own words carry what it shows.
 A real end user gets a picture only when what the person agreed to be kept includes one. Upload after
 the owner's last write in the step: a rewrite of the persona takes its picture off, and a rewrite of
