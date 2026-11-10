@@ -36,12 +36,17 @@ A thought that is not yet an entry, ranked by effort against impact.
 
 | Call | Arguments | Effect |
 | --- | --- | --- |
-| `add_idea` | `blockId`, `title`, `body`, `effort`, `impact` (VeryLow … VeryHigh) | Proposed. |
-| `update_idea` | `title` + `body` together; `effort` + `impact` together | Rewrites, rescores. |
+| `add_idea` | `blockId`, `title`, `body`, `effort`, `impact` (VeryLow … VeryHigh), `picturePrompt` when it has a sketch | Proposed. |
+| `update_idea` | `title` + `body` + `picturePrompt` together; `effort` + `impact` together | Rewrites, rescores. |
 | `resolve_idea` | `resolution` Exploring, Adopted, Rejected, Reconsidered | Reconsidered reopens a rejected one. |
 
 Statuses: Proposed, Exploring, Adopted, Rejected. An adopted idea usually becomes an entry; write
 the entry and say in its body which idea it came from.
+
+An idea can carry a sketch: `picturePrompt` is the prompt it is drawn from, and the sketch itself goes
+up through `request_picture_upload` with the slot `IdeaSketch` and the idea's id as `ownerId`, after the
+idea is written. A rewrite sends the prompt again: one left out or changed drops the sketch drawn from
+the old prompt. An adopted or rejected idea takes no sketch.
 
 ## Contradictions
 

@@ -5,7 +5,7 @@ file carries what the schema cannot say: which permission each tool demands, whe
 anything, and which take and answer a canvas version. How to use them well is the `mentat-canvas`
 skill's job.
 
-One hundred and sixty-nine tools: forty-four reads and one hundred and twenty-five writes.
+One hundred and eighty tools: forty-five reads and one hundred and thirty-five writes.
 
 ## Reads — `mcp:tools.read`
 
@@ -17,16 +17,17 @@ One hundred and sixty-nine tools: forty-four reads and one hundred and twenty-fi
 | `get_project` | BusinessIntelligence | The project and its overview, with the canvas version. Its description is the idea as last stated, or the founder's own words before the idea is stated |
 | `get_project_state` | BusinessIntelligence | Where a project stands: the canvas in summary with every block's counts, the plan position and whether it has a thesis, the decisions, your open jobs, what a person answered while you were away, how many inbox rows still wait for the person you work for, and what changed since your last run ended |
 | `get_canvas` | BusinessIntelligence | The canvas document and its version: every block whole, every segment as a whole entry with its card, parts and refusals — large. What is written inside a segment or a value proposition comes through `get_customer_segment` and `get_value_proposition` |
-| `get_block` | BusinessIntelligence | One block by code, its kinds with each kind's schema, everything on it, the version. On Customer Segments, its trees under `customerSegments`: an outline row per live segment (id, code, title, status, order, and only what holds a value: parent, state, score, reasons, the true flags), the retired count, every beachhead in full but its end user profile with its adjacent markets in short, and the shortlisted segments of a tree with no beachhead in short. `includeSchemas`, `includeRetired` and `allInFull` add the kinds' schemas, the retired segments and every segment as a whole entry. On Value Proposition, our value propositions and the notes |
+| `get_block` | BusinessIntelligence | One block by code, its kinds with each kind's schema, everything on it, the version. On Customer Segments, its trees under `customerSegments`: an outline row per live segment (id, code, title, status, order, and only what holds a value: parent, state, score, reasons, the true flags), the retired count, every beachhead in full but its end user profile with its adjacent markets in short, and the shortlisted segments of a tree with no beachhead in short. `includeSchemas`, `includeRetired` and `allInFull` add the kinds' schemas, the retired segments and every segment as a whole entry. On Value Proposition, our value propositions and the notes. On Competitive Landscape, each Competitive Position with its kind, the segments it targets, its latest fact per section and our reading of it; our moat and Core candidates with the Core, its state and what it delivers; each Strategy Canvas with its factors and scores; and `openings`: per profile, its top pains no alternative relieves, with the complaints that name them, beside that profile's gaps |
 | `get_customer_segment` | BusinessIntelligence | One customer segment whole: its ratings and score, the three conditions of a market, its comparison, its customers today, its TAM with the total and the market share, its gathering places with each one's latest audience and growth worked out from its measurements, the tally of those places by platform (a sum before overlap), its beachhead part with the adjacent markets and the segments it turns away, and its end user profile — who they are, the jobs, pains and gains in rank order, the purchasing criteria in order, the persona with the gathering places the person uses, its picture's address and its picture prompt, the context profiles with their items — with the canvas version |
 | `get_value_proposition` | BusinessIntelligence | One value proposition whole: the profile it aims at, its products and services, pain relievers and gain creators in rank order with what each is connected to, the value propositions of what they use today aimed at the same profile, and the fit check, with the canvas version |
+| `get_competitor_record` | BusinessIntelligence | One Competitive Position's whole competitor record: its kind, segments and our reading of it, every section with its latest fact and the history beneath, each ad with its running days, their orders per 30 days and growth from the test purchases, set against the goal of ours named in `comparedWithGoalId` when one is, our guesses of its Core and moats, its value propositions by profile, the work items about it and the runs a routine started among those that recorded its facts. Another organisation's is not found |
 | `get_hypothesis` | BusinessIntelligence | One hypothesis with its runs |
 | `get_experiment` | BusinessIntelligence | One run with metric and criterion ids, evidence |
 | `list_experiment_definitions` | BusinessIntelligence | The method cards, optionally for one concern |
 | `get_experiment_definition` | BusinessIntelligence | One card's full method text |
 | `get_roadmap` | BusinessIntelligence | A project's plan: thesis, rows in order with the blocks each operation writes to, the gate line, the roadmap version |
 | `get_ideation` | BusinessIntelligence | The project's idea: the founder's starting point and route, the candidates weighed with their signals and ratings, the statement in force, the proposal waiting for a person, every revision with its decision, and the idea's `version`, which every idea write sends as `ideationVersion`; each write answers the next `version` |
-| `get_operation_package` | BusinessIntelligence | One row's method text: its steps in order with what each asks the founder, its targets — blocks and kinds, or the project's idea with the idea itself — the operations it goes back to, in order, and on an `Experiment` operation its hand-over to hypotheses and the steps every `Experiment` operation shares; its prerequisites and any run to resume |
+| `get_operation_package` | BusinessIntelligence | One row's method text, by the row's id or the operation's slug: its steps in order, each by its code, with what each asks the founder, its targets — blocks and kinds, or the project's idea with the idea itself — the operations it goes back to, in order, and on an `Experiment` operation its hand-over to hypotheses and the steps every `Experiment` operation shares; its prerequisites and any run to resume |
 | `get_gate_status` | BusinessIntelligence | What the method gate would answer now, recorded nowhere |
 | `list_gate_evaluations` | BusinessIntelligence | The gate evaluations a project has recorded |
 | `get_run` | BusinessIntelligence | One run of any kind with its events, and — on an attempt at a row of the plan — the verdict, its steps with each one finished and the founder's answer to each that asked, and what it produced; on an `Experiment` operation's run, the hand-over to hypotheses as the canvas stands now |
@@ -88,12 +89,21 @@ carries its own version and a conflict names which of them moved.
 | `describe_end_user` | Writes who the end user is: the end user profile's twelve characteristics and any added ones, each with the numbers its text quotes as breakdowns and figures, in one call |
 | `write_purchasing_criteria` | Writes an end user profile's whole list of purchasing criteria, in order, each pointing at one of its jobs, pains or gains |
 | `write_persona` | Writes or replaces the persona of an end user profile: how it was made, its fact sheet, the segment's gathering places the person uses, its words for the top pain and its picture prompt |
-| `request_persona_picture_upload`, `remove_persona_picture` | Puts a picture on the persona — a link the file (PNG, JPEG, WebP or SVG, at most 25 MB) is sent to from disk with one PUT — or takes it off |
+| `request_picture_upload`, `remove_picture` | Puts a picture in one of its seven slots — the persona's picture on its end user profile, an idea's sketch on the idea, and on our value proposition the concept's napkin sketch, the use case's visual, the product's diagram, a drawing frame's wireframe (naming the frame) or the promise's final napkin sketch — by a link the file (PNG, JPEG, WebP or SVG, at most 25 MB) is sent to from disk with one PUT; or takes it off, keeping its prompt |
+| `request_persona_picture_upload`, `remove_persona_picture` | The persona's picture alone, kept for plugins published before `request_picture_upload`: the same as it with the slot `PersonaPicture`. A skill calls `request_picture_upload` and `remove_picture` |
 | `erase_persona` | Erases a real end user's persona when they ask: its facts and its picture, and their values in the history |
 | `move_end_user_profile` | Moves an end user profile, with its context profiles and persona, onto a leaf segment |
 | `aim_value_proposition` | Aims a value proposition at a profile |
 | `connect_value_map_entry`, `disconnect_value_map_entry` | Connects a product, reliever or creator to the job, pain or gain it addresses, or takes the connection off |
-| `add_what_they_use_today` | Adds the value proposition of what they use today, aimed at the same profile as ours, on a Competitive Position entry that exists or a new one |
+| `add_what_they_use_today` | Adds the value proposition of what they use today, mapped against a profile before or after ours aims at it, on a Competitive Position entry that exists or a new one named with its kind and the segments it targets |
+| `classify_competitive_position` | Says what a Competitive Position is to the customer — status quo, direct competitor, offer from another industry or logical future competitor — and the live segments it targets, at least one |
+| `record_competitor_observation` | Appends one fact to a competitor's record through the form of its type: the day it was true, the fact with its link and date seen, the figures and tags its type asks for, the ad on an Ad fact, the receipt on a Test purchase fact, the top pain a complaint names. A fact is never edited or deleted; inside a run it is the agent's, or the routine's collector's |
+| `read_the_field` | Writes our reading of an alternative: its threat to ours (Low, Medium or High, with why), where it is going and what works for it |
+| `draw_strategy_canvas` | Draws a Strategy Canvas whole: its factors in order, each matching a job, pain or gain of the profile the compared value proposition aims at, with one score 0 to 10 for ours and one per alternative |
+| `correct_strategy_canvas_score` | Corrects one score of a Strategy Canvas from evidence: ours, or one alternative's |
+| `read_strategy_canvas_lead` | Reads what an alternative's lead over ours on one factor means — a deliberate trade-off or a thing to improve — with why |
+| `make_core` | Makes one of our moat or Core candidates the working Core |
+| `lock_core` | Locks the working Core with the plan for building it: team members with the skills, leaders in the field, where they are found, owner, review cadence, skills plan, incentives |
 | `reach_fit` | Records the next kind of fit our value proposition reached; problem–solution fit takes the reason to switch from what they use today |
 | `write_starting_point`, `add_ideation_candidate`, `update_ideation_candidate`, `drop_ideation_candidate`, `add_ideation_signal`, `update_ideation_signal`, `propose_ideation_revision` | The project's idea — these take `ideationVersion`: the founder's starting point and the route, the ideas weighed and the signals read for them, each with one `citation`, and a statement of the idea naming its riskiest hypothesis; an agent's statement is proposed for a person to accept, a person's is accepted as written |
 | `create_hypothesis`, `update_hypothesis`, `recommend_experiment_definition`, `withdraw_experiment_definition`, `park_hypothesis`, `unpark_hypothesis`, `retire_hypothesis`, `decide_hypothesis`, `delete_hypothesis` | Hypotheses |
@@ -101,7 +111,7 @@ carries its own version and a conflict names which of them moved.
 | `record_evidence`, `update_evidence`, `add_data_point`, `delete_evidence` | Evidence bundles |
 | `add_question`, `update_question`, `resolve_question` | Questions |
 | `add_risk`, `update_risk`, `resolve_risk` | Risks |
-| `add_idea`, `update_idea`, `resolve_idea` | Ideas |
+| `add_idea`, `update_idea`, `resolve_idea` | Ideas. `add_idea` and `update_idea` carry the prompt of the idea's sketch, `picturePrompt`; the sketch goes up through `request_picture_upload` |
 | `record_contradiction`, `rule_contradiction` | Contradictions |
 | `set_roadmap_thesis`, `place_roadmap_item`, `skip_roadmap_item`, `include_roadmap_item`, `annotate_roadmap_item`, `append_roadmap_operation`, `add_roadmap_move`, `remove_roadmap_move`, `apply_pivot` | A project's plan — these take `roadmapVersion` |
 | `set_roadmap_move_work_item` | Points a move of the plan at the job that carries it out — it takes `roadmapVersion` too |
@@ -161,7 +171,7 @@ The board, the inbox and the decision ledger carry no version either: a job, an 
 decision hang off the project rather than off the canvas, and the last write to a job stands.
 
 `delete_entry`, `delete_hypothesis`, `delete_experiment`, `delete_evidence`, `remove_roadmap_move`,
-`unlink_from_goal`, `cancel_run`, `apply_pivot`, `remove_persona_picture`, `erase_persona` and
+`unlink_from_goal`, `cancel_run`, `apply_pivot`, `remove_picture`, `remove_persona_picture`, `erase_persona` and
 `disconnect_value_map_entry` are marked destructive; a harness may ask before running them.
 
 `evaluate_gate` and `apply_pivot` move a project's tier, so BusinessIntelligence asks for

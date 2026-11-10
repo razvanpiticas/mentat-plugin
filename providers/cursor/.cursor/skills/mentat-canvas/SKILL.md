@@ -1,6 +1,6 @@
 ---
 name: "mentat-canvas"
-description: "Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks and inside other entries, the customer segments' trees with their parts, end user profiles and personas, value propositions with their value maps and fit, the project's idea, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows, the run tools, the method gates and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it."
+description: "Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks and inside other entries, the customer segments' trees with their parts, end user profiles and personas, value propositions with their value maps and fit, the Competitive Landscape's competitor records, Strategy Canvases and Core, the project's idea, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows, the run tools, the method gates and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it."
 ---
 
 # Mentat canvas
@@ -63,7 +63,8 @@ will be refused the same way, and the fix is a new `start_run`, never a retry.
 `get_block` and `get_neighbours` take **codes**. `get_customer_segment` takes `segmentId` and
 `get_value_proposition` takes `valuePropositionId`: the ids `get_block` answered for that code or,
 for a value proposition of what they use today, the id `get_value_proposition` answered under
-`whatTheyUseToday`. A
+`whatTheyUseToday`. `get_competitor_record` takes the Competitive Position's entry id from `get_block`
+on `CL`. A
 block's code comes from `get_canvas`, which lists every block with its code,
 or from a refusal of `get_block`, which lists the codes that exist; never from memory, because a
 project may hold custom blocks with codes of their own. Writes take **ids** a read answered:
@@ -119,9 +120,10 @@ taking the segment's or the profile's id and `canvasVersion`: `set_customer_segm
 `split_customer_segment`, `rate_customer_segment`, `test_market_conditions`, `write_comparison`,
 `write_gathering_places`, `write_customers_today`, `write_total_addressable_market`, `choose_beachhead`,
 `write_turned_away_segments`; `describe_end_user`, `write_purchasing_criteria`, `write_persona`,
-`request_persona_picture_upload`, `remove_persona_picture`, `erase_persona`, `move_end_user_profile`. Each
-writes its part whole: send everything the part holds, not the change. The picture is the exception:
-`request_persona_picture_upload` answers a link, and the file goes to it from disk with one `curl` PUT. `rerank_entries` puts every
+`erase_persona`, `move_end_user_profile`. Each writes its part whole: send everything the part holds,
+not the change. A picture is the exception, the persona's as every other: `request_picture_upload`
+names the slot and its owner and answers a link, the file goes to it from disk with one `curl` PUT, and
+`remove_picture` takes it off, keeping its prompt. `rerank_entries` puts every
 entry of one kind inside one owner in a new order; the order is the rank.
 
 Where a segment's end users gather is one list on the segment, its gathering places, and nowhere else:
@@ -140,11 +142,35 @@ choosing the one that replaces it; it is never cleared.
 Our value proposition is aimed at one profile (`aim_value_proposition`); its products, relievers and
 creators are written inside it and connected to the jobs, pains and gains they address
 (`connect_value_map_entry`, `disconnect_value_map_entry`). What they use today is a value proposition
-of its own on a Competitive Position entry, mapped against the profile ours aims at:
-`add_what_they_use_today` takes our value proposition's id (`valuePropositionId`) and is refused until
-ours is aimed, so write ours first (`add_entry` on `VP`, then `aim_value_proposition`).
-`get_value_proposition` answers the fit check; `reach_fit` records the kind of fit reached,
-problem–solution fit with the reason to switch from what they use today.
+of its own on a Competitive Position entry, mapped against a profile whether or not ours aims at it
+yet: `add_what_they_use_today` takes the profile's id (`profileId`) and names its Competitive Position
+exactly once — an existing one by its entry id (`competitivePositionEntryId`), or a new one
+(`newCompetitivePosition`) by its `title`, its `alternativeKind` and the segments it targets
+(`targetsSegmentIds`, at least one). `get_value_proposition` answers the fit check; `reach_fit`
+records the kind of fit reached, problem–solution fit with the reason to switch from what they use
+today.
+
+## The Competitive Landscape
+
+Every alternative the customer has is a Competitive Position entry (`CL.POS`) on the Competitive
+Landscape: what it is to the customer (`alternativeKind`: `StatusQuo`, `DirectCompetitor`,
+`OfferFromAnotherIndustry` or `LogicalFutureCompetitor`) and the segments it targets. One written
+before alternatives had kinds reads unclassified until `classify_competitive_position` gives it both.
+Its record is a list of facts appended one at a time with `record_competitor_observation`, each
+through the form of its type, which the kind's schema serves as `observationForms`: a fact is never
+edited or deleted, and the one true on the latest day is its section's latest. `read_the_field` writes our
+reading of it: its threat to ours, where it is going and what works for it. `get_competitor_record`
+reads the record whole, by section with history and the numbers worked out from its ads and test
+purchases; `get_block` on `CL` answers each position's latest fact per section beside our candidates,
+the Strategy Canvases and the openings.
+
+A Strategy Canvas (`CL.SC`) compares one value proposition of ours with the alternatives: `add_entry`
+names it, then `draw_strategy_canvas` writes its factors and scores whole, `correct_strategy_canvas_score`
+corrects one score from evidence and `read_strategy_canvas_lead` reads an alternative's lead over ours.
+Our moat and Core candidates, and our guesses of a competitor's, are `CL.MOAT` entries;
+`make_core` makes one of ours the working Core, and `lock_core` locks it with the plan for building it
+when the founder locks it. The rules each holds, the shapes and the refusals are in
+[reference/entries.md](reference/entries.md).
 
 ## The idea
 

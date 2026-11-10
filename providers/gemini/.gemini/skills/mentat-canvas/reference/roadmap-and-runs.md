@@ -83,7 +83,7 @@ revisit row is opened with `revisitOfRunId`, the run that sent the project back.
 Each step the package lists carries `founderInputNeeded` — `None`, `Always`, or `WhenInstructionsSay`,
 when its instructions say when — and `founderInputPurpose`, the question in the founder's words. The
 answer goes on the step's checkpoint as `founderAnswer`. An `Always` step checkpointed without one is
-refused with its question: "Step persona.1 asks the founder: … Send their answer as founderAnswer." A
+refused with its question: "Step choose-how-the-persona-is-made asks the founder: … Send their answer as founderAnswer." A
 step that asks nothing refuses an answer. A run a routine fired asks in the inbox instead:
 `raise_escalation` with the step's `procedureId` pauses the run, the person's answer becomes the step's
 answer on the run, `get_run` shows it under the step, and the run that resumes carries it, so the step
@@ -128,22 +128,22 @@ rather than omitting them when a checkpoint produced none.
 The plan's row `customer-profile` is `NotStarted` at `T2`, and the project stands at `T2`.
 
 1. `get_operation_package(projectId, operationId)` → the definition with **validation level
-   `Experiment`**, five own steps (`customer-profile.1` jobs, `.2` pains, `.3` gains, `.4` one kind of
-   people, `.5` rank), target slots on `CS` (`CS.JOBS`, `CS.PAINS`, `CS.GAINS`, `CS.PROFILE`, `CS`),
+   `Experiment`**, five own steps (`map-jobs`, `map-pains`, `map-gains`, `check-one-kind-of-people`,
+   `rank-jobs-pains-and-gains`), target slots on `CS` (`CS.JOBS`, `CS.PAINS`, `CS.GAINS`, `CS.PROFILE`, `CS`),
    its revisits `beachhead-selection`, `end-user-profile`, `beachhead-tam`, its hand-over and the four
    shared steps, one mandatory prerequisite `beachhead-tam` in state `Met`, no resumable run.
 2. The description's "Read first:" reads: `get_customer_segment` on the beachhead `CS-08` — its end
    user profile `CS.PROFILE-02` — and on the shortlisted segment it was split from; `get_ideation`.
 3. `start_run(projectId, operationId, forcePastPrerequisites: false)` → a run, status `Running`.
-4. Do `customer-profile.1`: `add_entry` with the `CS.JOBS` kind for each job, `ownerId` the profile's
-   id. `checkpoint_run(runId, completedProcedureId: <the id of customer-profile.1>, writtenEntryIds:
+4. Do `map-jobs`: `add_entry` with the `CS.JOBS` kind for each job, `ownerId` the profile's
+   id. `checkpoint_run(runId, completedProcedureId: <the id of map-jobs>, writtenEntryIds:
    [those ids], producedHypothesisIds: [], note: "Four jobs from the five transcripts.")`.
-5. Do `customer-profile.2`, the pains, from five interviews. `observe_run(runId, payload: {
+5. Do `map-pains` from five interviews. `observe_run(runId, payload: {
    "interviews": 5 }, note: "Two people said the opposite of the third.")`, then `add_entry` with the
    `CS.PAINS` kind inside the profile and `checkpoint_run(runId, completedProcedureId: <the id of
-   customer-profile.2>, …)`.
-6. Do `.3`, the gains, the same way; `.4` and `.5` correct the profile and rank the items with
-   `rerank_entries`. The checkpoint of `.5` answers the hand-over: "Hypothesise now", order 1 open with
+   map-pains>, …)`.
+6. Do `map-gains` the same way; `check-one-kind-of-people` and `rank-jobs-pains-and-gains` correct the
+   profile and rank the items with `rerank_entries`. The checkpoint of `rank-jobs-pains-and-gains` answers the hand-over: "Hypothesise now", order 1 open with
    the top job `CS.JOBS-03`, order 2 waiting for order 1.
 7. `mentat-hypothesis` writes the hypothesis about `CS.JOBS-03`; `checkpoint_run` on the Hypothesise
    step, its `procedureId` from `sharedSteps`, with the hypothesis's id in `producedHypothesisIds`.

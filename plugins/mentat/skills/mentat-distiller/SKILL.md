@@ -1,6 +1,6 @@
 ---
 name: "mentat-distiller"
-description: "Distil the insights an organisation has recorded — the drafts a run left behind and the confirmed learnings — into one proposal per subject whose text should change, folding repeats together, escalating contradictions and never approving or applying anything. Use when the person says \"distil the insights\", \"what did we learn about persona.4\", \"clean up the learnings\", when the Nightly distiller routine fires, or when a run's blockers were recorded and the person asks what the method should say instead."
+description: "Distil the insights an organisation has recorded — the drafts a run left behind and the confirmed learnings — into one proposal per subject whose text should change, folding repeats together, escalating contradictions and never approving or applying anything. Use when the person says \"distil the insights\", \"what did we learn about fill-the-persona-gaps\", \"clean up the learnings\", when the Nightly distiller routine fires, or when a run's blockers were recorded and the person asks what the method should say instead."
 argument-hint: "<project name or id> [subject: a procedure code, an entry kind code, an operation slug, a card slug, a charter document title, or \"the project\"] | [since <date> | since the last run]"
 allowed-tools: "mcp__mentat__list_insights, mcp__mentat__get_insight, mcp__mentat__get_procedure, mcp__mentat__get_experiment_definition, mcp__mentat__get_block, mcp__mentat__get_operation_definition, mcp__mentat__list_charter_documents, mcp__mentat__list_agent_documents, mcp__mentat__get_agent_document, mcp__mentat__get_routine, mcp__mentat__list_runs, mcp__mentat__get_run, mcp__mentat__get_history, mcp__mentat__record_procedure_insight, mcp__mentat__record_block_entry_definition_insight, mcp__mentat__record_experiment_definition_insight, mcp__mentat__record_charter_insight, mcp__mentat__record_operation_insight, mcp__mentat__record_project_insight, mcp__mentat__supersede_insight, mcp__mentat__contradict_insight, mcp__mentat__observe_run, mcp__mentat__boot_agent, mcp__mentat__get_project_state, mcp__mentat__start_run, mcp__mentat__end_run, mcp__mentat__raise_escalation"
 ---
@@ -171,7 +171,7 @@ The `mentat` skill's table, plus:
 
 - **A proposal is the whole text**, with your change in place, not a diff and not the paragraph
   that changes. A fragment applied is a document with a hole in it.
-- **One proposal per subject per pass.** Five drafts on `persona.4` become one proposal on `persona.4`,
+- **One proposal per subject per pass.** Five drafts on `fill-the-persona-gaps` become one proposal on `fill-the-persona-gaps`,
   not five.
 - **Never invent a learning.** Every statement in a distillate traces to a draft, a confirmed
   learning or a run you read, named in its body. A pass that finds nothing to fold says so.

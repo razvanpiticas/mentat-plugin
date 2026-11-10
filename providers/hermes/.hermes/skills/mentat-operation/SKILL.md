@@ -71,14 +71,19 @@ what was raised, never the place the question is asked.
 
 ## The loop
 
-1. **Find the row.** The person named a slug or a position: `get_roadmap`, take that row's id. They
+1. **Find the row.** The person named a slug: `get_operation_package(projectId, operationSlug)` reads
+   that row's package, and its `operationId` is the row's id; a slug the plan does not hold, a retired
+   one among them, is refused with the plan's operations, so take the one they meant from those. They
+   named a position: `get_roadmap`, take that row's id. They
    said "next", or a routine fired this: the brief's `project.roadmap.next` (`boot_agent`,
    `get_project_state`) is the row; with no brief, `get_roadmap` and the first row that is
    `NotStarted`, `Paused`, `Failed` or `Cancelled`. A `Skipped` row is not run: say why it was skipped
    and stop. In a session, when what they named matches no row or matches several: Ask the user directly to clarify what you cannot infer.
    Unattended, a row that cannot be resolved is a message through `mentat-inbox` naming what was
    asked and what was not found, then stop.
-2. **Read the package.** `get_operation_package(projectId, operationId)`. What each part of it is
+2. **Read the package.** `get_operation_package(projectId, operationId)`, unless step 1 already read
+   it by slug. Each step carries its code, words joined by hyphens that say what it does, such as
+   `choose-how-the-persona-is-made`: name a step by that code. What each part of it is
    for is in [reference/running-a-row.md](reference/running-a-row.md): the definition and the theme
    question; the steps in order, each with what it asks the founder; the target slots — a block and a
    kind, or the project's idea, with the idea itself; the operations it goes back to (`revisits`), in
@@ -119,7 +124,8 @@ what was raised, never the place the question is asked.
      profile's or value proposition's part with its own tool (`rate_customer_segment`,
      `write_gathering_places`, `describe_end_user`, `write_persona`, `connect_value_map_entry` and
      the rest); the idea with the
-     idea tools and `ideationVersion`, never as a block entry. Keep the ids the writes answered.
+     idea tools and `ideationVersion`, never as a block entry. Keep the ids the writes answered. A
+     step that draws a picture: [Drawing a picture](#drawing-a-picture).
    - **It sends the project back?** When the instructions say the work of an earlier operation no
      longer holds — the beachhead moved, the profile narrowed — the project goes back mid-way:
      [Going back](#going-back).
@@ -162,7 +168,7 @@ step's work before the answer: the answer is what the step is done from.
   then stop. The person answers in the inbox; the answer becomes the step's answer on the run, and
   the next firing resumes it ([Resuming](#resuming)).
 - An `Always` step checkpointed without its answer is refused in a sentence that quotes the question:
-  "Step persona.1 asks the founder: … Send their answer as founderAnswer." Ask it then; never invent
+  "Step choose-how-the-persona-is-made asks the founder: … Send their answer as founderAnswer." Ask it then; never invent
   the answer to get past the refusal.
 
 ## Going back
@@ -240,44 +246,74 @@ own step is checkpointed, so it is read from the earlier run instead:
 
 **`None`.** The steps write; `end_run` without a verdict.
 
-## Drawing the persona's picture
+## Drawing a picture
 
-The step that draws the persona — the persona operation's last, Draw the picture — builds one prompt
-from the fact sheet as its text says, and saves it with `write_persona` (`picturePrompt`) before any
-picture, always: it is what a person or another agent draws from when the picture is missing or
-wrong. A real end user gets a picture only when what the person agreed to be kept includes one. Then
-the picture, which depends on what this agent can do:
+Every picture a step draws goes the same way, whatever it shows: the persona's picture, a napkin
+sketch, a use case's visual, a product's diagram, a wireframe of one frame of the drawing, the sketch
+of a concept set aside. The step's instructions say what to draw from and in which style; this says
+where it goes and how it gets there. Each picture has a **slot**, and the slot sits on one **owner**:
+
+| Slot | Owner, sent as `ownerId` | What it is |
+| --- | --- | --- |
+| `PersonaPicture` | the end user profile whose persona it is | the persona's picture |
+| `IdeaSketch` | the idea | the sketch of a concept set aside |
+| `ConceptNapkinSketch` | our value proposition | the napkin sketch of the concept chosen |
+| `UseCaseVisual` | our value proposition | a diagram or flowchart of the use case's full life cycle |
+| `ProductDiagram` | our value proposition | the diagram of a hardware product |
+| `DrawingFrameWireframe` | our value proposition, with the frame as `drawingFrameId` | the wireframe of one frame, part or step of the product's drawing |
+| `PromiseNapkinSketch` | our value proposition | the final napkin sketch of the promise |
+
+Only the wireframe names a frame; every other slot is sent without one. An owner refuses a slot it
+does not hold.
+
+**1. The prompt first, always.** Build the one prompt the step's text says, and save it with the
+owner's own write before any picture: `write_persona` (`picturePrompt`) for the persona, `add_idea` or
+`update_idea` (`picturePrompt`) for an idea, and for our value proposition the write of the part the
+picture belongs to, as the step names it. The prompt is what a person or another agent draws from
+when the picture is missing or wrong, and without a picture the step's own words carry what it shows.
+A real end user gets a picture only when what the person agreed to be kept includes one. Upload after
+the owner's last write in the step: a rewrite of the persona takes its picture off, and a rewrite of
+an idea or a part with another prompt drops the picture drawn from the old one.
+
+**2. The picture**, which depends on what this agent can do:
 
 Hermes has no image tool here: write the picture yourself as an SVG, as below.
 
 **With no image tool, an SVG written from the prompt.** The same prompt, drawn in code. The file
 opens with `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">` — the root is `svg` in
 the SVG namespace, or it is not read as an image — with no DOCTYPE, flat shapes and gradients only,
-no text, no script, no event handler, no external link or font. Write it to a file, `persona.svg`.
+no text, no script, no event handler, no external link or font. Write it to a file named for what it
+shows, such as `persona.svg` or `promise-napkin-sketch.svg`.
 
-**Send the file to an upload link, never as text.** The picture's bytes never pass through the
+**3. Send the file to an upload link, never as text.** The picture's bytes never pass through the
 conversation: one wrong character copied by hand and the file is not an image, and a photo is
 millions of characters.
 
-1. Ask for the link: `request_persona_picture_upload(projectId, canvasVersion, endUserProfileId,
-   fileName, runId)` — `fileName` the name it is kept under, such as `dana-whitfield.png`; the
-   `canvasVersion` the `write_persona` call answered. The answer is `uploadUrl`, `expiresAtUtc`
-   (fifteen minutes on) and `maxBytes`. Asking does not move the canvas version.
+1. Ask for the link: `request_picture_upload(projectId, canvasVersion, slot, ownerId,
+   drawingFrameId, fileName, runId)` — the slot and its owner from the table, `drawingFrameId` only
+   for `DrawingFrameWireframe`, `fileName` the name it is kept under, such as `dana-whitfield.png`;
+   the `canvasVersion` the owner's write answered. The answer is `uploadUrl`, `expiresAtUtc` (fifteen
+   minutes on) and `maxBytes`. Asking does not move the canvas version.
 2. Send the file as the whole body of one PUT, with no token and nothing else:
    `curl -sS -X PUT --data-binary @persona.png "<uploadUrl>"` — the same on Windows, macOS and Linux;
    quote the address. The answer is `{"canvasVersion": N}`: the next write sends `N`.
-3. Report that the picture is on the Persona section.
+3. Report where the picture now shows: the Persona section, the idea, or the part of the value
+   proposition the slot belongs to.
 
 The link takes one picture, recorded as yours inside this run. A refused PUT leaves it usable until it
-expires: fix the file and send it to the same link.
+expires: fix the file and send it to the same link. A picture sent to a slot that already holds one
+replaces it. `remove_picture` with the same slot, owner and frame takes a picture off and keeps its
+prompt; take one off only when the step or the person says so.
 
-A refusal says what to change: "The picture is 30.0 MB; the limit is 25 MB.", "A persona picture is a
-PNG, JPEG, WebP or SVG image.", "An SVG picture holds no script, event handler or external link." The
+A refusal says what to change: "The picture is 30.0 MB; the limit is 25 MB.", "A picture is a PNG,
+JPEG, WebP or SVG image.", "An SVG picture holds no script, event handler or external link." The
 second, on an `.svg`, means the file is not an SVG drawing: its root is not `svg`, or not in the
-`http://www.w3.org/2000/svg` namespace, or the XML is malformed or declares a DOCTYPE. A `CONFLICT`
-naming the canvas version means the canvas moved after the link was issued: ask for a new link at
-the version the refusal names and send the file again. A link that expired, or whose run ended, is
-refused the same way: ask for a new one, inside an open run. The prompt is already saved.
+`http://www.w3.org/2000/svg` namespace, or the XML is malformed or declares a DOCTYPE. A refusal
+naming the slot means the owner does not hold it, or the frame is missing or not wanted: send the
+owner and the frame the table says. A `CONFLICT` naming the canvas version means the canvas moved
+after the link was issued: ask for a new link at the version the refusal names and send the file
+again. A link that expired, or whose run ended, is refused the same way: ask for a new one, inside an
+open run. The prompt is already saved.
 
 ## When a routine fired this run
 
