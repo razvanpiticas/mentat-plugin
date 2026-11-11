@@ -130,10 +130,12 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
    find what it wrote. Unattended, nobody reads the reply: send nothing.
 5. **Do the operation's own steps, in order, one at a time.** For each step of
    `definition.procedures`:
-   - **Read the step first, always.** `get_procedure` with the step's code, just before its first
-     read or write, and read the instructions it answers in full. Why: the package was read at the
-     start, and by the fourth step of a long run its words are far behind; `get_procedure` answers
-     the wording this organisation reads now, and the read shows the step was done from its text.
+   - **Read the step first, always.** `get_procedure` with the step's code and the `runId`, just
+     before its first read or write, and read the instructions it answers in full. Why: the package
+     was read at the start, and by the fourth step of a long run its words are far behind;
+     `get_procedure` answers the wording this organisation reads now, and with the `runId` the
+     service writes the read into the run's log, before the step's checkpoint, which is how a person
+     sees the step was done from its text. Without the `runId` the read leaves no trace.
    - **The step has an explainer?** `get_procedure` answers it as `explainer` when the platform wrote
      one. In a session, give the founder its `text` and `webUrl` as the step starts. None: say nothing
      of it. Unattended: send nothing.
@@ -166,7 +168,13 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
    - **It leaves work that outlives the run?** A task the step writes — a founder check on a
      competitor, the Core kept in view — is `create_work_item` with `aboutKind: "BlockEntries"` and
      `aboutId` the entry it is about, the three ratings and `runId`: written inside this run, it is
-     the agent's work and lands `Proposed` for a person to approve. The open question beside it is
+     the agent's work and lands `Proposed` for a person to approve. `create_work_item` takes no
+     assignee, so a job the agent is to do — the Core kept in view — is then handed to it with
+     `update_work_item`: the job's whole text as `create_work_item` answered it, `assigneeAgentId` the
+     `agentId` this run was started with, and `runId`. Why: a job nobody is assigned to shows in
+     nobody's work, and the Core must stay in the agent's view while the later operations run. A
+     founder's check by hand is the founder's: leave it for the person to hand out on the board. The
+     open question beside it is
      `add_question`, its text naming the entry's code as the entry carries it (`CL.MOAT-03`), never its
      title. Why: the service links a question to every code its text names, and that link is what shows
      the question on the entry's card. Routines the step proposes are the person's

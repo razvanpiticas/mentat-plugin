@@ -27,8 +27,10 @@ of what each part of the package is for, the exact escalation bodies, and the sh
 
 For each of the operation's own steps, in `executionOrder`:
 
-1. `get_procedure` with the step's code, and read the `instructions` it answers whole, before the
-   step's first read or write — never from the package read at the start of the run alone. When it
+1. `get_procedure` with the step's code and the `runId`, and read the `instructions` it answers
+   whole, before the step's first read or write — never from the package read at the start of the
+   run alone. The `runId` is what writes the read into the run's log, before the step's checkpoint.
+   When it
    answers an `explainer`, give the founder its `text` and `webUrl` as the step starts, in a session.
 2. Read what the step reads: the target blocks (`get_block`), the segments and value propositions it
    names (`get_customer_segment`, `get_value_proposition`), the idea (`get_ideation`).

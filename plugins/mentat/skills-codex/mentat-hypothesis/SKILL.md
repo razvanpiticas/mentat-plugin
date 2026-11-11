@@ -57,7 +57,8 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
 ## The loop
 
 1. **Fetch the method.** `get_procedure` with the Hypothesise step's code. From an operation, the
-   code is handed over. Otherwise read it where every `Experiment` operation lists the steps it
+   code is handed over, and the read carries the operation's `runId`, so it lands in the run's log
+   before the step's checkpoint. Otherwise read it where every `Experiment` operation lists the steps it
    shares: `list_operation_definitions` with the project, any operation whose `validationLevel` is
    `Experiment`, `get_operation_definition` on it, and in its `sharedSteps` the one named
    Hypothesise. Never type a code from memory. Read the step whole before anything else; its steps
