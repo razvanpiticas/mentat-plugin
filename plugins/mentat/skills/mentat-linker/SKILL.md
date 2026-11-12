@@ -2,7 +2,7 @@
 name: "mentat-linker"
 description: "Gives the links the server drew between rows that read alike their meaning — type the links with the word that fits, its direction, and for increases and decreases how much. Use it before end_run on the rows a run wrote, nightly over the whole project when the Nightly linker routine fires, and when a person says \"type the links\" or asks what the related links mean. It never confirms or rejects a link and never merges two rows: those are a person's, on the links screen."
 argument-hint: "<project> [runId]"
-allowed-tools: "mcp__mentat__list_untyped_links, mcp__mentat__type_link, mcp__mentat__get_block, mcp__mentat__get_neighbours, mcp__mentat__get_customer_segment, mcp__mentat__get_value_proposition, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__get_run, mcp__mentat__observe_run, mcp__mentat__get_project, mcp__mentat__list_projects, mcp__mentat__list_portfolios"
+allowed-tools: "mcp__mentat__list_untyped_links, mcp__mentat__type_link, mcp__mentat__get_block, mcp__mentat__get_neighbours, mcp__mentat__get_customer_segment, mcp__mentat__get_value_proposition, mcp__mentat__get_competitor_record, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__get_run, mcp__mentat__observe_run, mcp__mentat__get_project, mcp__mentat__list_projects, mcp__mentat__list_portfolios"
 ---
 
 # Mentat linker
@@ -62,7 +62,11 @@ Step 1 never starts without a run id, and start_run and end_run are never called
 4. **Read whole when the quotes are not enough** — one passage is null, or the sentence will not
    come. An entry the block lists — a card, a segment, a note: `get_block` with the block code, the
    part of the entry's code before the first `.` or `-` (`KR-01` → `KR`, `CS-03` → `CS`), and find
-   the entry by its code. An entry written inside another — a profile, a context, a job, pain or gain
+   the entry by its code. On `CL` the block lists only its cards; what is not a card is read in the
+   block's `competitiveLandscape`: an indirect or named competitor (`CL.IND-…`, `CL.NAMED-…`) as its
+   line under `indirectCompetitors` or `namedCompetitors`, a moat or Core candidate of ours
+   (`CL.MOAT-…`) under `ourCoreAndMoats`, and a guess of a competitor's in that competitor's record,
+   `get_competitor_record` with its id. An entry written inside another — a profile, a context, a job, pain or gain
    (`CS.PROFILE-…`, `CS.CONTEXT-…`, `CS.JOBS-…`, `CS.PAINS-…`, `CS.GAINS-…`), a product, reliever or
    creator (`VP.PS-…`, `VP.PR-…`, `VP.GC-…`) — is not on its block's list: read it whole through its
    owner. `get_neighbours(projectId, referenceCode)` names the owner with its id: `in_profile` from

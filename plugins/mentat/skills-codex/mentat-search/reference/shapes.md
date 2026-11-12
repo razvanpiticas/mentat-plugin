@@ -14,10 +14,15 @@ profile to its segment), `context_of` (a context profile to its end user profile
 job, pain or gain to its profile), `copied_from` (an item to the one it was copied from),
 `in_value_map` (a product, reliever or creator to its value proposition), `aims_at` (a value
 proposition to its profile), `addresses` (a product, reliever or creator to the job, pain or gain it
-is connected to), `value_proposition_of_what_they_use_today` (a value proposition to its Competitive
-Position entry), `resells_to` (a segment to the one it sells on to), `adjacent_market_of` (a segment
-to the beachhead it is an adjacent market of), `turned_away_by` (a segment to the beachhead that
-turns it away); every accepted link is an edge `linked` with `link_type_id`, `origin`, `confidence`,
+is connected to), `value_proposition_of_what_they_use_today` (a value proposition to its competitor,
+a Competitive Position or an indirect competitor), `coverage_of` (a value proposition of what they
+use today to each top job, pain or gain it has a coverage row for), `resells_to` (a segment to the
+one it sells on to), `adjacent_market_of` (a segment to the beachhead it is an adjacent market of),
+`turned_away_by` (a segment to the beachhead that turns it away); the competitor edges: `targets` (a
+competitor of any of the three models to a segment it targets), `for_profile` (a Strategy Canvas to
+the profile it is for), `scores` (a Strategy Canvas to each competitor it scores),
+`observation_of` (a `competitor_observation` vertex, one fact of a record, to its competitor, also
+held as its `competitor_id`); every accepted link is an edge `linked` with `link_type_id`, `origin`, `confidence`,
 `magnitude`, `unit`. Content vertices expose every column of their row: `status`, `severity`,
 `reference_code` among them; the status words are the ones the glossary and the tool answers use.
 

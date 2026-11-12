@@ -37,6 +37,11 @@ kind's schema and the profile's id from `get_customer_segment`:
 }
 ```
 
+**A title is a name of a few words, at most 80 characters**, on every kind of every block: "Waiting
+for a client reply", not the sentence that explains it, which goes in `body`. A longer title is refused:
+"A title names it in a few words, at most 80 characters. Put the sentence in the body." A title written
+longer before the limit stays until the entry is rewritten, and is then held to it.
+
 A new item lands last among its kind inside its owner; `rerank_entries` with every one of them, in
 the new order, moves it. `update_entry` on a typed kind takes the whole new `fields` object; leave
 `fields` out to keep the current columns. A blank body is refused; leave `body` out rather than
@@ -112,6 +117,7 @@ part is sent in `fields`.
 | the TAM | `write_total_addressable_market` | on a beachhead only |
 | the beachhead part | `choose_beachhead` | on a leaf; why not on every other shortlisted segment; offers to try first is at least 1 |
 | the segments it turns away | `write_turned_away_segments` | on a beachhead, the whole list |
+| its adjacent markets, once it is accepted | `write_adjacent_markets` | on an accepted beachhead, the whole list in order; never `choose_beachhead` again |
 
 Every fact inside a part (a rating's reason, a condition's evidence, a cell of the comparison, a level
 of the TAM, a characteristic, a criterion's why, a fact of the persona, how a place's end users were
@@ -179,11 +185,19 @@ value propositions aimed at the profile has reached a fit: a new offer starts fr
 **The gaps are a ranked list, written whole.** `write_gaps` takes the profile's id (`profileId`, an
 end user or a context profile: each holds its own) and `gaps` in rank order, the one that matters most
 first, replacing the list there was; `[]` clears it. Each gap is `pointsAtProfileEntryId`, a live
-top-ranked item of that same profile — its top job, or one of its first three pains or gains —
-`coverageByWhatTheyUseToday` (`NothingAddressesIt` or `AllAddressItBadly`) and `inTheirUsersWords`, a
-fact with its citations, link and date seen. One gap per item. `get_customer_segment` answers each
-profile's `gaps` in rank order, each with the code and title of the item it points at. The free-text
-gaps field of a profile is kept only for older plugins: never write it.
+top-ranked item of that same profile — its top job, or one of its first three pains or gains — that no
+competitor does well, `isRecommendedToDesignFor` (true for the gaps ours is to be designed for) and
+`inTheirUsersWords`, a fact with its citations, link and date seen. One gap per item. With the list,
+once, `tenTimesBetterThingAmongTheGaps`: `gapPointsAtProfileEntryId`, the item of the gap that is the
+idea's ten-times-better thing, or none when it is not among the gaps, and `reason`, why. How well what
+they use today covers a gap is never sent: it is read from the coverage rows of the value propositions
+of what they use today aimed at the profile — `NothingAddressesIt` when every one of them does the item
+not at all, `NoneAddressesItWell` otherwise — so write the coverage rows before the gaps.
+`write_gaps` answers only the gaps it wrote, the ten-times-better thing and the new canvas version,
+never the segment. `get_customer_segment` answers each profile's `gaps` in rank order, each with the code and title of the
+item it points at, its coverage and whether it is recommended, and the profile's
+`tenTimesBetterThingAmongTheGaps`. The free-text gaps field of a profile is kept only for older
+plugins: never write it.
 
 **A high-value job is scored, its sum worked out.** `score_high_value_job` takes the profile's id, the
 job's id (`jobId`) and its marks, each a rating from `VeryLow` (1) to `High` (4) with its `reason`, a
@@ -193,7 +207,7 @@ fact with its citations; the call replaces the score there was.
 | --- | --- | --- |
 | Important | read from the job's importance: 5 gives 4, 4 gives 3, 3 gives 2, lower gives 1; `importanceRaisedByItsPainsOrGains` only when a pain or gain of the job matters more, its reason naming it | a raise not above the job's own mark is refused |
 | Tangible | `tangible`, always | 1 to 4 |
-| Unsatisfied | read from the gap that points at the job: `NothingAddressesIt` gives 4, `AllAddressItBadly` 3; `unsatisfiedWhenNoGapPointsAtTheJob` exactly when no gap points at it | sent beside a gap, or left out without one, is refused; a gap written later on the job drops the written mark |
+| Unsatisfied | read from the coverage of the gap that points at the job: `NothingAddressesIt` gives 4, `NoneAddressesItWell` 3; `unsatisfiedWhenNoGapPointsAtTheJob` exactly when no gap points at it | sent beside a gap, or left out without one, is refused; a gap written later on the job drops the written mark |
 | Lucrative | `lucrative`, always | 1 to 4 |
 
 The score is the sum, 4 to 16, never sent. `get_customer_segment` answers each scored job's
@@ -222,6 +236,8 @@ factors of `write_use_case`), or none. Send both on every rewrite of a pain.
 | "No gap points at job <code>, so its score says how unsatisfied they are, with why." | no gap points at the job and the mark was left out |
 | "Gap <n> points at no top-ranked job, pain or gain of profile <code>. …" | the item is not live and top-ranked on that same profile |
 | "Two gaps point at <code>. Write one gap per item." | two gaps on one item |
+| "Gap <n> points at <code>, which <competitor code> does well. A gap points at a top item no competitor does well." | a coverage row says a competitor does the item well |
+| "The ten-times-better thing is said to be gap …, which is not one of the gaps written. …" | `gapPointsAtProfileEntryId` names an item no gap of the list points at |
 | "A pain's number can be missing only when its measure is written." | `isMeasureNumberMissing` true with no `measure` |
 | "Only an obstacle or a risk can be a barrier to adoption." | a barrier on an `UndesiredOutcome` pain |
 
@@ -236,16 +252,18 @@ first.
 | our value proposition, aimed at a profile or a draft | `add_entry` on `VP`, then `aim_value_proposition` |
 | its products, relievers and creators | `add_entry` with `ownerId` the value proposition |
 | a connection to the job, pain or gain addressed | `connect_value_map_entry`, `disconnect_value_map_entry` |
-| what they use today, mapped against a profile before or after ours aims at it, on a Competitive Position entry that exists or a new one | `add_what_they_use_today` with the profile's id (`profileId`) and exactly one of `competitivePositionEntryId` or `newCompetitivePosition` (`title`, `alternativeKind`, `targetsSegmentIds`) |
+| what they use today, mapped against a profile before or after ours aims at it, on a Competitive Position or an indirect competitor that exists or a new one | `add_what_they_use_today` with the profile's id (`profileId`) and exactly one of `competitorId` or `newCompetitivePosition` (`title`, `model`, `indirectCompetitorKind` on an indirect one, `oneLineSummary`, `targetsSegmentIds`); it answers the ids of the value proposition, its competitor and the profile's Strategy Canvas |
+| how well what they use today does each top job, pain and gain of the profile it aims at | `write_top_item_coverages` with the value proposition's id and `coverages`, the whole list |
 | our business as it is today, the offer an existing business sells now, one per profile | `add_our_business_as_it_is_today` with the profile's id (`profileId`), `title`, `body` and `citations` (empty while nothing shows it yet); its products, relievers and creators then with `add_entry` and `ownerId` it, connected as ours are |
 | what ours forgoes and why, its brochure | `update_entry` on our value proposition, `whatItForgoesAndWhy` and `brochure` in its `fields` |
 | where a pain reliever or gain creator comes from when not the products and services ("30-day money-back guarantee", "the price") | `offerPartItComesFrom` in its `fields` |
 | the kind of fit reached | `reach_fit`: problem–solution fit with the reason to switch from what they use today, then product–market, then business model, one at a time |
 
 A draft connects nothing until it is aimed; a value proposition with connections or a fit is not
-retargeted. A new Competitive Position named by `add_what_they_use_today` needs at least one segment:
-"Pick at least one segment this alternative targets." A Competitive Position entry a value
-proposition maps as what they use today is retired, never deleted. A rewrite with `update_entry`
+retargeted. A new competitor named by `add_what_they_use_today` is a `CompetitivePosition` or an
+`IndirectCompetitor`: "A named competitor holds no value proposition: write it with add_entry, and
+promote it to a Competitive Position to map it." A competitor a value proposition maps as what they use
+today is retired, never deleted. A rewrite with `update_entry`
 replaces every field: send the profile it aims at now, what it forgoes and the brochure back with
 the one that changes.
 
@@ -255,6 +273,26 @@ the one that changes.
 check of ours on the same profile; neither is designed nor reaches a fit, and a design write on either
 is refused "<code> is not ours to design." "Profile <code> already has our business as it is today,
 <code>." means it is mapped: write inside the one there.
+
+**The coverage rows say how well what they use today does each top item.** `write_top_item_coverages`
+takes a value proposition of what they use today (`valuePropositionId`) and `coverages`, one row per
+top item of the profile it aims at — its top job, its first three pains, its first three gains — each
+named once, replacing the rows there were. Each row is `pointsAtProfileEntryId`,
+`howWellItAddressesIt` and `inTheirUsersWords`, its users' words as a fact with its citations, link and
+date seen:
+
+| `howWellItAddressesIt` | When |
+| --- | --- |
+| `Well` | an entry of its value map is connected to the item, and its users say it works; their words required |
+| `Badly` | an entry of its value map is connected to the item, and its users say it falls short; their words required |
+| `NotAtAll` | no live entry of its value map is connected to the item; their words optional |
+
+Connect the value map first: "<code> does <item> not at all, yet an entry of its value map is connected
+to it. Disconnect it, or say how well it does it." and "<code> does <item> well, yet no entry of its
+value map is connected to it. Connect the entry that does it, or say it does it not at all." A row
+missing or named twice is refused naming the item. Ours is never covered: "<code> is ours to design;
+ours is scored on the Strategy Canvas, not covered item by item." The rows answer `topItemCoverages`
+on the value proposition's `whatTheyUseToday` line, and each gap's coverage is read from them.
 
 ## Our value proposition's design
 
@@ -299,77 +337,126 @@ objection answered instead.
 
 ## The Competitive Landscape
 
-Three typed kinds on `CL`, each written with `add_entry` and its `fields`, and read back by
-`get_block` on `CL`:
+Five typed kinds on `CL`, each written with `add_entry` and its `fields`, and read back by `get_block`
+on `CL`:
 
-| Kind | `fields` | Written through its own tool |
-| --- | --- | --- |
-| `CL.POS`, a Competitive Position | `kind: CompetitivePosition`, `alternativeKind` (`StatusQuo`, `DirectCompetitor`, `OfferFromAnotherIndustry`, `LogicalFutureCompetitor`), `targetsSegmentIds` (live segments of this canvas, at least one once it has a kind) | `classify_competitive_position` (kind and segments together), `record_competitor_observation`, `read_the_field` |
-| `CL.SC`, a Strategy Canvas | `kind: StrategyCanvas`, `comparedValuePropositionId` (a value proposition of ours to design) | `draw_strategy_canvas`, `correct_strategy_canvas_score`, `read_strategy_canvas_lead` |
-| `CL.MOAT`, a moat or Core candidate | `kind: MoatOrCoreCandidate`, `guessedForCompetitivePositionId` (none on ours), `category`, `verdict` (`Core`, `Moat`, `NeitherYet`), `moatDurability` (`Wide`, `Narrow`, exactly on a `Moat`), `deliversBetterThanAnyoneIds` (pain relievers and gain creators of ours; `[]` on a guess) | `make_core`, `lock_core` |
+| Kind | `fields` | A card | Written through its own tool |
+| --- | --- | --- | --- |
+| `CL.POS`, a Competitive Position: a direct competitor, researched in full | `kind: CompetitivePosition`, `oneLineSummary`, `targetsSegmentIds` | Always | `record_competitor_observation`, `read_the_field` |
+| `CL.IND`, an indirect competitor: what they do today, or an offer from another industry | `kind: IndirectCompetitor`, `indirectCompetitorKind` (`WhatTheyDoToday`, `OfferFromAnotherIndustry`), `oneLineSummary`, `targetsSegmentIds` | Never | `record_competitor_observation`, `read_the_field` (the threat alone), `promote_to_competitive_position` |
+| `CL.NAMED`, a named competitor: a company that could compete later, or a direct competitor that is named and waits | `kind: NamedCompetitor`, `namedCompetitorKind` (`CouldCompeteLater`, `DirectCompetitorThatWaits`), `oneLineSummary`, `targetsSegmentIds` | Never | `record_competitor_observation` (who it is), `read_the_field` (the threat alone), `promote_to_competitive_position` |
+| `CL.SC`, a Strategy Canvas | `kind: StrategyCanvas`, `profileId` (the end user or context profile the competitors are mapped against) | Always | `draw_strategy_canvas`, `correct_strategy_canvas_score`, `read_strategy_canvas_lead` |
+| `CL.MOAT`, a moat or Core candidate | `kind: MoatOrCoreCandidate`, `guessedForCompetitivePositionId` (none on ours), `category`, `verdict` (`Core`, `Moat`, `NeitherYet`), `moatDurability` (`Wide`, `Narrow`, exactly on a `Moat`), `deliversBetterThanAnyoneIds` (pain relievers and gain creators of ours; `[]` on a guess) | Never | `make_core`, `lock_core` |
 
-**A Competitive Position.** One written before alternatives had kinds has no `alternativeKind` and its
-old values in its body as a JSON block; `classify_competitive_position` gives it a kind and its
-segments. "A Competitive Position targets a live segment of this canvas."
+**A model is a card always or never.** `block.entries` lists the cards: the Competitive Positions, the
+Strategy Canvases and the notes. `competitiveLandscape` answers the whole block, a card or not:
 
-**Its record is appended, never edited.** `record_competitor_observation` adds one fact: its `type`
-(one of the 22 sections: `Identity`, `OfferAndPrice`, `Promise`, `ProductVelocity`, `Financials`,
-`TestPurchase`, `TrafficAndSearch`, `Demand`, `AiVisibility`, `Ad`, `LandingPageAndComparisonPages`,
-`Email`, `ContentAndSocial`, `ReviewCountAndRating`, `Praise`, `Complaint`, `SwitchingStory`,
-`ChannelsAndDistribution`, `SalesMotionAndSupport`, `Hiring`, `Teardown`, `SuppliersAndPartners`),
-the day it was true (`observedOn`), the fact itself (a fact as inside a part: text, status, citations,
-figures, tags), the ad on an `Ad` fact, the receipt on a `TestPurchase` fact, and on a `Complaint` the
-top pain it names (`aboutProfileEntryId`), a live top pain of a profile this position's value
-propositions aim at. Read the form of each type from the `CL.POS` kind's `observationForms` before
-writing: the figures it needs under their labels ("price", "monthly visits") and the tags it needs,
-each written `name: value` ("plan: Pro", "month: 2026-10"). A fact that is not `Unknown` carries a
-citation with its link and the date it was seen. Each refusal names the type and what is missing:
-"Ad id is required for an Ad fact.", "Order or invoice number is required for a Test purchase
-fact.", "A Financials fact needs its revenue, profit or recurring revenue figure and the period it
-covers." A section that could not be filled is an `Unknown` fact whose text says why. Sent with the
-run's id, the fact is entered by the agent, and by the routine's collector in a routine's run; sent
-without one, it is the person's. Ad running days, orders per 30 days and growth are worked out by
-`get_competitor_record`, never typed; growth against ours needs the goal of ours that counts orders,
-named as `comparedWithGoalId`, and without one the record says "No number of ours yet: pick the goal
-that counts our orders."
+| Member | What it holds |
+| --- | --- |
+| `strategyCanvases` | One per profile: its profile, the value proposition of ours it compares or none yet, its competitors, each top item against every competitor with its gap and whether it is recommended, the ten-times-better thing, the factors and scores, the questions about it, and its `readings`, worked out: how many competitors and direct ones, how many top items nobody does well, the widest gap, whether ours is on it, on how many factors ours leads, the widest lead, how many leads rest on the Core, how many scores are guesses |
+| `competitivePositions`, `indirectCompetitors`, `namedCompetitors` | Every live competitor of each model as a line: its code, title, kind, one line, threat, segments, how many top items it does well, badly and not at all, its price range per currency, how many use it, its praises, complaints and switching stories by site, how many facts and how many looked for and not found, the routines collecting on it, its value propositions with their coverage rows |
+| `ourCoreAndMoats` | The Core, our candidates, how many moats, the questions and risks whose text names the Core or a candidate of ours, and the tasks about the Core |
+| `openings` | Per profile, its top pains no competitor's value map relieves, with the complaints that name them, beside that profile's gaps |
 
-**Our reading of it.** `read_the_field` writes the threat to ours (`Low`, `Medium` or `High`, with
-why), where it is going and what works for it, each a fact with its citations; it replaces the last
-reading.
+**A competitor's one line** is `oneLineSummary`, plain text of at most 160 characters: what it does for
+them and where it stops; on a named one, why it could compete or why it waits. Written with the entry,
+or later with `update_entry`; once written it is rewritten, never cleared: "A one line summary says in
+at most 160 characters what it does for them and where it stops. Put the rest in the body." A rewrite
+of an indirect or named competitor sends the kind it has: a rewrite never changes it. A competitor may
+target no segment yet; each one named is a live segment of this canvas, once: "A competitor targets a
+live segment of this canvas."
 
-**A Strategy Canvas** compares one value proposition of ours on the jobs, pains and gains of the
-profile it aims at. `draw_strategy_canvas` replaces its factors whole, in order: each a `name` (what
-it does for the customer), the job, pain or gain it matches, the pain reliever or gain creator it came
-from (none when it came from the pain or gain itself), and its scores — one for ours (no Competitive
-Position) and one per alternative, each 0 to 10 with its evidence; evidence with status `Hypothesis`
-marks the score a guess, drawn dashed. Every alternative is a live, classified Competitive Position,
-and among them a status quo that targets the aimed profile's segment. `correct_strategy_canvas_score`
-rewrites one score from evidence; `read_strategy_canvas_lead` reads an alternative's lead on one
-factor as `DeliberateTradeOff` or `ThingToImprove`, with why, only where it scores above ours.
+**Its record is appended, never edited.** `record_competitor_observation` adds one fact to a competitor
+of any of the three models (`competitorId`): its `type` (one of the 23 sections: `Identity`,
+`OfferAndPrice`, `HowManyUseIt`, `Promise`, `ProductVelocity`, `Financials`, `TestPurchase`,
+`TrafficAndSearch`, `Demand`, `AiVisibility`, `Ad`, `LandingPageAndComparisonPages`, `Email`,
+`ContentAndSocial`, `ReviewCountAndRating`, `Praise`, `Complaint`, `SwitchingStory`,
+`ChannelsAndDistribution`, `SalesMotionAndSupport`, `Hiring`, `Teardown`, `SuppliersAndPartners`), the
+day it was true (`observedOn`), its `headline`, the fact itself (a fact as inside a part: text, status,
+citations, figures, tags), the ad on an `Ad` fact, the receipt on a `TestPurchase` fact, and on a
+`Complaint` the top pain it names (`aboutProfileEntryId`), a live top pain of a profile this
+competitor's value propositions aim at. It answers the fact written, not the record.
+
+- **The headline** is the fact in one line, plain text of at most 100 characters; for an ad, its hook.
+  The text is the fact in full. "A headline is the fact in one line of at most 100 characters. Put the
+  rest in the fact's text." A fact written before headlines has none, and shows its first sentence.
+- **Each model keeps its own sections.** A Competitive Position keeps all 23. An indirect competitor
+  keeps the seven `what-they-use-today` writes: `Identity`, `OfferAndPrice`, `HowManyUseIt`, `Promise`,
+  `Praise`, `Complaint`, `SwitchingStory`. A named competitor keeps `Identity`, where its evidence is
+  written. Each form's `heldBy` says which. Another is refused: "A Financials fact is kept only on a
+  Competitive Position, and <code> is an indirect competitor. Promote it to a Competitive Position to
+  research it in full."
+- **How many use it** is a `HowManyUseIt` fact with its `users` or `customers` figure, 0 or more.
+- Read the form of each type from the kind's `observationForms` before writing: the figures it needs
+  under their labels ("price", "monthly visits") and the tags it needs, each written `name: value`
+  ("plan: Pro", "month: 2026-10"). A fact that is not `Unknown` carries a citation with its link and the
+  date it was seen. Each refusal names the type and what is missing: "Ad id is required for an Ad
+  fact.", "Order or invoice number is required for a Test purchase fact.", "A Financials fact needs its
+  revenue, profit or recurring revenue figure and the period it covers."
+- **What was looked for and not found** is an `Unknown` fact in its section, whose text says what was
+  looked for and why it is missing; it carries none of the figures and tags its type asks for.
+- Sent with the run's id, the fact is entered by the agent, and by the routine's collector in a
+  routine's run; sent without one, it is the person's. Ad running days, orders per 30 days and growth
+  are worked out by `get_competitor_record`, never typed; growth against ours needs the goal of ours
+  that counts orders, named as `comparedWithGoalId`, and without one the record says "No number of ours
+  yet: pick the goal that counts our orders."
+
+`get_competitor_record` reads the record of a Competitive Position or an indirect competitor whole; a
+named competitor's facts are counted in its line under `competitiveLandscape`.
+
+**Our reading of it.** `read_the_field` replaces the last reading. On any of the three it writes the
+threat to ours (`Low`, `Medium` or `High`, with why). On a Competitive Position it also writes, and
+needs, where it is going and what works for it, each a fact with its citations; sent on another model
+they are refused: "<code> is not researched in full: only its threat is read. Promote it to a
+Competitive Position to read where it is going and what works for it."
+
+**Becoming a Competitive Position.** `promote_to_competitive_position` takes a live indirect or named
+competitor (`competitorId`) the founder chose to research in full: a new Competitive Position is
+written, its facts, value propositions, segments, one line and threat move to it, the scores that named
+the old one name the new one, and the old one is retired as superseded by it. It answers the new
+entry. Nothing moves the other way.
+
+**A Strategy Canvas** is one per profile the competitors are mapped against. The first
+`add_what_they_use_today` on a profile creates it, titled as the profile, with no factor; give it a
+title of a few words with `update_entry`. `draw_strategy_canvas` then names the value proposition of
+ours it compares (`comparedValuePropositionId`, ours to design, aimed at the canvas's profile) and
+replaces its factors whole, in order: each a `name` (what it does for the customer), the job, pain or
+gain of the profile it matches, the pain reliever or gain creator it came from (none when it came from
+the pain or gain itself), and its scores — one for ours (no `competitorId`) and one per competitor,
+each 0 to 10 with its evidence; evidence with status `Hypothesis` marks the score a guess, drawn
+dashed. A score's `competitorId` names a competitor of any of the three models that targets the
+profile's segment. `correct_strategy_canvas_score` rewrites one score from evidence;
+`read_strategy_canvas_lead` reads a competitor's lead on one factor as `DeliberateTradeOff` or
+`ThingToImprove`, with why, only where it scores above ours. Its readings are worked out, never written.
 
 | Refused | Because |
 | --- | --- |
-| "The Strategy Canvas needs a status quo alternative that targets <segment name>." | no classified status quo targets the aimed segment |
+| "Profile <code> already has Strategy Canvas <code>. One Strategy Canvas per profile." | a second Strategy Canvas for a profile |
 | "<code> is not ours to design." | the compared value proposition is what they use today or our business as it is today |
-| "<code> already has Strategy Canvas <code>." | one live Strategy Canvas per value proposition of ours |
-| "A factor matches a job, pain or gain of <profile code>, the profile <code> aims at." | the factor matches an item of another profile |
-| "<code> is not classified yet. Classify it before a Strategy Canvas compares it." | an alternative has no kind |
+| "<code> aims at another profile than Strategy Canvas <code>; …" | ours aims at another profile |
+| "Strategy Canvas <code> compares <code>. … retire <code> before comparing another." | the canvas already compares a live value proposition of ours |
+| "A factor matches a job, pain or gain of <profile code>, the profile the Strategy Canvas is for." | the factor matches an item of another profile |
+| "Strategy Canvas <code> scores <code>, which does not target <segment code>, the segment of the profile it is for. …" | a scored competitor does not target the profile's segment |
+| "Factor '<name>' scores ours and each of the <n> competitors the canvas compares once." | a score missing or sent twice |
 
-**Moat and Core candidates.** Ours carry no `guessedForCompetitivePositionId` and show as cards; a guess
-names the competitor and shows in that competitor's record. A competitor has one guessed Core: "<code>
-is already our guess of <competitor>'s Core." "A moat says whether it is wide or narrow." / "Only a
-moat has a durability." `make_core` makes a candidate of ours with verdict `Core` the working Core —
-or the strongest moat while no candidate is a Core, keeping its verdict and durability. `lock_core`
-locks the working Core with the plan for building it, every part required: team members with the
-skills, leaders in the field, where they are found, owner, review cadence, skills plan, incentives.
-A locked Core is not replaced: "The Core <code> is locked; another candidate cannot become the Core."
+**Moat and Core candidates** are never cards. Ours carry no `guessedForCompetitivePositionId` and are
+rows of the one card "Our core and moats", read under `ourCoreAndMoats`; a guess names a Competitive
+Position and is read in that competitor's record. A competitor has one guessed Core: "<code> is already
+our guess of <competitor>'s Core." "A moat says whether it is wide or narrow." / "Only a moat has a
+durability." `make_core` makes a candidate of ours with verdict `Core` the working Core — or the
+strongest moat while no candidate is a Core, keeping its verdict and durability. `lock_core` locks the
+working Core with the plan for building it, every part required: team members with the skills, leaders
+in the field, where they are found, owner, review cadence, skills plan, incentives. A locked Core is not
+replaced: "The Core <code> is locked; another candidate cannot become the Core." A question or risk
+that keeps the Core in view names its code in its text; a task about it is a work item about the Core's
+entry.
 
 **What it holds up is not deleted.** `delete_entry` is refused, naming every row that points at the
-entry: "<code> cannot be removed: Strategy Canvas <code> scores it." on a Competitive Position a
-Strategy Canvas scores, "… moat guess <code> points at it." or "… value proposition of what they use
-today <code> points at it."; "… Strategy Canvas <code> compares it." on our value proposition; "…
-Competitive Position <code> targets it." on a segment; and on a job, pain, gain, reliever or creator a
-factor matches or comes from, or the Core delivers.
+entry: "<code> cannot be removed: Strategy Canvas <code> scores it." on a competitor a Strategy Canvas
+scores, "… moat guess <code> points at it." or "… value proposition of what they use today <code> points
+at it."; "… Strategy Canvas <code> compares it." on our value proposition; "… competitor <code>
+targets it." on a segment; and on a job, pain, gain, reliever or creator a factor matches or comes
+from, or the Core delivers.
 
 ## The idea
 

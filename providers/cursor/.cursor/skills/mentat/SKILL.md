@@ -142,13 +142,13 @@ Every call is also tenant-scoped from the caller's token. A caller who belongs t
 
 ## The tools
 
-One hundred and sixty-nine tools, all over BusinessIntelligence: forty-four reads (portfolios,
+One hundred and ninety tools, all over BusinessIntelligence: forty-five reads (portfolios,
 projects, where a project stands, the canvas, one block by code, one customer segment, one value
-proposition, the idea, one hypothesis, one experiment, the method cards, one procedure of the method
+proposition, one competitor's record, the idea, one hypothesis, one experiment, the method cards, one procedure of the method
 catalogue, a project's plan, its runs, its agents, routines and goals, its learnings, its board, its
 change log, its decision ledger, and the three ways of finding a row nobody knows the code of) and
-one hundred and twenty-five writes (entries, segments and their parts, end user profiles and
-personas, value maps and fit, the idea, hypotheses, experiments, evidence, questions, risks, ideas,
+one hundred and forty-five writes (entries, segments and their parts, end user profiles and
+personas, value maps and fit, competitors, their records and the Strategy Canvas, the idea, hypotheses, experiments, evidence, questions, risks, ideas,
 contradictions, insights, the plan's rows, runs, method gates, agents, routines and goals, the
 board's jobs, escalations, messages and decisions). The full table with permissions and which tools take which version
 is in [reference/tools.md](reference/tools.md). **How to use them — which kind, which fields, what

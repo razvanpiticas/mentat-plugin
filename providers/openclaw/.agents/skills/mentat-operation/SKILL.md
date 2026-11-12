@@ -157,8 +157,12 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
      `add_entry`, carrying `ownerId` when its kind is written inside another entry; a segment's,
      profile's or value proposition's part with its own tool (`rate_customer_segment`,
      `write_gathering_places`, `describe_end_user`, `write_persona`, `connect_value_map_entry` and
-     the rest; a profile's gaps with `write_gaps`, the whole ranked list, and a job's high-value marks
-     with `score_high_value_job`, after the gaps; our value proposition's design with `write_concept`,
+     the rest; what they use today with `add_what_they_use_today`, its coverage rows with
+     `write_top_item_coverages` once its value map is connected, and a competitor's facts with
+     `record_competitor_observation`, each with its headline; an indirect or named competitor the
+     founder chose to research in full with `promote_to_competitive_position`; a profile's gaps with
+     `write_gaps`, the whole ranked list, after the coverage rows, and a job's high-value marks with
+     `score_high_value_job`, after the gaps; our value proposition's design with `write_concept`,
      `write_use_case`, `draw_product`, `quantify_value_proposition` and `write_promise`, each part
      whole, and an existing business's current offer with `add_our_business_as_it_is_today`); the idea
      with the idea tools and `ideationVersion`, never as a block entry. What the step learns towards

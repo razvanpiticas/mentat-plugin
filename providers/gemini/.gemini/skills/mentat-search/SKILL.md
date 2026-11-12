@@ -36,7 +36,8 @@ the question. You write nothing, so no call of yours carries the run's id.
 Every question, whoever asks it, goes through these four steps in this order.
 
 1. **Read the glossary — first, before any instrument is chosen.** The product's words — gate,
-   confidence, validated, tier, retired, related, operation, run, checkpoint, verdict, pivot and the
+   confidence, validated, tier, retired, related, operation, run, checkpoint, verdict, pivot, the
+   three models of competitor (Competitive Position, indirect competitor, named competitor) and the
    rest — are one short file on the server, the resource `mentat://glossary`. Read it once per
    session, before the first call of any instrument, so a question is asked in the product's words
    and an answer is read in them. Already read in this session: go to step 2. If this harness lists
@@ -68,7 +69,10 @@ has the rule with examples and the answer's shape.
 notes — and the hypotheses, questions, risks and ideas on it. On Customer Segments the segments are
 under `customerSegments`: an outline row per live segment with its reasons, the beachheads in full
 with their adjacent markets, the shortlisted segments of a tree with no beachhead, and the retired
-count (`includeRetired: true` lists them). A listed entry's code names its block before the first `.` or `-` (`KR-01` → `KR`,
+count (`includeRetired: true` lists them). On Competitive Landscape the entries listed are its cards
+only, the Competitive Positions, Strategy Canvases and notes; `competitiveLandscape` answers every
+competitor of the three models, every Strategy Canvas with its readings, and our Core and moats,
+whether or not each is a card. A listed entry's code names its block before the first `.` or `-` (`KR-01` → `KR`,
 `CS-03` → `CS`). An entry written inside an owner is not on its block's list — a profile, a context,
 a job, pain or gain, a product, reliever or creator — and is read through that owner:
 `get_customer_segment` with the segment's id for a profile and its items, `get_value_proposition`
