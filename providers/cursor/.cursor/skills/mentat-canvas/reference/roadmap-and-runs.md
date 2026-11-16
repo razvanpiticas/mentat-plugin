@@ -131,11 +131,16 @@ The plan's row `customer-profile` is `NotStarted` at `T2`, and the project stand
    `Experiment`**, five own steps (`map-jobs`, `map-pains`, `map-gains`, `check-one-kind-of-people`,
    `rank-jobs-pains-and-gains`), target slots on `CS` (`CS.JOBS`, `CS.PAINS`, `CS.GAINS`, `CS.PROFILE`, `CS`),
    its revisits `beachhead-selection`, `end-user-profile`, `beachhead-tam`, its hand-over and the four
-   shared steps, one mandatory prerequisite `beachhead-tam` in state `Met`, no resumable run.
+   shared steps, one mandatory prerequisite `beachhead-tam` in state `Met`, no resumable run. It is the
+   package in short: the steps by code without their instructions, and the description in one part
+   (`descriptionParts: 1`); a description in two parts has its second read with `descriptionPart: 2`.
 2. The description's "Read first:" reads: `get_customer_segment` on the beachhead `CS-08` — its end
    user profile `CS.PROFILE-02` — and on the shortlisted segment it was split from; `get_ideation`.
-3. `start_run(projectId, operationId, forcePastPrerequisites: false)` → a run, status `Running`.
-4. Do `map-jobs`: `add_entry` with the `CS.JOBS` kind for each job, `ownerId` the profile's
+3. `start_run(projectId, operationId, forcePastPrerequisites: false)` → a run, status `Running`, with
+   the same package in short beside it.
+4. `get_procedure(code: "map-jobs", runId)` → `procedure.instructions`, `instructionsPart: 1`,
+   `instructionsParts: 1`; a step in two parts is read whole with `part: 2` before it is done.
+   Do `map-jobs`: `add_entry` with the `CS.JOBS` kind for each job, `ownerId` the profile's
    id. `checkpoint_run(runId, completedProcedureId: <the id of map-jobs>, writtenEntryIds:
    [those ids], producedHypothesisIds: [], note: "Four jobs from the five transcripts.")`.
 5. Do `map-pains` from five interviews. `observe_run(runId, payload: {

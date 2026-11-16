@@ -105,8 +105,10 @@ here. The one file it may write is the local one that remembers a "not now" on t
 ## Research tools
 
 Desk research turns guesses into quoted, linked citations on the statements they back, so canvas
-entries can be `Reported` instead of `Inferred`. Five tools help with it: agent-reach, ScrapeCreators, Firecrawl, Treg and last30days;
-what each is good for is in `mentat-operation`'s research-tools reference. Research works without
+entries can be `Reported` instead of `Inferred`. Seven tools help with it: agent-reach, ScrapeCreators, Firecrawl, Treg,
+last30days, and a browser for the pages that refuse every fetch — playwright-cli, and on Claude Code
+the Claude in Chrome extension; what each is good for, and the order a blocked page tries them in, is
+in `mentat-operation`'s research-tools reference. Research works without
 any of them, through the agent's own web search and fetch; they only add depth: quoted posts,
 transcripts, comments, counts. Mentat has no affiliation with any of these tools or their providers:
 they are third-party options the founder may choose to install and pay for.

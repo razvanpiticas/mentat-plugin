@@ -59,12 +59,18 @@ day.
 the "not now" dates; it never prints a key:
 
 ```
-node -p "const fs=require('fs'),p=require('path'),os=require('os');const win=process.platform==='win32';const onPath=(n,extra)=>[...process.env.PATH.split(p.delimiter),...extra].some(d=>d&&['',...(win?process.env.PATHEXT.split(';'):[])].some(e=>fs.existsSync(p.join(d,n+e))));const env=p.join(os.homedir(),'.config','last30days','.env');const f=p.join(win?p.join(process.env.LOCALAPPDATA,'Mentat'):p.join(os.homedir(),'.local','state','mentat'),'research-tools.json');JSON.stringify({agentReach:onPath('agent-reach',[p.join(os.homedir(),'.local','bin')]),firecrawl:onPath('firecrawl',[]),ytDlp:onPath('yt-dlp',[]),scrapeCreatorsKey:Boolean(process.env.SCRAPECREATORS_API_KEY)||(fs.existsSync(env)&&/^SCRAPECREATORS_API_KEY=\S+/m.test(fs.readFileSync(env,'utf8'))),notNow:fs.existsSync(f)?JSON.parse(fs.readFileSync(f,'utf8')).notNow:{}})"
+node -p "const fs=require('fs'),p=require('path'),os=require('os');const win=process.platform==='win32';const onPath=(n,extra)=>[...process.env.PATH.split(p.delimiter),...extra].some(d=>d&&['',...(win?process.env.PATHEXT.split(';'):[])].some(e=>fs.existsSync(p.join(d,n+e))));const env=p.join(os.homedir(),'.config','last30days','.env');const f=p.join(win?p.join(process.env.LOCALAPPDATA,'Mentat'):p.join(os.homedir(),'.local','state','mentat'),'research-tools.json');JSON.stringify({agentReach:onPath('agent-reach',[p.join(os.homedir(),'.local','bin')]),firecrawl:onPath('firecrawl',[]),playwrightCli:onPath('playwright-cli',[]),ytDlp:onPath('yt-dlp',[]),scrapeCreatorsKey:Boolean(process.env.SCRAPECREATORS_API_KEY)||(fs.existsSync(env)&&/^SCRAPECREATORS_API_KEY=\S+/m.test(fs.readFileSync(env,'utf8'))),notNow:fs.existsSync(f)?JSON.parse(fs.readFileSync(f,'utf8')).notNow:{}})"
 ```
 
-The other two are read from this session, not the machine: Treg is here when the session has the
-`treg` tools; last30days when a `last30days` skill is listed. Firecrawl also counts as here when a
-`firecrawl` skill is listed.
+The other three are read from this session, not the machine: Treg is here when the session has the
+`treg` tools; last30days when a `last30days` skill is listed; the Claude in Chrome extension when the
+session has the `claude-in-chrome` tools and its tabs context call answers. Firecrawl also counts as
+here when a `firecrawl` skill is listed.
+
+**A browser.** Some pages refuse every fetch, Firecrawl's included; a real browser still reads them.
+Offer one when neither playwright-cli nor the Chrome extension is here: playwright-cli first, on every
+harness, because it also works when a routine fires with nobody at the machine; the Chrome extension
+as well on Claude Code, for the person's own sessions.
 
 **What each adds**, one line each, only for the missing ones:
 
@@ -75,6 +81,8 @@ The other two are read from this session, not the machine: Treg is here when the
 | Firecrawl | "Firecrawl searches the web and reads whole pages and sites, such as competitors' pricing. It spends your own credits after a free allowance." |
 | Treg | "Treg answers what no page shows: search volumes, search results, company and people data, ad libraries. Each call spends your own Treg credit." |
 | last30days | "last30days shows what people are saying now on Reddit, X, YouTube, TikTok, Instagram and Hacker News, freshest first." |
+| playwright-cli | "playwright-cli is a free browser I drive from the terminal: it reads the pages that block every other tool, such as a competitor's pricing behind a bot wall, and it works in routines too." |
+| Claude in Chrome | "The Claude in Chrome extension lets me read a page in your own Chrome when nothing else can open it. Free; I open my own tab and never sign in, post or buy." |
 
 Close with three lines: with them, canvas entries carry quoted, linked citations and can be `Reported`
 instead of `Inferred`; "Research still works without any of them, through my own web search and
@@ -91,6 +99,8 @@ to install and pay for." Then ask whether to set up the missing ones, all, some,
 | Firecrawl | `pnpm add -g firecrawl-cli`, then `firecrawl config` to sign in |
 | Treg | The person signs up at treg.to and adds its server, `https://treg.to/mcp/`, to this harness with their own key, as Treg's setup page says; the tools appear in the next session |
 | last30days | On Claude Code: `claude plugin marketplace add mvanhorn/last30days-skill`, then `claude plugin install last30days@last30days-skill`. Elsewhere: as https://github.com/mvanhorn/last30days-skill says. Needs Python 3.12 or later |
+| playwright-cli | `pnpm add -g @playwright/cli@latest`, then `playwright-cli --version` to show it answers. The package is `@playwright/cli`; `@playwright/mcp` is the MCP server, not this tool |
+| Claude in Chrome | Claude Code only. The person installs the Claude extension from the Chrome Web Store (https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn), then types `/chrome` in Claude Code and connects it; the tools appear in this session. They do both themselves |
 
 yt-dlp, the program that fetches YouTube subtitles: agent-reach's setup brings its own. Offer
 `pip install yt-dlp` only when last30days is set up and agent-reach is not.
@@ -100,7 +110,7 @@ yt-dlp, the program that fetches YouTube subtitles: agent-reach's setup brings i
 `~/.local/state/mentat/` on macOS and Linux. Name the tools in the list:
 
 ```
-node -p "const fs=require('fs'),p=require('path'),os=require('os');const win=process.platform==='win32';const f=p.join(win?p.join(process.env.LOCALAPPDATA,'Mentat'):p.join(os.homedir(),'.local','state','mentat'),'research-tools.json');const s=fs.existsSync(f)?JSON.parse(fs.readFileSync(f,'utf8')):{notNow:{}};for(const t of ['agent-reach','scrapecreators','firecrawl','treg','last30days'])s.notNow[t]=new Date().toISOString().slice(0,10);fs.mkdirSync(p.dirname(f),{recursive:true});fs.writeFileSync(f,JSON.stringify(s,null,2));f"
+node -p "const fs=require('fs'),p=require('path'),os=require('os');const win=process.platform==='win32';const f=p.join(win?p.join(process.env.LOCALAPPDATA,'Mentat'):p.join(os.homedir(),'.local','state','mentat'),'research-tools.json');const s=fs.existsSync(f)?JSON.parse(fs.readFileSync(f,'utf8')):{notNow:{}};for(const t of ['agent-reach','scrapecreators','firecrawl','treg','last30days','playwright-cli','claude-in-chrome'])s.notNow[t]=new Date().toISOString().slice(0,10);fs.mkdirSync(p.dirname(f),{recursive:true});fs.writeFileSync(f,JSON.stringify(s,null,2));f"
 ```
 
 The file holds nothing else. Which tools are here is never written down.

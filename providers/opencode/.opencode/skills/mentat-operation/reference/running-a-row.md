@@ -9,29 +9,31 @@ of what each part of the package is for, the exact escalation bodies, and the sh
 | Package member | Used for |
 | --- | --- |
 | `definition.description`, `themeQuestion` | Read first; the framing every step is done under. The description opens with "Read first:" and the reads it names, each with its tool |
+| `definition.descriptionPart`, `descriptionParts` | Which part of the description `description` holds, of how many. Above 1: read every other part, in order, with `get_operation_package` and `descriptionPart`, before the run starts; the parts joined are the description exactly, and the rest of the package is the same in each |
 | `definition.summary.validationLevel` | Which ending: verdict, hand-over, or neither |
 | `definition.validatedWhen`, `ifNot` | The Checkpoint judgement; the pass sentence the hand-over repeats; which operations an ending goes back to |
-| `definition.procedures[]` (`procedureId`, `code`, `name`, `instructions`, `executionOrder`, `source`, `founderInputNeeded`, `founderInputPurpose`, `explainer`) | The operation's own steps, in order; `procedureId` is what `checkpoint_run` names; a step's founder input says whether it asks the founder and what; a step's explainer is what the founder is sent as it starts |
-| `definition.explainer` (`text`, `webUrl`, `media[]`), `outputWebUrl` | The first message of a run in a session: what the operation is, the page where its video plays (`webUrl`), and where what the run writes is read (`outputWebUrl`). `media[]` says what each video or picture is: its `kind`, `alternativeText`, `caption`, and on a video its `durationInSeconds` and `transcript`. Null when none is written |
-| `definition.founderInput` | The operation's founder input in short: the strongest a step asks (`Always`, then `WhenInstructionsSay`, then `None`) and which steps |
+| `definition.procedures[]` (`stepId`, `procedureId`, `code`, `name`, `executionOrder`, `founderInputNeeded`, `founderInputPurpose`) | The operation's own steps in short, in order; `procedureId` is what `checkpoint_run` names; a step's founder input says whether it asks the founder and what. A step's instructions, book, version and explainer are not here: `get_procedure` reads them by its code when the step starts |
+| `definition.explainer` (`text`, `webUrl`, `media[]`), `outputWebUrl` | The first message of a run in a session: what the operation is, the page where its video plays (`webUrl`), and where what the run writes is read (`outputWebUrl`). `media[]` says what each video or picture is: its `kind`, `alternativeText`, `caption`, and on a video its `durationInSeconds`. In short: a video's transcript is not here, the founder watches the video on `webUrl` and `get_operation_definition` answers it. Null when none is written |
+| `definition.founderInput` (`need`, `stepCodes`) | The operation's founder input in short: the strongest a step asks (`Always`, then `WhenInstructionsSay`, then `None`) and the codes of the steps that ask |
 | `revisits` | The operations this one may send the project back to, in order: the only ones `revisitOperationIds` may name |
 | `handOver` | On an `Experiment` operation: the entry kinds it hands to hypotheses, how many of each from the top, in test orders, and its instruction. The checkpoint of the last own step answers it resolved: the entries themselves. No lines: the checkpoint answers no test order, and Hypothesise works from the "validated when" sentence and the entries the run wrote |
-| `sharedSteps` | On an `Experiment` operation: Hypothesise, Design the test, Learn from the evidence, Decide — each with the `procedureId` its checkpoint names and the code `get_procedure` reads it by |
+| `sharedSteps` | On an `Experiment` operation: Hypothesise, Design the test, Learn from the evidence, Decide — each in short with the `procedureId` its checkpoint names and the code `get_procedure` reads it by |
 | `resolvedTargetSlots[]` (`blockCode`, `entryKindCode`, `entryKindStorage`, or the idea) | Where the steps write; an idea slot is written with the idea tools |
 | `ideation` | The project's idea, when a slot targets it: the starting point, the candidates, the statement in force |
 | `prerequisites[]` (`slug`, `kind`, `state`) | What `start_run` will check; a `Mandatory` one not `Met` is the refusal coming |
-| `latestRun`, `resumableRun` | Resume, or start fresh |
+| `latestRun`, `resumableRun` | Resume, or start fresh. Each in short: its id, status and when it started; `get_run` reads the paused run whole before it is resumed |
 | `gate.isDue`, `gate.pendingSlugs` | Whether this row finishes the tier |
 
 ## The step loop
 
 For each of the operation's own steps, in `executionOrder`:
 
-1. `get_procedure` with the step's code and the `runId`, and read the `instructions` it answers
-   whole, before the step's first read or write — never from the package read at the start of the
-   run alone. The `runId` is what writes the read into the run's log, before the step's checkpoint.
-   When it
-   answers an `explainer`, give the founder its `text` and `webUrl` as the step starts, in a session.
+1. `get_procedure` with the step's code and the `runId`, and read `procedure.instructions` whole,
+   before the step's first read or write — the package lists the step without its text. When
+   `instructionsParts` is above 1, read the other parts in order with `part` (and the `runId`); the
+   parts joined are the instructions exactly. The `runId` is what writes each read into the run's
+   log, before the step's checkpoint. When it answers a `procedure.explainer`, give the founder its
+   `text` and `webUrl` as the step starts, in a session.
 2. Read what the step reads: the target blocks (`get_block`), the segments, value propositions and
    products it names (`get_customer_segment`, `get_value_proposition` with the sections the step
    names, `get_product`, `get_entry`), the idea (`get_ideation`).

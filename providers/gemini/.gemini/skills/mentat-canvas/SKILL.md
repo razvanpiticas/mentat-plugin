@@ -333,15 +333,20 @@ Each answers the whole plan with the version it produced; carry that into the ne
 
 1. `get_operation_package` with the row's id, or with `operationSlug` when the operation is named by
    its slug: a slug the plan does not hold, a retired one among them, is refused naming the
-   operations it does hold. It answers the method text as this project has it, the
-   procedures in order with their ids and what each asks the founder, the places on the canvas or the
-   idea the operation writes to, the operations it goes back to, on an `Experiment` operation its
-   hand-over and the steps it shares, what it waits on, and any run left paused.
-2. `start_run` with `operationId` set to the row. A refusal naming operations that have not run is the
-   prerequisite check: report which ones and ask whether to run them first or to force past them.
+   operations it does hold. It answers the package in short, as this project has it: the description
+   (in parts when `definition.descriptionParts` is above 1, each read with `descriptionPart`), the
+   procedures in order with their ids and what each asks the founder but not their instructions, the
+   places on the canvas or the idea the operation writes to, the operations it goes back to, on an
+   `Experiment` operation its hand-over and the steps it shares, what it waits on, and any run left
+   paused, in short.
+2. `start_run` with `operationId` set to the row. It answers the run and the same package in short. A
+   refusal naming operations that have not run is the prerequisite check: report which ones and ask
+   whether to run them first or to force past them.
    Ask the user directly to clarify what you cannot infer. Never set `forcePastPrerequisites` on your own judgement. Keep the run id it
    answered: every write for the rest of the run carries it as `runId`.
-3. Do the procedures. Write what they produce with the canvas tools above — `add_entry`,
+3. Do the procedures, each read first with `get_procedure` by its code and the `runId`: it answers
+   `procedure.instructions`, in parts when `instructionsParts` is above 1, each read with `part`.
+   Write what they produce with the canvas tools above — `add_entry`,
    `create_hypothesis`, `add_question` — each carrying `runId`, and keep the ids those writes answered.
 4. `checkpoint_run` after **each** procedure, naming the procedure and those ids, with the founder's
    words as `founderAnswer` when the procedure asked them, and `revisitOperationIds` when it sends the

@@ -98,9 +98,10 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
    Unattended, a row that cannot be resolved is a message through `mentat-inbox` naming what was
    asked and what was not found, then stop.
 2. **Read the package.** `get_operation_package(projectId, operationId)`, unless step 1 already read
-   it by slug. Each step carries its code, words joined by hyphens that say what it does, such as
-   `choose-how-the-persona-is-made`: name a step by that code. What each part of it is
-   for is in [reference/running-a-row.md](reference/running-a-row.md): the definition and the theme
+   it by slug. It is in short: each step carries its code, words joined by hyphens that say what it
+   does, such as `choose-how-the-persona-is-made`, never its text (step 5 reads it). When
+   `definition.descriptionParts` is above 1, read the other parts in order with `descriptionPart`
+   before step 3. Why: an answer past 20,000 characters is cut off. What each part of it is for is in [reference/running-a-row.md](reference/running-a-row.md): the definition and the theme
    question; the steps in order, each with what it asks the founder; the target slots — a block and a
    kind, or the project's idea, with the idea itself; the operations it goes back to (`revisits`), in
    order; on an `Experiment` operation its hand-over to hypotheses (`handOver`) and the four steps
@@ -131,23 +132,30 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
 5. **Do the operation's own steps, in order, one at a time.** For each step of
    `definition.procedures`:
    - **Read the step first, always.** `get_procedure` with the step's code and the `runId`, just
-     before its first read or write, and read the instructions it answers in full. Why: the package
-     was read at the start, and by the fourth step of a long run its words are far behind;
-     `get_procedure` answers the wording this organisation reads now, and with the `runId` the
-     service writes the read into the run's log, before the step's checkpoint, which is how a person
+     before its first read or write, and read `procedure.instructions` in full; when
+     `instructionsParts` is above 1, read the other parts in order with `part`. Why: the package lists
+     the steps without their text, `get_procedure` answers the wording this organisation reads now,
+     and the longest are cut in parts so no answer passes 20,000 characters; with the `runId` the
+     service writes each read into the run's log, before the step's checkpoint, which is how a person
      sees the step was done from its text. Without the `runId` the read leaves no trace.
-   - **The step has an explainer?** `get_procedure` answers it as `explainer` when the platform wrote
-     one. In a session, give the founder its `text` and `webUrl` as the step starts. None: say nothing
-     of it. Unattended: send nothing.
+   - **The step has an explainer?** `get_procedure` answers it as `procedure.explainer` when the
+     platform wrote one. In a session, give the founder its `text` and `webUrl` as the step starts.
+     None: say nothing of it. Unattended: send nothing.
    - **It asks the founder?** Its `founderInputNeeded` says: `Always`, or `WhenInstructionsSay` with
      the instructions saying when. Then ask before you do the step —
      [Asking the founder](#asking-the-founder). `None`: it asks nothing.
    - **It needs desk research?** These tools may be at your disposal: agent-reach, ScrapeCreators,
-     Firecrawl, Treg and last30days. What each is good for, how to tell it is here and the shape of a
-     call are in [reference/research-tools.md](reference/research-tools.md). Use them, or better tools
-     and techniques you know: they are options, never a required procedure. Before the first paid
+     Firecrawl, Treg, last30days, and a real browser — the Claude in Chrome extension or
+     playwright-cli. What each is good for, how to tell it is here and the shape of a call are in
+     [reference/research-tools.md](reference/research-tools.md). Use them, or better tools
+     and techniques you know: they are options, never a required procedure. Check which are here
+     before the first research call, and name them in every research subagent's brief: a subagent
+     knows only the tools you hand it. A page that refuses to be read goes down the page ladder in
+     that reference — the free reads first, then Firecrawl, then the browser — before anything is
+     written as not found. Before the first paid
      call, list the paid calls and their rough cost and ask; unattended, call only what the routine's
-     instructions allow. Write what you find into
+     instructions allow. The spend the person approved is the only limit: never add a cap of your
+     own. Write what you find into
      the entries the step writes (the ratings and comparison, the segment's gathering places, the
      profile's fields, the jobs, pains and gains), each with its status and every quote or figure as a citation on the statement it
      backs, never into a note.
@@ -515,8 +523,9 @@ The `mentat` skill's table and `mentat-canvas`'s, plus:
 
 ## Rules that are easy to get wrong
 
-- **The package is the method.** Read the description, its "Read first:" reads, the theme question
-  and every step's text in full before writing. Never run a step from memory of another project.
+- **The package is the method.** Read the description, every part of it, its "Read first:" reads,
+  the theme question, and every step's text in full with `get_procedure`, every part of it, before
+  writing. Never run a step from memory of another project, nor from its line in the package.
 - **One row, one run.** A run is spent on one thing; the agent's project run is not this run.
 - **Checkpoint after every step**, with the step's `procedureId` the package listed and the ids the
   writes answered — the shared steps with the ids `sharedSteps` lists. A checkpoint with invented ids
