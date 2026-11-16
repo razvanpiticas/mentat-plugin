@@ -108,10 +108,10 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
    the gate line. A `resumableRun` means somebody paused this row: go to [Resuming](#resuming).
 3. **Read first.** The description opens with "Read first:" and names what the operation reads, each
    with the tool that answers it — `get_project`, `get_ideation`, `get_block`, `get_customer_segment`,
-   `get_value_proposition`. Make every one of those reads before the first step, on the segments and
-   value propositions it names. Then `get_block` on every block a target slot names: the block's
+   `get_value_proposition` with the sections it names, `get_product`, `get_entry`. Make every one of
+   those reads before the first step, on the segments, value propositions and products it names. Then `get_block` on every block a target slot names: the block's
    description says what belongs on it, a kind's schema says what a write must send — on Customer
-   Segments, send `includeSchemas: true` to get the schemas. An idea slot is
+   Segments and Value Proposition, send `includeSchemas: true` to get the schemas. An idea slot is
    read with `get_ideation`, which answers the idea's `version`: every idea write sends it as
    `ideationVersion`, and each write answers the next `version`.
 4. **Open the run.** `start_run(projectId, operationId, forcePastPrerequisites: false, agentId,
@@ -314,20 +314,21 @@ where it goes and how it gets there. Each picture has a **slot**, and the slot s
 | Slot | Owner, sent as `ownerId` | What it is |
 | --- | --- | --- |
 | `PersonaPicture` | the end user profile whose persona it is | the persona's picture |
-| `IdeaSketch` | the idea | the sketch of a concept set aside |
+| `IdeaSketch` | the idea | the sketch of an idea |
 | `ConceptNapkinSketch` | our value proposition | the napkin sketch of the concept chosen |
+| `ConceptSetAsideNapkinSketch` | our value proposition, with the concept set aside's `id` as `drawingFrameId` | the napkin sketch of a concept set aside |
 | `UseCaseVisual` | our value proposition | a diagram or flowchart of the use case's full life cycle |
 | `ProductDiagram` | our value proposition | the diagram of a hardware product |
 | `DrawingFrameWireframe` | our value proposition, with the frame as `drawingFrameId` | the wireframe of one frame, part or step of the product's drawing |
 | `PromiseNapkinSketch` | our value proposition | the final napkin sketch of the promise |
 
-Only the wireframe names a frame; every other slot is sent without one. An owner refuses a slot it
+Only the wireframe names its frame, and the sketch of a concept set aside its concept, each as `drawingFrameId`; every other slot is sent without one. An owner refuses a slot it
 does not hold.
 
 **1. The prompt first, always.** Build the one prompt the step's text says, and save it with the
 owner's own write before any picture: `write_persona` (`picturePrompt`) for the persona, `add_idea` or
 `update_idea` (`picturePrompt`) for an idea, and for our value proposition the write of the part the
-picture belongs to, as the step names it: `write_concept` (the sketch's `picturePrompt`),
+picture belongs to, as the step names it: `write_concept` (the sketch's `picturePrompt`, and each concept set aside's, its `id` then read from the concept it answers),
 `write_use_case` (`visualPrompt`), `draw_product` (`diagramPrompt`, and each frame's
 `wireframePrompt`, the frame's id then read from the drawing it answers) or `write_promise` (the final
 napkin sketch's `picturePrompt`). The prompt is what a person or another agent draws from
@@ -355,7 +356,7 @@ millions of characters.
 
 1. Ask for the link: `request_picture_upload(projectId, canvasVersion, slot, ownerId,
    drawingFrameId, fileName, runId)` — the slot and its owner from the table, `drawingFrameId` only
-   for `DrawingFrameWireframe`, `fileName` the name it is kept under, such as `dana-whitfield.png`;
+   for `DrawingFrameWireframe` and `ConceptSetAsideNapkinSketch`, `fileName` the name it is kept under, such as `dana-whitfield.png`;
    the `canvasVersion` the owner's write answered. The answer is `uploadUrl`, `expiresAtUtc` (fifteen
    minutes on) and `maxBytes`. Asking does not move the canvas version.
 2. Send the file as the whole body of one PUT, with no token and nothing else:

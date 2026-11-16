@@ -5,10 +5,10 @@ kind — `fields`; for a kind written inside another entry, the owner's id as `o
 confirmed or reported customer or value entry, at least one citation in `citations`. All of it comes
 from `get_block`: its
 `kinds` list carries each kind's `definitionId`, `code`, `storage`, its `schema` — the columns and the
-words — and, for a custom kind, the `attributes` it declares. On Customer Segments `get_block` answers
-the schemas only with `includeSchemas: true`. The owner's id comes from the read that answered the
-owner: `get_block` for a segment, `get_customer_segment` for a profile, `get_value_proposition` for a
-value proposition.
+words — and, for a custom kind, the `attributes` it declares. On Customer Segments and Value Proposition
+`get_block` answers the kinds' descriptions and schemas only with `includeSchemas: true`. The owner's id
+comes from the read that answered the owner: `get_block` for a segment, a value proposition or our
+product, `get_customer_segment` for a profile, `get_product` for a feature.
 
 ## Typed kinds: the `fields` object
 
@@ -79,9 +79,11 @@ part carries its own (below); a signal of the idea carries exactly one, `citatio
 | `CS.CONTEXT` | an end user profile | the profile's id |
 | `CS.JOBS`, `CS.PAINS`, `CS.GAINS` | a profile, end user or context | the profile's id |
 | `VP.PS`, `VP.PR`, `VP.GC` | a value proposition | the value proposition's id |
+| `VP.FEAT`, a feature | our product | the product's id |
+| `VP.FEAT`, a sub-feature | a feature of our product, one level only | the feature's id |
 
-`CS.NOTES`, `VP`, `VP.NOTES` and the kinds of every other block are written on the block itself and
-refuse an `ownerId`. On CS, `get_block` lists the notes in `block.entries` and the segments under
+`CS.NOTES`, `VP`, `VP.PRODUCT`, `VP.NOTES` and the kinds of every other block are written on the block
+itself and refuse an `ownerId`. On CS, `get_block` lists the notes in `block.entries` and the segments under
 `customerSegments`:
 
 | Member | What it holds |
@@ -93,10 +95,11 @@ refuse an `ownerId`. On CS, `get_block` lists the notes in `block.entries` and t
 
 `allInFull: true` adds every live segment as a whole entry to `block.entries` — body, citations,
 timestamps, and `fields` with its card, parts and the refusals of a beachhead or an end user profile
-on it. Read one segment whole with `get_customer_segment` instead. On VP, `get_block` lists our value
-propositions and the notes.
-Profiles, their items and value map entries are read through their owner with
-`get_customer_segment` / `get_value_proposition`. A first child
+on it. Read one segment whole with `get_customer_segment` instead. On VP, `get_block` lists its cards — our
+product and our value propositions — and the notes ([value-propositions.md](value-propositions.md)).
+Profiles and their items are read through their owner with `get_customer_segment`, value map entries
+with `get_value_proposition` and its section `ValueMap`, features with `get_product`; `get_entry` reads
+any one entry whole by its id. A first child
 of a segment is refused until the segment says why it is split: `split_customer_segment` writes both.
 An owner that still holds live entries is not deleted; retire it, or delete what it holds first.
 
@@ -226,7 +229,9 @@ worked out.
 measure is known and no source gives its number (the web reads "Number not found", not "Measure
 missing"), and `barrierToAdoptionAtUseCaseFactor`, the step of the full life cycle use case at which
 it stops them adopting the product (`DeterminesTheyHaveANeed` … `BuysMoreOrSpreadsTheWord`, the ten
-factors of `write_use_case`), or none. Send both on every rewrite of a pain.
+factors of `write_use_case`), or none. Send both on every rewrite of a pain. A barrier that is not
+the customer's own pain is a risk about our value proposition at that factor, never a pain
+([value-propositions.md](value-propositions.md)).
 
 | Refused | Because |
 | --- | --- |
@@ -245,95 +250,12 @@ factors of `write_use_case`), or none. Send both on every rewrite of a pain.
 refused "<code> cannot be removed: gap <n> of <profile code> points at it." Write the gaps without it
 first.
 
-## Value propositions
+## Value propositions, our product and its features
 
-| What | Tool |
-| --- | --- |
-| our value proposition, aimed at a profile or a draft | `add_entry` on `VP`, then `aim_value_proposition` |
-| its products, relievers and creators | `add_entry` with `ownerId` the value proposition |
-| a connection to the job, pain or gain addressed | `connect_value_map_entry`, `disconnect_value_map_entry` |
-| what they use today, mapped against a profile before or after ours aims at it, on a Competitive Position or an indirect competitor that exists or a new one | `add_what_they_use_today` with the profile's id (`profileId`) and exactly one of `competitorId` or `newCompetitivePosition` (`title`, `model`, `indirectCompetitorKind` on an indirect one, `oneLineSummary`, `targetsSegmentIds`); it answers the ids of the value proposition, its competitor and the profile's Strategy Canvas |
-| how well what they use today does each top job, pain and gain of the profile it aims at | `write_top_item_coverages` with the value proposition's id and `coverages`, the whole list |
-| our business as it is today, the offer an existing business sells now, one per profile | `add_our_business_as_it_is_today` with the profile's id (`profileId`), `title`, `body` and `citations` (empty while nothing shows it yet); its products, relievers and creators then with `add_entry` and `ownerId` it, connected as ours are |
-| what ours forgoes and why, its brochure | `update_entry` on our value proposition, `whatItForgoesAndWhy` and `brochure` in its `fields` |
-| where a pain reliever or gain creator comes from when not the products and services ("30-day money-back guarantee", "the price") | `offerPartItComesFrom` in its `fields` |
-| the kind of fit reached | `reach_fit`: problem–solution fit with the reason to switch from what they use today, then product–market, then business model, one at a time |
-
-A draft connects nothing until it is aimed; a value proposition with connections or a fit is not
-retargeted. A new competitor named by `add_what_they_use_today` is a `CompetitivePosition` or an
-`IndirectCompetitor`: "A named competitor holds no value proposition: write it with add_entry, and
-promote it to a Competitive Position to map it." A competitor a value proposition maps as what they use
-today is retired, never deleted. A rewrite with `update_entry`
-replaces every field: send the profile it aims at now, what it forgoes and the brochure back with
-the one that changes.
-
-`get_value_proposition` answers which of the three a value proposition is: ours to design
-(`isOursToDesign`), our business as it is today (`isOurBusinessAsItIsToday`), or what they use today
-(neither). Our business as it is today and what they use today carry a value map and sit in the fit
-check of ours on the same profile; neither is designed nor reaches a fit, and a design write on either
-is refused "<code> is not ours to design." "Profile <code> already has our business as it is today,
-<code>." means it is mapped: write inside the one there.
-
-**The coverage rows say how well what they use today does each top item.** `write_top_item_coverages`
-takes a value proposition of what they use today (`valuePropositionId`) and `coverages`, one row per
-top item of the profile it aims at — its top job, its first three pains, its first three gains — each
-named once, replacing the rows there were. Each row is `pointsAtProfileEntryId`,
-`howWellItAddressesIt` and `inTheirUsersWords`, its users' words as a fact with its citations, link and
-date seen:
-
-| `howWellItAddressesIt` | When |
-| --- | --- |
-| `Well` | an entry of its value map is connected to the item, and its users say it works; their words required |
-| `Badly` | an entry of its value map is connected to the item, and its users say it falls short; their words required |
-| `NotAtAll` | no live entry of its value map is connected to the item; their words optional |
-
-Connect the value map first: "<code> does <item> not at all, yet an entry of its value map is connected
-to it. Disconnect it, or say how well it does it." and "<code> does <item> well, yet no entry of its
-value map is connected to it. Connect the entry that does it, or say it does it not at all." A row
-missing or named twice is refused naming the item. Ours is never covered: "<code> is ours to design;
-ours is scored on the Strategy Canvas, not covered item by item." The rows answer `topItemCoverages`
-on the value proposition's `whatTheyUseToday` line, and each gap's coverage is read from them.
-
-## Our value proposition's design
-
-Each part is its own tool and is written whole: it replaces the part there was, so read it first with
-`get_value_proposition` and `sections` naming it, and send back what stays. Every one takes the value
-proposition's id (`valuePropositionId`), `canvasVersion` and `runId`.
-
-| Part | Tool | What it takes |
-| --- | --- | --- |
-| the concept chosen | `write_concept` | `name`, `coreIdea`, `sketch` (`caption`, `whatTheDrawingShows`, `picturePrompt`), `whatStrengthensIt`, `whatUnderminesIt`, and `changeToTheCurrentValueProposition` (`Improve`, `Extend` or `Invent`) exactly when our business as it is today aims at the same profile |
-| the full life cycle use case | `write_use_case` | `factors`: one row for each of the ten — `DeterminesTheyHaveANeed`, `FindsOutAboutIt`, `AnalysesIt`, `AcquiresIt`, `InstallsIt`, `UsesIt`, `DeterminesTheValueGained`, `PaysForIt`, `ReceivesSupport`, `BuysMoreOrSpreadsTheWord` — each with `today` and `withOurs`, facts with their citations, the `UsesIt` row telling the use in its steps; `visualPrompt` |
-| the features | `add_entry` on `VP.FEAT`, `ownerId` a product or service of ours | `fields`: `kind: Feature`, `whatItDoes`, `howItWorks`, `isBuilt`, `servesUseCaseFactor` (one of the ten), `servesSupportingJobId` (a live supporting job of the aimed profile), `whereElseItShows`, `candidateToCutReason` (null while it is not one), `producesIds` (pain relievers and gain creators of the same value proposition it produces). Ranked with `rerank_entries` on the product; changed with `update_entry`, every field sent back |
-| the drawing | `draw_product` | `form` (`SoftwareStoryboard`, `ServiceStoryboard`, `HardwareDiagram`), `frames` in order, at least one — each `id` (the one read, or none for a new frame), `title`, `whatHappens`, `showsFeatureIds`, `wireframePrompt` — and `diagramPrompt` on a `HardwareDiagram` only |
-| the value quantified | `quantify_value_proposition` | `measuredOnProfileEntryId` (a live job, pain or gain of the aimed profile), `asIs` and `possible` (facts with their numbers and citations; `possible` stays `Hypothesis` until a pilot or a customer shows it), `difference`, `sentence`, `benefitCategory` (`Better`, `Faster`, `Cheaper`), `stageRows` (`stage`, `today`, `withOurs`, `change`; empty when there is no table) |
-| the brochure | `update_entry` on the value proposition | `brochure` in its `fields`, markdown |
-| the promise | `write_promise` | `adLibs` in rank order, at least one — each `sentence`, `painRelieverId`, `gainCreatorId` and `unlikeWhatTheyUseTodayValuePropositionId` (none when it names no alternative) — `finalNapkinSketch` shaped as the concept's sketch, and `objections`, each `inTheirWords` (a fact with its citations) and exactly one of `answer` or `writtenAsRiskId` (a risk of this canvas, written first with `add_risk`) |
-
-A concept, use case, drawing and promise carry their pictures through their prompts: the part is
-written first with the prompt, then the picture goes up through `request_picture_upload` with the
-slot `ConceptNapkinSketch`, `UseCaseVisual`, `ProductDiagram`, `DrawingFrameWireframe` (naming the
-frame's id from the drawing just written) or `PromiseNapkinSketch`, and the value proposition's id as
-`ownerId`. A part written again with the same prompt keeps its picture; another prompt drops it.
-
-| Refused | Because |
-| --- | --- |
-| "<code> is not ours to design." | the value proposition is what they use today or our business as it is today |
-| "Say whether this concept improves, extends or replaces the current offer." | our business as it is today aims at the same profile, and the concept left `changeToTheCurrentValueProposition` out |
-| "No current offer aims at this profile, so the concept changes nothing of it." | the concept named a change, and no business of ours as it is today aims at that profile |
-| "The use case has no row for <factor>. It holds one row for each of the 10 factors." | a factor is missing; a factor sent twice is refused the same way |
-| "Job <code> is not a supporting job of the profile <code> aims at; …" | the feature's job is another kind of job, or on another profile |
-| "Only a HardwareDiagram has a diagram of the whole, …" | a diagram prompt on a storyboard |
-| "An objection is either answered or written as a risk, …" | an objection sent with both, or with neither |
-
-**What the design holds up is not deleted.** `delete_entry` is refused, naming every row that points
-at the entry: "<code> cannot be removed: it holds features <codes>." on a product with features; "…
-feature <code> produces it." on a reliever or creator; "… ad-lib <n> of the promise of <code> names
-it." and "… frame '<title>' of the drawing of <code> shows it." on what they name; "… the quantified
-value of <code> is measured on it." and "… feature <code> serves it." on a profile item. A risk an
-objection became is held the same way: deleting it in the web is refused "<code> cannot be removed: an
-objection in the promise of <code> became this risk." until the promise is written with that
-objection answered instead.
+The Value Proposition block's two cards — our product, written once, and each value proposition of
+ours — what is written inside each, the features and sub-features of the product, the sections
+`get_value_proposition` reads, the design parts with the concepts set aside and the barriers, and
+their refusals are in [value-propositions.md](value-propositions.md).
 
 ## The Competitive Landscape
 

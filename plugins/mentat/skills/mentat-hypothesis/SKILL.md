@@ -2,7 +2,7 @@
 name: "mentat-hypothesis"
 description: "Propose hypotheses on a block of a Mentat canvas — write them in the testable form the method asks for, check and score them, shortlist the method cards that can test them — from the procedure and the block's definition it fetches at the moment of use, never from anything it remembers. Use when the person asks for a hypothesis on a block, an entry or a note, when an operation reaches the point where its beliefs are written down, or when the person asks what should be tested next. It writes through the mentat-canvas loop and hands the test itself to mentat-experiment."
 argument-hint: "<project> <block code, entry code, or \"from the operation\">"
-allowed-tools: "mcp__mentat__get_project, mcp__mentat__get_block, mcp__mentat__get_hypothesis, mcp__mentat__get_procedure, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__recommend_experiment_definition, mcp__mentat__withdraw_experiment_definition, mcp__mentat__park_hypothesis, mcp__mentat__retire_hypothesis, mcp__mentat__link_to_goal, mcp__mentat__list_insights, mcp__mentat__record_procedure_insight, mcp__mentat__record_block_entry_definition_insight, mcp__mentat__list_operation_definitions, mcp__mentat__get_operation_definition, mcp__mentat__get_customer_segment, mcp__mentat__get_value_proposition"
+allowed-tools: "mcp__mentat__get_project, mcp__mentat__get_block, mcp__mentat__get_hypothesis, mcp__mentat__get_procedure, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__recommend_experiment_definition, mcp__mentat__withdraw_experiment_definition, mcp__mentat__park_hypothesis, mcp__mentat__retire_hypothesis, mcp__mentat__link_to_goal, mcp__mentat__list_insights, mcp__mentat__record_procedure_insight, mcp__mentat__record_block_entry_definition_insight, mcp__mentat__list_operation_definitions, mcp__mentat__get_operation_definition, mcp__mentat__get_customer_segment, mcp__mentat__get_value_proposition, mcp__mentat__get_product"
 ---
 
 # Mentat hypothesis
@@ -79,7 +79,9 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
    for the block to hold; those sentences are the beliefs the procedure's first step sends you to.
    The same answer lists the block's entries and every hypothesis already on it. An entry written
    inside another — a job, pain or gain inside a profile, a reliever or creator inside a value
-   proposition — is read whole with `get_customer_segment` or `get_value_proposition` on its owner.
+   proposition, a feature inside our product — is read with `get_customer_segment` on its segment,
+   `get_value_proposition` on its value proposition with the section `ValueMap`, or `get_product` on
+   the product with the feature as `featureId`.
 3. **Find what is already there — through the `mentat-search` skill, never the search tool.**
    If you are about to call the search tool, or to load it with ToolSearch, stop and invoke `mentat-search`
    instead. For each belief, invoke the `mentat-search` skill once, on the block's project, with the

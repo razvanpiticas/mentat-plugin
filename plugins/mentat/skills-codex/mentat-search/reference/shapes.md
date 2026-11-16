@@ -5,7 +5,7 @@ Load this before `run_analytical_query`. Every shape is one `SELECT` over the pr
 server refuses a query that does not name the project there. The graph's words: vertices `block`,
 `entry`, `hypothesis`, `experiment`, `evidence`, `question`, `risk`, `idea`, `run`, every one also
 labelled `node` with `id`, `project_id`, `reference_code`; structural edges `on_block` (a row to
-its block), `about` (a hypothesis to its entry), `tests` (an experiment to its hypothesis),
+its block), `about` (a hypothesis to its entry, and a risk to the value proposition it is about), `tests` (an experiment to its hypothesis),
 `from_experiment` (evidence to its experiment), `produced` (a run to what it wrote), `contradicts`,
 `for_segment` (a channel, relationship or revenue stream to its segment), `supplies`, `performs`,
 `pays_for`; the customer and value edges, each from the entry written inside
@@ -18,7 +18,11 @@ is connected to), `value_proposition_of_what_they_use_today` (a value propositio
 a Competitive Position or an indirect competitor), `coverage_of` (a value proposition of what they
 use today to each top job, pain or gain it has a coverage row for), `resells_to` (a segment to the
 one it sells on to), `adjacent_market_of` (a segment to the beachhead it is an adjacent market of),
-`turned_away_by` (a segment to the beachhead that turns it away); the competitor edges: `targets` (a
+`turned_away_by` (a segment to the beachhead that turns it away); the product edges: `stands_for` (a
+line of products and services of ours to our product it points at), `feature_of` (a feature or
+sub-feature to its product), `sub_feature_of` (a sub-feature to its feature), `serves` (a feature or
+sub-feature to a job it serves), `produces` (a feature or sub-feature to a pain reliever or gain creator
+it produces); the competitor edges: `targets` (a
 competitor of any of the three models to a segment it targets), `for_profile` (a Strategy Canvas to
 the profile it is for), `scores` (a Strategy Canvas to each competitor it scores),
 `observation_of` (a `competitor_observation` vertex, one fact of a record, to its competitor, also

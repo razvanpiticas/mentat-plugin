@@ -45,8 +45,9 @@ fit. `concept-and-use-case` creates our value proposition and aims it at the pro
 
 1. The segment is the first line of `fitPairShortfalls`.
 2. `get_customer_segment` with its `segmentId`: the ids of its end user profile and context profiles.
-   `get_block` VP lists our value propositions; `get_value_proposition` on each answers the profile
-   it aims at and, in its fit check, `nextKindOfFit`. Only one whose `isOursToDesign` is true counts:
+   `get_block` VP lists our value propositions among its cards; `get_value_proposition` on each, with
+   the section `FitCheck`, answers the profile it aims at in its header and, in its fit check,
+   `nextKindOfFit`. Only one whose `isOursToDesign` is true counts:
    our business as it is today is mapped, never designed, and never reaches a fit.
 3. None of ours aims at one of those profiles: the operation is `concept-and-use-case`. One does and
    its `nextKindOfFit` is still `ProblemSolution`: the operation is `value-proposition`.

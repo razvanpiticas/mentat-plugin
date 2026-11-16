@@ -31,11 +31,39 @@ times severity, 1 to 25, and is what the index sorts on.
 
 | Call | Arguments | Effect |
 | --- | --- | --- |
-| `add_risk` | `blockId`, `statement`, `likelihood`, `severity` (VeryLow … VeryHigh) | Open. |
-| `update_risk` | `statement`; `likelihood` + `severity` together; `triggerSignal`; `response` | Restates, rescores, describes what would be seen first, plans what will be done. |
+| `add_risk` | `blockId`, `statement`, `likelihood`, `severity` (VeryLow … VeryHigh); `title`, `valuePropositionId`, `arisesAtUseCaseFactor` on a risk about a value proposition | Open. |
+| `update_risk` | `title`; `statement`; `valuePropositionId`; `arisesAtUseCaseFactor`; `likelihood` + `severity` together; `triggerSignal`; `response` | Retitles, restates, says what it is about and where it arises, rescores, describes what would be seen first, plans what will be done. What is left out is kept. |
 | `resolve_risk` | `resolution` Mitigated, Accepted, Closed, Reopened | Mitigated needs a response plan. |
 
 Statuses: Open, Mitigated, Accepted, Closed.
+
+**A risk about a value proposition.** A risk is about its block unless it names one value proposition
+of ours: `valuePropositionId`, a live one on the Value Proposition block — ours to design or our
+business as it is today, never what they use today — with the Value Proposition block's id as
+`blockId`. It then needs a `title`, a name of a few words, at most 80 characters, the sentence in
+`statement`: inside the value proposition it is read by its title. It is never a card of the block:
+`get_block` lists it among the block's risks with `isCard` false, and it goes with the value
+proposition when that is deleted.
+
+| What it is | Sent | Read |
+| --- | --- | --- |
+| a risk about the block | `blockId` alone; a `title` if it has one | a card of the block |
+| a barrier to adoption that is not the customer's own pain | `title`, `valuePropositionId` (ours to design) and `arisesAtUseCaseFactor`, one of the ten factors of `write_use_case` | on that factor of the use case, `get_value_proposition` section `UseCase`, with its exposure and status |
+| an objection of the persona nothing answers | `title` and `valuePropositionId`, no factor | inside the value proposition; `write_promise` names it as an objection's `writtenAsRiskId` |
+
+A barrier that is the customer's own pain is a pain of the profile, marked in its fields, not a risk.
+
+| Refused | Because |
+| --- | --- |
+| "A risk that arises at a factor of the use case is a barrier to adoption of one value proposition. Name the value proposition it is about." | a factor with no value proposition |
+| "A risk about <code> is read inside it by its title." | a value proposition with no title |
+| a title over 80 characters | a title is a name of a few words |
+| the value proposition named | it is retired, on another block or of what they use today; a factor on our business as it is today, which has no use case |
+
+`update_risk` sends what you leave out as the risk holds it, so a title, a value proposition or a factor
+already on a risk cannot be taken off through it; a person does that on the risk's own form. Giving a
+risk of the Value Proposition block its title, `valuePropositionId` and `arisesAtUseCaseFactor` makes
+it a barrier read on that factor, no longer a card of the block.
 
 ## Ideas
 

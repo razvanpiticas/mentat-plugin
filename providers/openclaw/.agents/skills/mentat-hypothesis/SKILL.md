@@ -77,7 +77,9 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
    for the block to hold; those sentences are the beliefs the procedure's first step sends you to.
    The same answer lists the block's entries and every hypothesis already on it. An entry written
    inside another — a job, pain or gain inside a profile, a reliever or creator inside a value
-   proposition — is read whole with `get_customer_segment` or `get_value_proposition` on its owner.
+   proposition, a feature inside our product — is read with `get_customer_segment` on its segment,
+   `get_value_proposition` on its value proposition with the section `ValueMap`, or `get_product` on
+   the product with the feature as `featureId`.
 3. **Find what is already there — through the `mentat-search` skill, never the search tool.**
    If you are about to call the search tool, or to load it with ToolSearch, stop and invoke `mentat-search`
    instead. For each belief, invoke the `mentat-search` skill once, on the block's project, with the

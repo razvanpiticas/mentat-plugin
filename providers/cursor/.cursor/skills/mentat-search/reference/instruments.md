@@ -10,11 +10,12 @@ when writing the answer.
 | "What is on Key Resources?" | `get_block("KR")` |
 | "Read KR-01" | `get_block("KR")`, the entry `KR-01` in it |
 | "Read CS.PAINS-04" | `get_neighbours("CS.PAINS-04")` → `in_profile` to its profile, `profile_of` to the segment with its id → `get_customer_segment(segmentId)`, the pain `CS.PAINS-04` in its end user profile |
-| "Read VP.PR-02" | `get_neighbours("VP.PR-02")` → `in_value_map` to the value proposition with its id → `get_value_proposition(valuePropositionId)`, the reliever `VP.PR-02` in its value map |
+| "Read VP.PR-02" | `get_neighbours("VP.PR-02")` → `in_value_map` to the value proposition with its id → `get_value_proposition(valuePropositionId, sections: ["ValueMap"])`, the reliever `VP.PR-02` in its value map |
+| "Read VP.FEAT-07" | `get_neighbours("VP.FEAT-07")` → the row's id, and `feature_of` to our product with its id → `get_product(productId, featureId)`, the feature whole with its sub-features |
 | "What does H-12 say?" | `get_neighbours("H-12")` → the row's id → `get_hypothesis(projectId, hypothesisId)` |
 | "What did run … find?" | `get_run(projectId, runId)` |
-| "Everything about segments and the value proposition" | `get_block("CS")`, `get_block("VP")` — two blocks, not the canvas; then `get_customer_segment` and `get_value_proposition` on the segments and value propositions whose parts the question needs, because the blocks list them without what is written inside |
-| "Everything we have" | `get_canvas` — last resort; it lists every block's cards and the segments in short, never what is written inside a segment or a value proposition, which comes through `get_customer_segment` and `get_value_proposition` |
+| "Everything about segments and the value proposition" | `get_block("CS")`, `get_block("VP")` — two blocks, not the canvas; then `get_customer_segment`, `get_value_proposition` with the sections the question needs and `get_product` on the segments, value propositions and product whose parts the question needs, because the blocks list them without what is written inside |
+| "Everything we have" | `get_canvas` — last resort; it lists every block's cards and the segments in short, never what is written inside a segment, a value proposition or our product, which comes through `get_customer_segment`, `get_value_proposition` and `get_product` |
 
 ## By meaning — the subject is known, the place is not
 

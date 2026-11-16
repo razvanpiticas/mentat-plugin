@@ -53,7 +53,7 @@ Apply in this order; the first row that fits is the instrument.
 
 | The question | Instrument | Call | Cost |
 | --- | --- | --- | --- |
-| names a block, or a code you hold | **exact** | `get_block(projectId, blockCode)`; a code that is not a block's → `get_neighbours(projectId, referenceCode)` for the row's id and kind, then `get_hypothesis`, `get_experiment` or `get_run` by id, or, for an entry written inside an owner, `get_customer_segment` or `get_value_proposition` on the owner; the canvas only when the question spans blocks and nothing narrower answers: `get_canvas` | free |
+| names a block, or a code you hold | **exact** | `get_block(projectId, blockCode)`; a code that is not a block's → `get_neighbours(projectId, referenceCode)` for the row's id and kind, then `get_hypothesis`, `get_experiment` or `get_run` by id, or, for an entry written inside an owner, `get_customer_segment`, `get_value_proposition` with the section that holds it, or `get_product` on the owner; the canvas only when the question spans blocks and nothing narrower answers: `get_canvas` | free |
 | names a subject and no code — "what do we know about pricing"; or is a duplicate check before a write — "is there already a hypothesis like this" | **by meaning** | `search(projectId, question, limit)` | one embedding per call |
 | holds a code and asks what is tied to it — "what hangs on KR-45" | **by connection** | `get_neighbours(projectId, referenceCode)` | a query |
 | has a shape with more than one hop — "open questions that block a hypothesis a high risk depends on" | **by connection, shaped** | `run_analytical_query` with a shape from [reference/shapes.md](reference/shapes.md) | a query, five seconds, 200 rows |
@@ -74,11 +74,14 @@ only, the Competitive Positions, Strategy Canvases and notes; `competitiveLandsc
 competitor of the three models, every Strategy Canvas with its readings, and our Core and moats,
 whether or not each is a card. A listed entry's code names its block before the first `.` or `-` (`KR-01` → `KR`,
 `CS-03` → `CS`). An entry written inside an owner is not on its block's list — a profile, a context,
-a job, pain or gain, a product, reliever or creator — and is read through that owner:
-`get_customer_segment` with the segment's id for a profile and its items, `get_value_proposition`
-with the value proposition's id for a value map entry. `get_neighbours(projectId, referenceCode)`
-finds the owner first: `in_profile`, `context_of`, `profile_of` and `in_value_map` lead from the
-entry up to it, each with its id. For any other code, `get_neighbours(projectId, referenceCode)`
+a job, pain or gain, a line of products and services, reliever or creator, a feature or sub-feature
+of our product — and is read through that owner: `get_customer_segment` with the segment's id for a
+profile and its items, `get_value_proposition` with the value proposition's id and the section
+`ValueMap` for a value map entry, `get_product` with the product's id and the feature's as `featureId`
+for a feature. `get_neighbours(projectId, referenceCode)` finds the owner first: `in_profile`,
+`context_of`, `profile_of`, `in_value_map` and `feature_of` lead from the entry up to it, each with its
+id. On Value Proposition the entries listed are its cards only, our product and our value
+propositions, with the notes. For any other code, `get_neighbours(projectId, referenceCode)`
 answers first the row itself — its kind, its id, its title, its status — which is the id
 `get_hypothesis`, `get_experiment` or `get_run` takes; one free read, and it brings the row's
 surroundings with it.

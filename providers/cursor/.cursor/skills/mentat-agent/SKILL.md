@@ -96,9 +96,10 @@ or only where to work — open the run, then read it before you suggest, route o
   with what it is for; what it holds — entries by code with their status, hypotheses by status, open
   questions, risks and ideas; its coverage and confidence. On Customer Segments and Value Proposition
   `get_block` lists the segments as an outline with the beachheads in full but their end user
-  profile, and our value propositions, never what is written inside the rest: before the account, read each segment the account needs with `get_customer_segment` (its
-  profiles, jobs, pains and gains) and each value proposition with `get_value_proposition` (its
-  products, relievers and creators). Then propose the work, one recommendation first, from what that
+  profile, and our product and our value propositions as cards, never what is written inside the rest: before the account, read each segment the account needs with `get_customer_segment` (its
+  profiles, jobs, pains and gains), each value proposition with `get_value_proposition` and the
+  sections the account needs (`ValueMap` for its products, relievers and creators, `FitCheck` for its
+  fit), and our product with `get_product` (its features). Then propose the work, one recommendation first, from what that
   definition asks for and what the block is missing — never from general knowledge of the subject.
 - **A subject** — anything that is not a block's name: `mentat-search` on it first, to find where it
   is written; an entry's code names its block before the first `.` or `-`. Then `get_block` on that

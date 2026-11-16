@@ -32,14 +32,15 @@ For each of the operation's own steps, in `executionOrder`:
    run alone. The `runId` is what writes the read into the run's log, before the step's checkpoint.
    When it
    answers an `explainer`, give the founder its `text` and `webUrl` as the step starts, in a session.
-2. Read what the step reads: the target blocks (`get_block`), the segments and value propositions it
-   names (`get_customer_segment`, `get_value_proposition`), the idea (`get_ideation`).
+2. Read what the step reads: the target blocks (`get_block`), the segments, value propositions and
+   products it names (`get_customer_segment`, `get_value_proposition` with the sections the step
+   names, `get_product`, `get_entry`), the idea (`get_ideation`).
 3. A step whose `founderInputNeeded` is `Always`, or `WhenInstructionsSay` when its instructions say
    so: ask before anything else — in the chat in a session, through the inbox unattended (the body
    below), and stop there until the answer comes.
 4. Draft what the step produces, as the entries and parts it asks for, on the kinds the target slots
-   name, with the fields the kind's schema lists (`get_block` carries it; on Customer Segments only
-   with `includeSchemas: true`). A step that produces a
+   name, with the fields the kind's schema lists (`get_block` carries it; on Customer Segments and
+   Value Proposition only with `includeSchemas: true`). A step that produces a
    hypothesis drafts it in the "We believe that" form; a step that opens a question drafts the
    question.
 5. In a session: show the draft, ask, write. Unattended: write.
@@ -102,8 +103,9 @@ skill's own "Resuming" section says how the next firing finishes the step.
 
 ## The Checkpoint judgement
 
-Read what the run wrote (`get_block` on the target blocks, `get_customer_segment` and
-`get_value_proposition` on what it wrote inside, the codes from the checkpoints). Against the
+Read what the run wrote (`get_block` on the target blocks, `get_customer_segment`,
+`get_value_proposition` by the sections it wrote and `get_product` on what it wrote inside, the codes
+from the checkpoints). Against the
 "validated when" sentence, write two or three sentences naming codes: what meets it, what does not.
 Propose the verdict, and on `Invalidated` the operations it sends the project back to — the first of
 `revisits` unless what failed says another. In a session the person confirms; unattended, the

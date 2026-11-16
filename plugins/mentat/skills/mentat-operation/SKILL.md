@@ -2,7 +2,7 @@
 name: "mentat-operation"
 description: "Run one operation of a Mentat project's plan end to end — read its package and what its description says to read first, follow its steps in order, ask the founder where a step asks them, write what the steps produce on the canvas or on the project's idea inside a run, checkpoint after every step, send the project back to earlier operations where a step or the ending says so, hand the entries an Experiment operation names to the hypothesis and experiment skills, end with a verdict only where the operation's level asks for one, and hand to the gate check when the tier's work is done. Use when the person names a row of the plan, says \"run the next one\" or \"run the next operation\", or asks for an operation of the method to be done; and when the heartbeat routine advances the plan. A person's request for a row reaches it through mentat-agent, which boots the agent the row's run is recorded under."
 argument-hint: "<project name or id> <row slug, position or \"next\">"
-allowed-tools: "mcp__mentat__server_info, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_project_state, mcp__mentat__get_roadmap, mcp__mentat__get_operation_package, mcp__mentat__get_operation_definition, mcp__mentat__get_gate_status, mcp__mentat__get_block, mcp__mentat__get_canvas, mcp__mentat__get_hypothesis, mcp__mentat__start_run, mcp__mentat__checkpoint_run, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__end_run, mcp__mentat__get_run, mcp__mentat__list_runs, mcp__mentat__add_entry, mcp__mentat__update_entry, mcp__mentat__choose_beachhead, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__add_question, mcp__mentat__add_what_was_learned, mcp__mentat__create_work_item, mcp__mentat__update_work_item, mcp__mentat__add_risk, mcp__mentat__record_operation_insight, mcp__mentat__record_procedure_insight, mcp__mentat__list_insights, mcp__mentat__get_insight, mcp__mentat__supersede_insight, mcp__mentat__boot_agent, mcp__mentat__raise_escalation, mcp__mentat__get_ideation, mcp__mentat__get_customer_segment, mcp__mentat__get_value_proposition, mcp__mentat__rate_customer_segment, mcp__mentat__describe_end_user, mcp__mentat__write_persona, mcp__mentat__connect_value_map_entry, mcp__mentat__request_picture_upload, mcp__mentat__get_procedure, mcp__mentat__retire_entry, mcp__mentat__rerank_entries, mcp__mentat__set_customer_segment_state, mcp__mentat__split_customer_segment, mcp__mentat__test_market_conditions, mcp__mentat__write_comparison, mcp__mentat__write_gathering_places, mcp__mentat__write_customers_today, mcp__mentat__write_total_addressable_market, mcp__mentat__write_turned_away_segments, mcp__mentat__write_adjacent_markets, mcp__mentat__write_purchasing_criteria, mcp__mentat__write_gaps, mcp__mentat__score_high_value_job, mcp__mentat__remove_picture, mcp__mentat__add_idea, mcp__mentat__update_idea, mcp__mentat__move_end_user_profile, mcp__mentat__aim_value_proposition, mcp__mentat__disconnect_value_map_entry, mcp__mentat__add_what_they_use_today, mcp__mentat__reach_fit, mcp__mentat__add_our_business_as_it_is_today, mcp__mentat__write_concept, mcp__mentat__write_use_case, mcp__mentat__draw_product, mcp__mentat__quantify_value_proposition, mcp__mentat__write_promise, mcp__mentat__get_competitor_record, mcp__mentat__promote_to_competitive_position, mcp__mentat__write_top_item_coverages, mcp__mentat__record_competitor_observation, mcp__mentat__read_the_field, mcp__mentat__draw_strategy_canvas, mcp__mentat__correct_strategy_canvas_score, mcp__mentat__read_strategy_canvas_lead, mcp__mentat__make_core, mcp__mentat__lock_core, mcp__mentat__write_starting_point, mcp__mentat__add_ideation_candidate, mcp__mentat__update_ideation_candidate, mcp__mentat__drop_ideation_candidate, mcp__mentat__add_ideation_signal, mcp__mentat__update_ideation_signal, mcp__mentat__propose_ideation_revision, Bash(curl -sS -X PUT --data-binary *)"
+allowed-tools: "mcp__mentat__server_info, mcp__mentat__list_projects, mcp__mentat__get_project, mcp__mentat__get_project_state, mcp__mentat__get_roadmap, mcp__mentat__get_operation_package, mcp__mentat__get_operation_definition, mcp__mentat__get_gate_status, mcp__mentat__get_block, mcp__mentat__get_canvas, mcp__mentat__get_hypothesis, mcp__mentat__start_run, mcp__mentat__checkpoint_run, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__end_run, mcp__mentat__get_run, mcp__mentat__list_runs, mcp__mentat__add_entry, mcp__mentat__update_entry, mcp__mentat__choose_beachhead, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__add_question, mcp__mentat__add_what_was_learned, mcp__mentat__create_work_item, mcp__mentat__update_work_item, mcp__mentat__add_risk, mcp__mentat__record_operation_insight, mcp__mentat__record_procedure_insight, mcp__mentat__list_insights, mcp__mentat__get_insight, mcp__mentat__supersede_insight, mcp__mentat__boot_agent, mcp__mentat__raise_escalation, mcp__mentat__get_ideation, mcp__mentat__get_customer_segment, mcp__mentat__get_value_proposition, mcp__mentat__get_product, mcp__mentat__get_entry, mcp__mentat__rate_customer_segment, mcp__mentat__describe_end_user, mcp__mentat__write_persona, mcp__mentat__connect_value_map_entry, mcp__mentat__request_picture_upload, mcp__mentat__get_procedure, mcp__mentat__retire_entry, mcp__mentat__rerank_entries, mcp__mentat__set_customer_segment_state, mcp__mentat__split_customer_segment, mcp__mentat__test_market_conditions, mcp__mentat__write_comparison, mcp__mentat__write_gathering_places, mcp__mentat__write_customers_today, mcp__mentat__write_total_addressable_market, mcp__mentat__write_turned_away_segments, mcp__mentat__write_adjacent_markets, mcp__mentat__write_purchasing_criteria, mcp__mentat__write_gaps, mcp__mentat__score_high_value_job, mcp__mentat__remove_picture, mcp__mentat__add_idea, mcp__mentat__update_idea, mcp__mentat__move_end_user_profile, mcp__mentat__aim_value_proposition, mcp__mentat__disconnect_value_map_entry, mcp__mentat__add_what_they_use_today, mcp__mentat__reach_fit, mcp__mentat__add_our_business_as_it_is_today, mcp__mentat__write_concept, mcp__mentat__write_use_case, mcp__mentat__draw_product, mcp__mentat__quantify_value_proposition, mcp__mentat__write_promise, mcp__mentat__get_competitor_record, mcp__mentat__promote_to_competitive_position, mcp__mentat__write_top_item_coverages, mcp__mentat__record_competitor_observation, mcp__mentat__read_the_field, mcp__mentat__draw_strategy_canvas, mcp__mentat__correct_strategy_canvas_score, mcp__mentat__read_strategy_canvas_lead, mcp__mentat__make_core, mcp__mentat__lock_core, mcp__mentat__write_starting_point, mcp__mentat__add_ideation_candidate, mcp__mentat__update_ideation_candidate, mcp__mentat__drop_ideation_candidate, mcp__mentat__add_ideation_signal, mcp__mentat__update_ideation_signal, mcp__mentat__propose_ideation_revision, Bash(curl -sS -X PUT --data-binary *)"
 ---
 
 # Mentat operation
@@ -110,10 +110,10 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
    the gate line. A `resumableRun` means somebody paused this row: go to [Resuming](#resuming).
 3. **Read first.** The description opens with "Read first:" and names what the operation reads, each
    with the tool that answers it — `get_project`, `get_ideation`, `get_block`, `get_customer_segment`,
-   `get_value_proposition`. Make every one of those reads before the first step, on the segments and
-   value propositions it names. Then `get_block` on every block a target slot names: the block's
+   `get_value_proposition` with the sections it names, `get_product`, `get_entry`. Make every one of
+   those reads before the first step, on the segments, value propositions and products it names. Then `get_block` on every block a target slot names: the block's
    description says what belongs on it, a kind's schema says what a write must send — on Customer
-   Segments, send `includeSchemas: true` to get the schemas. An idea slot is
+   Segments and Value Proposition, send `includeSchemas: true` to get the schemas. An idea slot is
    read with `get_ideation`, which answers the idea's `version`: every idea write sends it as
    `ideationVersion`, and each write answers the next `version`.
 4. **Open the run.** `start_run(projectId, operationId, forcePastPrerequisites: false, agentId,
@@ -316,20 +316,21 @@ where it goes and how it gets there. Each picture has a **slot**, and the slot s
 | Slot | Owner, sent as `ownerId` | What it is |
 | --- | --- | --- |
 | `PersonaPicture` | the end user profile whose persona it is | the persona's picture |
-| `IdeaSketch` | the idea | the sketch of a concept set aside |
+| `IdeaSketch` | the idea | the sketch of an idea |
 | `ConceptNapkinSketch` | our value proposition | the napkin sketch of the concept chosen |
+| `ConceptSetAsideNapkinSketch` | our value proposition, with the concept set aside's `id` as `drawingFrameId` | the napkin sketch of a concept set aside |
 | `UseCaseVisual` | our value proposition | a diagram or flowchart of the use case's full life cycle |
 | `ProductDiagram` | our value proposition | the diagram of a hardware product |
 | `DrawingFrameWireframe` | our value proposition, with the frame as `drawingFrameId` | the wireframe of one frame, part or step of the product's drawing |
 | `PromiseNapkinSketch` | our value proposition | the final napkin sketch of the promise |
 
-Only the wireframe names a frame; every other slot is sent without one. An owner refuses a slot it
+Only the wireframe names its frame, and the sketch of a concept set aside its concept, each as `drawingFrameId`; every other slot is sent without one. An owner refuses a slot it
 does not hold.
 
 **1. The prompt first, always.** Build the one prompt the step's text says, and save it with the
 owner's own write before any picture: `write_persona` (`picturePrompt`) for the persona, `add_idea` or
 `update_idea` (`picturePrompt`) for an idea, and for our value proposition the write of the part the
-picture belongs to, as the step names it: `write_concept` (the sketch's `picturePrompt`),
+picture belongs to, as the step names it: `write_concept` (the sketch's `picturePrompt`, and each concept set aside's, its `id` then read from the concept it answers),
 `write_use_case` (`visualPrompt`), `draw_product` (`diagramPrompt`, and each frame's
 `wireframePrompt`, the frame's id then read from the drawing it answers) or `write_promise` (the final
 napkin sketch's `picturePrompt`). The prompt is what a person or another agent draws from
@@ -354,7 +355,7 @@ millions of characters.
 
 1. Ask for the link: `request_picture_upload(projectId, canvasVersion, slot, ownerId,
    drawingFrameId, fileName, runId)` — the slot and its owner from the table, `drawingFrameId` only
-   for `DrawingFrameWireframe`, `fileName` the name it is kept under, such as `dana-whitfield.png`;
+   for `DrawingFrameWireframe` and `ConceptSetAsideNapkinSketch`, `fileName` the name it is kept under, such as `dana-whitfield.png`;
    the `canvasVersion` the owner's write answered. The answer is `uploadUrl`, `expiresAtUtc` (fifteen
    minutes on) and `maxBytes`. Asking does not move the canvas version.
 2. Send the file as the whole body of one PUT, with no token and nothing else:
