@@ -42,15 +42,18 @@ write carries its id.
    entry that already exists and how you learn which ids to address. On Customer Segments it answers
    the trees under `customerSegments`, not in `block.entries`: an `outline` row per live segment, the
    `beachheads` in full with their adjacent markets in short, the `shortlisted` segments of a tree with
-   no beachhead in short, and `retiredCount`. It leaves out the kinds' schemas unless you send
-   `includeSchemas: true`, the retired segments unless `includeRetired: true`, and every segment as a
-   whole entry unless `allInFull: true`. On Value Proposition `block.entries` lists only the cards —
+   no beachhead in short, and `retiredCount`. It leaves out the kinds' schemas, the retired segments
+   unless `includeRetired: true`, and every segment as a whole entry unless `allInFull: true`. On Value Proposition `block.entries` lists only the cards —
    our product and each value proposition of ours — and the notes; it leaves out the kinds'
-   descriptions and schemas unless `includeSchemas: true`, and what is retired or rejected unless
-   `includeRetired: true`, counting it in `leftOut`. On Competitive Landscape `block.entries` lists only the
+   descriptions and schemas, and what is retired or rejected unless `includeRetired: true`, counting it
+   in `leftOut`. The kinds are read apart, in a second call: `includeSchemas: true` on these two blocks
+   answers every kind's description and schema in short (`schemas`), `kindCode` on any block one kind
+   whole (`kindWhole`), and neither answers what is written — `block.entries` is empty and
+   `writtenLeftOut` counts it. On Competitive Landscape `block.entries` lists only the
    cards, and `competitiveLandscape` answers everything the block holds, a card or not: every
    competitor, every Strategy Canvas, our Core and moats. `get_customer_segment` reads one segment whole,
-   `get_value_proposition` one value proposition by the `sections` named, at least one,
+   `get_value_proposition` one value proposition by the `sections` named, at least one, as many as
+   fit in one answer (`sectionsLeftOut` names the rest, to read in another call),
    `get_product` our product with its features, `get_entry` one entry whole, `get_ideation` the idea.
 3. **Write with the version you read.** Every write takes `canvasVersion` and answers with the new
    one. Carry the answered version into the next write. Two writes in a row against the same version
@@ -87,9 +90,13 @@ project may hold custom blocks with codes of their own. Writes take **ids** a re
 
 Every kind `get_block` lists carries its `schema`: the columns a write of that kind takes, each with
 its type, whether it is required, what it points at and the words it accepts with what each word
-means. On Customer Segments and Value Proposition the schema comes only with `includeSchemas: true`;
-send it before writing an entry there. Read the schema of the kind you are about to write; it is the only source of its
-columns and words.
+means. On Customer Segments and Value Proposition the schemas come only in a read of the kinds:
+`includeSchemas: true` answers every kind's schema in short — each column's name, type, whether it is
+required, where it is written, what it points at and its words, without the column's description or
+what each word means — and `kindCode` answers one kind whole, with both. Make that read before writing
+an entry there, and read the kind you are about to write whole when a word's meaning decides which to
+send; it is the only source of its columns and words. Neither answers what is written on the block:
+read that with `get_block` alone.
 
 - **A title is a name of a few words, at most 80 characters, on every kind of every block.** The
   sentence that explains it goes in `body`. A longer title is refused: "A title names it in a few
@@ -140,7 +147,9 @@ taking the segment's or the profile's id and `canvasVersion`: `set_customer_segm
 `write_turned_away_segments`, `write_adjacent_markets`; `describe_end_user`, `write_purchasing_criteria`, `write_persona`,
 `erase_persona`, `move_end_user_profile`; on an end user or a context profile, `write_gaps` and
 `score_high_value_job`. Each writes its part whole: send everything the part holds,
-not the change. A picture is the exception, the persona's as every other: `request_picture_upload`
+not the change. Each but `write_gaps` and `write_adjacent_markets` answers the segment with its parts
+and its end user profile in short: every job, pain, gain, gap, alternative and criterion by code, the
+persona by name; `get_entry` reads an item whole with its marks, `get_customer_segment` the profile. A picture is the exception, the persona's as every other: `request_picture_upload`
 names the slot and its owner and answers a link, the file goes to it from disk with one `curl` PUT, and
 `remove_picture` takes it off, keeping its prompt. `rerank_entries` puts every
 entry of one kind inside one owner (`ownerId`) in a new order; the order is the rank. With `blockId`
@@ -317,9 +326,11 @@ on blocks the canvas gates, which is the point. Verbs and states are in
 ## The roadmap and operation runs
 
 A project's **roadmap** is the plan it runs: forty-eight operations from the method, in order, banded
-by tier, plus the moves it has decided to make. Start with `get_roadmap` — it answers the thesis, every
-row with its id, tier, status and prerequisites, the gate line above the plan, and the `roadmapVersion`
-every change to the plan carries. **That version is not the canvas version.** Changing the plan and
+by tier, plus the moves it has decided to make. Start with `get_roadmap` — it answers the thesis, the
+rows in short (each with its id, tier, status, what it still waits on and the blocks it writes to) as
+many as fit from the first or from `fromPosition`, `rowsLeftOut` counting the rest, the gate line above
+the plan, and the `roadmapVersion` every change to the plan carries; with `itemId` it answers one row
+whole, with its skip reason, notes, latest run and prerequisites by kind. **That version is not the canvas version.** Changing the plan and
 writing on the canvas are two different aggregates with two different numbers; send each where it
 belongs.
 
@@ -327,7 +338,7 @@ Changing the plan: `set_roadmap_thesis`, `place_roadmap_item` (one row to one po
 one call — every row after it is renumbered), `skip_roadmap_item` with a reason and
 `include_roadmap_item` to undo it, `annotate_roadmap_item`, `append_roadmap_operation`,
 `add_roadmap_move` for an idea a person has adopted, `remove_roadmap_move`.
-Each answers the whole plan with the version it produced; carry that into the next change.
+Each answers the plan in short from its first row with the version it produced; carry that into the next change.
 
 **Running an operation** is `mentat-operation`'s loop; these are the calls it is made of:
 
@@ -413,6 +424,7 @@ with `add_metric`, `add_criterion`, `update_evidence` or `add_data_point` rather
   a segment, a value proposition or our product, which comes through `get_customer_segment`,
   `get_value_proposition` and `get_product`. Reach for `get_block` unless the task spans blocks.
 - `get_value_proposition` reads only the `sections` it is sent, at least one; with none it is refused.
+  It answers them in order as far as they fit and names the rest in `sectionsLeftOut`.
 - Retire what was once believed (`retire_entry`, `retire_hypothesis`); delete only what should never
   have existed. Deletes cascade to hypotheses and contradictions about the entry.
 - One `update_*` call per changed thing; each takes the version the previous answered.

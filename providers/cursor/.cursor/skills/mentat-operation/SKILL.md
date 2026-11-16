@@ -90,18 +90,19 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
 1. **Find the row.** The person named a slug: `get_operation_package(projectId, operationSlug)` reads
    that row's package, and its `operationId` is the row's id; a slug the plan does not hold, a retired
    one among them, is refused with the plan's operations, so take the one they meant from those. They
-   named a position: `get_roadmap`, take that row's id. They
+   named a position: `get_roadmap` with it as `fromPosition`, the first row answered. They
    said "next", or a routine fired this: the brief's `project.roadmap.next` (`boot_agent`,
    `get_project_state`) is the row; with no brief, `get_roadmap` and the first row that is
-   `NotStarted`, `Paused`, `Failed` or `Cancelled`. A `Skipped` row is not run: say why it was skipped
-   and stop. In a session, when what they named matches no row or matches several: Ask the user directly to clarify what you cannot infer.
+   `NotStarted`, `Paused`, `Failed` or `Cancelled`, read again from `fromPosition` one past the last
+   row's position while `rowsLeftOut` is above 0 and none is found. A `Skipped` row is not run: say
+   why it was skipped, its `skipReason` on the row whole (`get_roadmap` with its `itemId`), and stop. In a session, when what they named matches no row or matches several: Ask the user directly to clarify what you cannot infer.
    Unattended, a row that cannot be resolved is a message through `mentat-inbox` naming what was
    asked and what was not found, then stop.
 2. **Read the package.** `get_operation_package(projectId, operationId)`, unless step 1 already read
    it by slug. It is in short: each step carries its code, words joined by hyphens that say what it
    does, such as `choose-how-the-persona-is-made`, never its text (step 5 reads it). When
    `definition.descriptionParts` is above 1, read the other parts in order with `descriptionPart`
-   before step 3. Why: an answer past 20,000 characters is cut off. What each part of it is for is in [reference/running-a-row.md](reference/running-a-row.md): the definition and the theme
+   before step 3. Why: an answer past 40,000 characters is not read whole. What each part of it is for is in [reference/running-a-row.md](reference/running-a-row.md): the definition and the theme
    question; the steps in order, each with what it asks the founder; the target slots — a block and a
    kind, or the project's idea, with the idea itself; the operations it goes back to (`revisits`), in
    order; on an `Experiment` operation its hand-over to hypotheses (`handOver`) and the four steps
@@ -112,12 +113,14 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
    `get_value_proposition` with the sections it names, `get_product`, `get_entry`. Make every one of
    those reads before the first step, on the segments, value propositions and products it names. Then `get_block` on every block a target slot names: the block's
    description says what belongs on it, a kind's schema says what a write must send — on Customer
-   Segments and Value Proposition, send `includeSchemas: true` to get the schemas. An idea slot is
+   Segments and Value Proposition, the schemas come in a second `get_block` with `includeSchemas: true`
+   (every kind in short) or `kindCode` (one kind whole), which answers nothing written on the block. An idea slot is
    read with `get_ideation`, which answers the idea's `version`: every idea write sends it as
    `ideationVersion`, and each write answers the next `version`.
 4. **Open the run.** `start_run(projectId, operationId, forcePastPrerequisites: false, agentId,
    routineId)` — `agentId` when you were booted as an agent, `routineId` when a routine fired this
-   session; on a row the plan marks as a revisit, also `revisitOfRunId`, the run whose ending or
+   session; on a revisit — a row whose `operation.revisitOfSlug` `get_roadmap` answers, in short or
+   whole with its `itemId` — also `revisitOfRunId`, the run whose ending or
    checkpoint sent the project back here. Keep the run id: every write from here carries it as
    `runId`. A refusal naming operations that have not run is the prerequisite check — see
    [Refusals](#reading-a-refusal).
@@ -135,7 +138,7 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
      before its first read or write, and read `procedure.instructions` in full; when
      `instructionsParts` is above 1, read the other parts in order with `part`. Why: the package lists
      the steps without their text, `get_procedure` answers the wording this organisation reads now,
-     and the longest are cut in parts so no answer passes 20,000 characters; with the `runId` the
+     and the longest are cut in parts so no answer passes 40,000 characters; with the `runId` the
      service writes each read into the run's log, before the step's checkpoint, which is how a person
      sees the step was done from its text. Without the `runId` the read leaves no trace.
    - **The step has an explainer?** `get_procedure` answers it as `procedure.explainer` when the
@@ -207,9 +210,10 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
    written, by code; what was decided; what waits. A run that could not be carried out at all —
    nothing written, the reason outside the canvas — is `outcome: "Failed"` with the reason, at any
    level.
-9. **Report, then the blockers.** The row's new status (`get_roadmap`), the codes written, the
-   hypotheses raised, the experiments designed, the rows the project goes back to, if any, and where
-   they stand. Then the blockers the run hit — what refused, what was missing, what misled — and ask
+9. **Report, then the blockers.** The row's new status and the rows right after it
+   (`get_roadmap` with the row's position as `fromPosition`), the codes written, the hypotheses
+   raised, the experiments designed, the rows the project goes back to, if any — each marked by its
+   `revisitOfSlug` — and where they stand. Then the blockers the run hit — what refused, what was missing, what misled — and ask
    whether any is worth recording as an insight: `record_operation_insight` (a pitfall, a niche it
    does not fit) or `record_procedure_insight` on the step that misled, on the person's word only.
    Read `list_insights` on the subject first; supersede a draft that already says it.

@@ -73,7 +73,8 @@ not be carried out — no interviews could be booked, the tool was down — conc
 to, in order. `revisitOperationIds` names the ones to run again, in the order to run them, on
 `checkpoint_run` (mid-way, when a step says the work before it no longer holds) or on `end_run`. The
 server inserts them right after the run's row, each with the row's tier and marked "Revisit, from
-<slug>"; every later row moves down. A revisit off the list is refused — "customer-profile goes back
+<slug>" (`operation.revisitOfSlug` on the row, in short and whole); every later row moves down.
+`get_roadmap` with the run's row's position as `fromPosition` reads them. A revisit off the list is refused — "customer-profile goes back
 only to beachhead-selection, end-user-profile or beachhead-tam; persona is not one of them." — and so
 is any revisit on a `Validated` ending: "A validated run sends the project back nowhere." A run of a
 revisit row is opened with `revisitOfRunId`, the run that sent the project back.
@@ -167,7 +168,8 @@ list.
 
 A run was paused mid-way yesterday.
 
-1. `get_roadmap(projectId)` → the row's status is `Paused` and its `latestRun` names the run.
+1. `get_roadmap(projectId)` → the row's status is `Paused`; `get_roadmap(projectId, itemId)` reads the row
+   whole, and its `latestRun` names the run.
 2. `get_run(projectId, runId)` → the run, and in its attempt the steps already checkpointed, the
    founder's answers and what they wrote.
 3. `get_operation_package(projectId, operationId)` → the same package, with `resumableRun` naming that

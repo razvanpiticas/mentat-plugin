@@ -126,7 +126,10 @@ this run, unattended, with nobody asked — see
    block and why, and the alternative — run the
    next row again and re-evaluate. `apply_pivot(projectId, roadmapVersion, pivotDefinitionId, toTier,
    notes, runId)` **only on the person's instruction**, with the tier they chose (earlier than the
-   project's; `get_roadmap` for the version). Report the plan's new tail and the project's tier.
+   project's; `get_roadmap` for the version). Report the plan's new tail and the project's tier:
+   `apply_pivot` answers the rows from the first as far as they fit, so while its `rowsLeftOut` is
+   above 0, `get_roadmap` again from `fromPosition`, one past the last row's position, until the
+   appended rows, each with its `operation.pivotName`, are read.
 7. **After.** `observe_run` with the outcome; in a session, the blockers reported and the question
    whether a `record_project_insight` is worth recording, on the person's word; from a routine,
    `end_run` with the digest: what the gate said, what was recorded, what waits for the person —

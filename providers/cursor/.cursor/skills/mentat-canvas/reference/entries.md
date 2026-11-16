@@ -6,7 +6,8 @@ confirmed or reported customer or value entry, at least one citation in `citatio
 from `get_block`: its
 `kinds` list carries each kind's `definitionId`, `code`, `storage`, its `schema` — the columns and the
 words — and, for a custom kind, the `attributes` it declares. On Customer Segments and Value Proposition
-`get_block` answers the kinds' descriptions and schemas only with `includeSchemas: true`. The owner's id
+`get_block` answers the kinds' descriptions and schemas only in a read of the kinds, apart from what is
+written: `includeSchemas: true` every kind in short, `kindCode` one kind whole. The owner's id
 comes from the read that answered the owner: `get_block` for a segment, a value proposition or our
 product, `get_customer_segment` for a profile, `get_product` for a feature.
 

@@ -38,7 +38,7 @@ A plan is an interview. Settle whether anybody is there to be interviewed from t
 3. **The method.** `get_procedure("P.P1")`. Read it whole. Its steps are the rounds; say which step you are on as you go, so a person reading the procedure on the screen can follow.
 4. **Read where the project stands**, in one pass, before saying anything — all seven reads, even those the brief seems to answer, because the brief is a summary and every round shows what these answer:
    - `list_goals` — the mission (or its absence), its metric, target, deadline, latest measurement; every objective, its deadline, its status, and what serves it. It answers no description: a phase's lines are kept from the `create_goal` or `update_goal` answer that wrote them.
-   - `get_roadmap` — the thesis (or null), every row with its id, position, tier, status, skip and reason, notes, prerequisites, the blocks each operation writes to (`targetBlockCodes`), and the goals it serves; the `roadmapVersion`.
+   - `get_roadmap` — the thesis (or null), the `roadmapVersion`, and every row in short: its id, position, tier, status, whether it is skipped or has notes, what it still waits on (`waitsOnSlugs`), the blocks each operation writes to (`targetBlockCodes`), the revisit or pivot that put it there (`revisitOfSlug`, `pivotName`, only on such a row), and the goals it serves. While `rowsLeftOut` is above 0, read again with `fromPosition` one past the last row's position. A row's skip reason, notes and prerequisites by kind are on the row whole: `get_roadmap` with its `itemId`, for the skipped and noted rows a round shows.
    - `get_canvas` — once, for the per-block picture: each block's `coverage`, `confidence`, `concern`, and how many entries, hypotheses, open questions, risks and ideas it holds; the `canvasVersion`, which `resolve_idea` and `add_idea` carry.
    - `get_gate_status` — the tier's operations done and pending, and whether the gate is due.
    - `list_decisions` — the accepted ones, and again with `status: "Proposed"`: the last plan decision is among either when there was a plan before.
@@ -80,7 +80,7 @@ Write, after the yes, in this order:
 
 1. `skip_roadmap_item` with the reason, `include_roadmap_item` for a skipped row the person wants back.
 2. `resolve_idea` to `Adopted` (canvas version) for each idea the person adopted, then `add_roadmap_move` (roadmap version, the row's tier) for each.
-3. `place_roadmap_item` for every row whose position differs from the order the person agreed, from position 1 upward, passing the tier the row already holds unless they moved it; every answer is the whole plan with the new version — carry it.
+3. `place_roadmap_item` for every row whose position differs from the order the person agreed, from position 1 upward, passing the tier the row already holds unless they moved it; every answer is the plan in short with the new version — carry it.
 4. `link_to_goal(itemKind: "RoadmapItems", itemId: the row, goalId: the phase)` for every row of the phase, moves included.
 5. `annotate_roadmap_item` where the person said something the runner of that row must know.
 6. `create_work_item` per gap: title as a board line, the brief naming the block and why now, `priority`, `effort`, `goalValue`, `dueOn` when the phase's date turns on it, `aboutKind: "Goals"` and `aboutId` the phase (or the question it answers). Each lands `Proposed` with an approval request in the inbox; say how many.
@@ -97,7 +97,7 @@ Then offer the first row: "Run <position> <slug> now?" — `mentat-operation` on
 
 ## Versions and the run
 
-Two version numbers travel in one round and they are not the same thing. Every roadmap write (`set_roadmap_thesis`, `skip_roadmap_item`, `include_roadmap_item`, `place_roadmap_item`, `annotate_roadmap_item`, `append_roadmap_operation`, `add_roadmap_move`, `remove_roadmap_move`) carries `roadmapVersion` and answers the whole plan with the next one. Every canvas write (`add_idea`, `resolve_idea`) carries `canvasVersion` and answers the next one. Goals, links, jobs and decisions carry neither. Every write carries `runId`. A `CONFLICT` naming a version means somebody changed the plan or the canvas under you: re-read with `get_roadmap` or `get_canvas`, show what changed, and resend against the new number.
+Two version numbers travel in one round and they are not the same thing. Every roadmap write (`set_roadmap_thesis`, `skip_roadmap_item`, `include_roadmap_item`, `place_roadmap_item`, `annotate_roadmap_item`, `append_roadmap_operation`, `add_roadmap_move`, `remove_roadmap_move`) carries `roadmapVersion` and answers the plan in short, from its first row, with the next one. Every canvas write (`add_idea`, `resolve_idea`) carries `canvasVersion` and answers the next one. Goals, links, jobs and decisions carry neither. Every write carries `runId`. A `CONFLICT` naming a version means somebody changed the plan or the canvas under you: re-read with `get_roadmap` or `get_canvas`, show what changed, and resend against the new number.
 
 ## A re-plan
 
@@ -106,7 +106,7 @@ A re-plan edits the plan; it never starts over. Read the last plan decision (`li
 - **A phase ended** (its objective `Achieved` or `Missed` on the goals tab): rounds 3 to 5 for the phases still open; the finished phase's rows are left where they are.
 - **A gate passed**: the tier moved; round 4 for the next phase's rows, which may now sit in a band the project has reached.
 - **A gate failed**: `get_gate_status` for what fell short; round 4 on the phase that owns the block, adding the operations that would lift it.
-- **A pivot was applied** (`get_roadmap` shows appended rows with `pivotName`; `list_pivot_definitions` says what that kind of pivot changes): round 3 for the blocks the pivot changes, then round 4 to place the appended rows in a phase and behind it.
+- **A pivot was applied** (`get_roadmap` shows appended rows with `operation.pivotName`, read from `fromPosition` while `rowsLeftOut` is above 0; `list_pivot_definitions` says what that kind of pivot changes): round 3 for the blocks the pivot changes, then round 4 to place the appended rows in a phase and behind it.
 - **No next row**: the plan is finished or empty; round 3 onward.
 - **The person asks**: whatever rounds their reason touches; a changed mission is round 1 and everything after it.
 

@@ -61,8 +61,11 @@ account manager, a contractor. Their name is all there is; there is nobody to as
 
 The same record `get_project_state` answers, read once here. `roadmap` carries `lastCompleted`,
 `inFlight`, `next`, `gatesAwaitingPerson` and `hasThesis`; `inboxPendingCount` is how many rows wait
-for the person you work for; `changesSinceLastRun` and `changesTruncated` are the delta since your last
-ended run; `myOpenWork` and `resolvedSinceLastRun` are yours. `overview.blocks` is one line per block
+for the person you work for; `changesSinceLastRun`, `changesLeftOut` and `changesTruncated` are the delta
+since your last ended run — each change in short (the table, the row's id and code, its `subject`, the
+kind, the property moved, who, which run, when; never the values), the newest that fit beside every
+document whole, `changesLeftOut` the older ones left out and `changesTruncated` the log holding even more,
+both read with `list_activity`; `myOpenWork` and `resolvedSinceLastRun` are yours. `overview.blocks` is one line per block
 of the canvas — its code, its name, how many live entries it holds, how many hypotheses stand on it and
 its confidence — so which blocks are empty is read here rather than by pulling the canvas. The front
 door reads its five status lines from here.

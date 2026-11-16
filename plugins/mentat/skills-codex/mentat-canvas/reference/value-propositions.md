@@ -23,7 +23,8 @@ and the features tied to it. A value proposition of what they use today is not a
 under `WhatTheyUseToday` on ours. A risk about a value proposition is among the block's risks with
 `isCard` false, its title, the value proposition and the factor it arises at.
 
-On `VP` the kinds' descriptions and schemas come only with `includeSchemas: true`: send it before
+On `VP` the kinds' descriptions and schemas come only in a read of the kinds, apart from the cards —
+`includeSchemas: true` every kind in short, `kindCode: "VP.FEAT"` one kind whole: make it before
 writing an entry there. What is no longer in play — the retired entries, such as a retired value
 proposition or a product written for its retired lines, the retired hypotheses and the rejected ideas —
 comes only with `includeRetired: true`, and is counted in `leftOut` otherwise.
@@ -145,7 +146,7 @@ pointing at its product, and each value proposition reads the features tied to i
 | `producesIds` | The pain relievers and gain creators it produces, of any of our value propositions with a line pointing at its product |
 
 Example — a sub-feature inside feature `VP.FEAT-01` of our product, after reading its id with
-`get_product`, the `VP.FEAT` kind's schema with `get_block` VP and `includeSchemas: true`, and the ids
+`get_product`, the `VP.FEAT` kind's schema with `get_block` VP and `kindCode: "VP.FEAT"`, and the ids
 of the pain reliever and the job with `get_value_proposition` (`ValueMap`) and `get_customer_segment`:
 
 ```json

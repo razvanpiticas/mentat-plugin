@@ -42,7 +42,7 @@ For each of the operation's own steps, in `executionOrder`:
    below), and stop there until the answer comes.
 4. Draft what the step produces, as the entries and parts it asks for, on the kinds the target slots
    name, with the fields the kind's schema lists (`get_block` carries it; on Customer Segments and
-   Value Proposition only with `includeSchemas: true`). A step that produces a
+   Value Proposition only in a read of the kinds: `includeSchemas: true` in short, `kindCode` whole). A step that produces a
    hypothesis drafts it in the "We believe that" form; a step that opens a question drafts the
    question.
 5. In a session: show the draft, ask, write. Unattended: write.

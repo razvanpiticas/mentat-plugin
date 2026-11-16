@@ -26,12 +26,12 @@ gate) has no table: "This gate checks no block; a person passes it by saying so.
    none: it failed on `fitPairShortfalls` alone, and the next row is chosen as
    [the next section](#the-next-row-on-a-fail-on-the-pairs-alone) says.
 2. Candidates: `get_roadmap` rows that are operations, not skipped, whose `tier` is the project's tier
-   or earlier.
-3. For each candidate of the project's tier, `get_operation_definition` with the project id and the
-   row's `operation.operationDefinitionId` — the tool takes that id, not the slug — and keep the ones
-   whose `targetSlots` name the weakest block's code. Earlier tiers only when the project's tier
-   yields none.
-4. Pick the one with the latest completed run (`operation.latestRun.endedAtUtc`); with none completed,
+   or earlier — every row of the plan: read again from `fromPosition`, one past the last row's
+   position, while `rowsLeftOut` is above 0.
+3. Keep the candidates of the project's tier whose `operation.targetBlockCodes` name the weakest
+   block's code — the row in short carries them, so no definition is read. Earlier tiers only when the
+   project's tier yields none.
+4. Pick the one with the latest completed run (`operation.latestRunEndedAtUtc`); with none completed,
    the first by position. Its row id is `nextOperationId`.
 5. None at all: send no `nextOperationId`; say "no row of the plan writes to {block code}; the
    planner is the place to add one."
@@ -52,7 +52,8 @@ fit. `concept-and-use-case` creates our value proposition and aims it at the pro
 3. None of ours aims at one of those profiles: the operation is `concept-and-use-case`. One does and
    its `nextKindOfFit` is still `ProblemSolution`: the operation is `value-proposition`.
 4. Candidates: `get_roadmap` rows that are operations whose `operation.slug` is that operation, not
-   skipped, whose `tier` is the project's tier or earlier. Pick as step 4 above; its row id is
+   skipped, whose `tier` is the project's tier or earlier, every row read as step 2 above, from
+   `fromPosition` while `rowsLeftOut` is above 0. Pick as step 4 above; its row id is
    `nextOperationId`.
 5. None at all: send no `nextOperationId`; say "no row of the plan writes {CS code}'s value
    proposition; the planner is the place to add one."
