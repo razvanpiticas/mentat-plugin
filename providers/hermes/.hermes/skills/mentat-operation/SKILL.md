@@ -112,9 +112,10 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
    with the tool that answers it — `get_project`, `get_ideation`, `get_block`, `get_customer_segment`,
    `get_value_proposition` with the sections it names, `get_product`, `get_entry`. Make every one of
    those reads before the first step, on the segments, value propositions and products it names. Then `get_block` on every block a target slot names: the block's
-   description says what belongs on it, a kind's schema says what a write must send — on Customer
-   Segments and Value Proposition, the schemas come in a second `get_block` with `includeSchemas: true`
-   (every kind in short) or `kindCode` (one kind whole), which answers nothing written on the block. An idea slot is
+   description says what belongs on it, a kind's schema says what a write must send — on every
+   block, the schemas come in a second `get_block` with `includeSchemas: true` (every kind in short)
+   or `kindCode` (one kind whole, read before writing an entry of it), which answers nothing written
+   on the block. An idea slot is
    read with `get_ideation`, which answers the idea's `version`: every idea write sends it as
    `ideationVersion`, and each write answers the next `version`.
 4. **Open the run.** `start_run(projectId, operationId, forcePastPrerequisites: false, agentId,
@@ -192,7 +193,8 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
      open question beside it is
      `add_question`, its text naming the entry's code as the entry carries it (`CL.MOAT-03`), never its
      title. Why: the service links a question to every code its text names, and that link is what shows
-     the question on the entry's card. Routines the step proposes are the person's
+     the question as a row inside the entry's card. A question is never a card on the canvas: one that
+     names nothing is read only on the questions page. Routines the step proposes are the person's
      schedule: after the person chooses, hand them to `mentat-routines`, which creates them switched
      off and switches them on with the person; never create one inside this run.
    - **It sends the project back?** When the instructions say the work of an earlier operation no

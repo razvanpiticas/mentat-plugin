@@ -44,4 +44,4 @@ Access is granted on Mentat's own roles screen, per tenant: `mcp:tools.read` and
 Reads working while writes answer 403 means the write permission has not been granted, or the
 token predates the grant.
 
-Version 0.7.5+67d01a5c83fe.
+Version 0.7.6+a73d888a0883.

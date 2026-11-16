@@ -4,10 +4,10 @@
 kind — `fields`; for a kind written inside another entry, the owner's id as `ownerId`; for a
 confirmed or reported customer or value entry, at least one citation in `citations`. All of it comes
 from `get_block`: its
-`kinds` list carries each kind's `definitionId`, `code`, `storage`, its `schema` — the columns and the
-words — and, for a custom kind, the `attributes` it declares. On Customer Segments and Value Proposition
-`get_block` answers the kinds' descriptions and schemas only in a read of the kinds, apart from what is
-written: `includeSchemas: true` every kind in short, `kindCode` one kind whole. The owner's id
+`kinds` list carries each kind's `definitionId`, `code`, `storage` and, for a custom kind, the
+`attributes` it declares. On every block `get_block` answers the kinds' descriptions and schemas — the
+columns and the words — only in a read of the kinds, apart from what is written: `includeSchemas: true`
+every kind in short, `kindCode` one kind whole. Read the kind you write with `kindCode` first. The owner's id
 comes from the read that answered the owner: `get_block` for a segment, a value proposition or our
 product, `get_customer_segment` for a profile, `get_product` for a feature.
 
@@ -310,7 +310,8 @@ competitor's value propositions aim at. It answers the fact written, not the rec
   Competitive Position, and <code> is an indirect competitor. Promote it to a Competitive Position to
   research it in full."
 - **How many use it** is a `HowManyUseIt` fact with its `users` or `customers` figure, 0 or more.
-- Read the form of each type from the kind's `observationForms` before writing: the figures it needs
+- Read the form of each type from the kind's `observationForms` before writing (`get_block` CL with
+  `kindCode` of the competitor's kind): the figures it needs
   under their labels ("price", "monthly visits") and the tags it needs, each written `name: value`
   ("plan: Pro", "month: 2026-10"). A fact that is not `Unknown` carries a citation with its link and the
   date it was seen. Each refusal names the type and what is missing: "Ad id is required for an Ad

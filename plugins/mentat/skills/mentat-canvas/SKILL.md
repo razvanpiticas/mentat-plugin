@@ -39,18 +39,17 @@ write carries its id.
    from the name or the description. An existing business starts on the `ExistingBusiness` route,
    and every later session maps the business as it is first.
 2. **Read before you write.** `get_block` with the block's code answers the block's id, the kinds of
-   entry it accepts (each with the `kindDefinitionId` and `storage` a write needs), everything already
-   written on it, and the canvas version. Reading first is how you avoid writing a duplicate of an
+   entry it accepts (each with the `kindDefinitionId`, code and `storage` a write needs, never its
+   description or schema), everything already written on it, and the canvas version. Reading first is how you avoid writing a duplicate of an
    entry that already exists and how you learn which ids to address. On Customer Segments it answers
    the trees under `customerSegments`, not in `block.entries`: an `outline` row per live segment, the
    `beachheads` in full with their adjacent markets in short, the `shortlisted` segments of a tree with
-   no beachhead in short, and `retiredCount`. It leaves out the kinds' schemas, the retired segments
+   no beachhead in short, and `retiredCount`. It leaves out the retired segments
    unless `includeRetired: true`, and every segment as a whole entry unless `allInFull: true`. On Value Proposition `block.entries` lists only the cards —
-   our product and each value proposition of ours — and the notes; it leaves out the kinds'
-   descriptions and schemas, and what is retired or rejected unless `includeRetired: true`, counting it
-   in `leftOut`. The kinds are read apart, in a second call: `includeSchemas: true` on these two blocks
-   answers every kind's description and schema in short (`schemas`), `kindCode` on any block one kind
-   whole (`kindWhole`), and neither answers what is written — `block.entries` is empty and
+   our product and each value proposition of ours — and the notes; it leaves out what is retired or
+   rejected unless `includeRetired: true`, counting it in `leftOut`. On every block the kinds are read
+   apart, in a second call: `includeSchemas: true` answers every kind's description and schema in
+   short (`schemas`), `kindCode` one kind whole (`kindWhole`), and neither answers what is written — `block.entries` is empty and
    `writtenLeftOut` counts it. On Competitive Landscape `block.entries` lists only the
    cards, and `competitiveLandscape` answers everything the block holds, a card or not: every
    competitor, every Strategy Canvas, our Core and moats. `get_customer_segment` reads one segment whole,
@@ -90,14 +89,14 @@ project may hold custom blocks with codes of their own. Writes take **ids** a re
 
 ## Which kind, which shape
 
-Every kind `get_block` lists carries its `schema`: the columns a write of that kind takes, each with
-its type, whether it is required, what it points at and the words it accepts with what each word
-means. On Customer Segments and Value Proposition the schemas come only in a read of the kinds:
-`includeSchemas: true` answers every kind's schema in short — each column's name, type, whether it is
-required, where it is written, what it points at and its words, without the column's description or
-what each word means — and `kindCode` answers one kind whole, with both. Make that read before writing
-an entry there, and read the kind you are about to write whole when a word's meaning decides which to
-send; it is the only source of its columns and words. Neither answers what is written on the block:
+Every kind has a `schema`: the columns a write of that kind takes, each with its type, whether it is
+required, what it points at and the words it accepts with what each word means; a competitor kind's
+also carries its `observationForms`. On every block `get_block` alone answers the kinds without their
+descriptions and schemas; they come only in a read of the kinds: `includeSchemas: true` answers every
+kind's schema in short — each column's name, type, whether it is required, where it is written, what
+it points at and its words, without the column's description or what each word means — and `kindCode`
+answers one kind whole, with both, nothing of it left out. Before writing an entry of a kind, read that
+kind with `kindCode`; it is the only source of its columns, words and forms. Neither answers what is written on the block:
 read that with `get_block` alone.
 
 - **A title is a name of a few words, at most 80 characters, on every kind of every block.** The
@@ -256,8 +255,8 @@ competitor that is not a card is read there, never missed because no card shows 
 
 Its record is a list of facts appended one at a time with `record_competitor_observation` on any of
 the three, each with its `headline` — the fact in one line of at most 100 characters; for an ad, its
-hook — and the fact in full through the form of its type, which the kind's schema serves as
-`observationForms` with the models that keep it: a Competitive Position keeps every section, an
+hook — and the fact in full through the form of its type, which the kind read whole
+(`get_block` CL with `kindCode`) serves as `observationForms` with the models that keep it: a Competitive Position keeps every section, an
 indirect competitor the seven `what-they-use-today` writes, a named competitor who it is. A fact is
 never edited or deleted, and the one true on the latest day is its section's latest. `read_the_field`
 writes our reading: the threat to ours on all three; where it is going and what works for it on a
