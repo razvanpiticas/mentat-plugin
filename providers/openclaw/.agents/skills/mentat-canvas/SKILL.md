@@ -280,9 +280,9 @@ holds, the shapes and the refusals are in [reference/entries.md](reference/entri
 The project's idea is not a block: the founder's starting point, the candidates weighed with their
 signals, and every statement of the idea are read with `get_ideation` and written with the idea
 tools, each taking `ideationVersion`. Never write the idea as a block entry. The statement names its
-riskiest part as a hypothesis: `create_hypothesis` on the block that part belongs to first, then
-`propose_ideation_revision` with its id. An agent's statement is proposed; a person accepts it on the
-decisions tab.
+riskiest part — `riskiestPart` on `propose_ideation_revision`, the reason in `why` — and no hypothesis is
+written for it: the operations that work on that part later write those. An agent's statement is
+proposed; a person accepts it on the decisions tab.
 
 ## Status says how true an entry is, so choose it honestly
 

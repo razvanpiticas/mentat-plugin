@@ -389,7 +389,7 @@ from, or the Core delivers.
 | the founder's starting point, and the route the first time | `write_starting_point` |
 | an idea weighed, its statement and ratings, why it was not chosen | `add_ideation_candidate`, `update_ideation_candidate`, `drop_ideation_candidate` |
 | a fact read for an idea, with its one `citation`: who, their words, the day, and a web address as its `reference` (bare or `[Reddit](https://…)`) unless it is a hypothesis | `add_ideation_signal`, `update_ideation_signal` |
-| a statement of the idea, with its riskiest hypothesis | `propose_ideation_revision` |
+| a statement of the idea, naming its riskiest part | `propose_ideation_revision` |
 
 The route is set once: "The route is set once, and this project's is Idea." A dropped idea says why
 it was not chosen.
