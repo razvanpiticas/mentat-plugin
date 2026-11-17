@@ -12,7 +12,7 @@ two rows only when the hand-over carries no test order:
 | the row of the plan: id, slug, position | the operation's package (get_operation_package) |
 | the Hypothesise step's code | the package's `sharedSteps`: the step named Hypothesise |
 | the hand-over, exactly as it was answered: "Hypothesise now", the "validated when" sentence, the operation's own instruction | the checkpoint of the operation's last own step |
-| every test order: its number, its status — `Open`, or waiting for an earlier order — and, when open, its entries by id and code | the same checkpoint |
+| every test order: its number, its status — `Open`, or waiting for an earlier order — and, when open, its entries by id and code, each with the `signedOffSentence` it carries when the run chose it | the same checkpoint |
 | only when the hand-over carries no test order: the target slots, each a block code and an entry kind code | the package's `resolvedTargetSlots` |
 | only when the hand-over carries no test order: the entries the run's own steps wrote, by id and code | the run's `writtenEntryIds`, as the same checkpoint answered them, with the codes the writes answered |
 
@@ -21,7 +21,9 @@ whether the hand-over carries a test order.
 
 **One or more test orders.** Read the block of every entry handed over. Write one hypothesis about
 each entry of every **open** test order — `aboutEntryId` the entry's id, on the block its code names —
-and, where an order hands over a value proposition itself, one about that value proposition. The
+and, where an order hands over a value proposition itself, one about that value proposition. An entry
+that carries a `signedOffSentence` is written with that sentence, its numbers as signed off: the
+founder signed it off when the operation chose it. The
 operation's instruction says what they are about ("Write hypotheses for the top job. Once it holds,
 write them for the top 3 pains and the top 3 gains."); the "validated when" sentence is what they must
 make true. A waiting order is not written: its entries are picked from the canvas as it stands when

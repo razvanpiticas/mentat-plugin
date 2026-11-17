@@ -97,7 +97,9 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
    polarity, its concern, the three checks answered, the two scores with the reason for each, and
    which you would test first. From an operation, the beliefs are the hand-over's: one hypothesis
    about each entry of an open test order, as the operation's instruction says, and none about an
-   order that waits. A hand-over with no test order: the beliefs the "validated when" sentence
+   order that waits. An entry that carries a `signedOffSentence` is written with that sentence, its
+   numbers as signed off: the founder signed it off when the operation chose it, so it is not
+   redrafted. A hand-over with no test order: the beliefs the "validated when" sentence
    depends on and the ones the target blocks' descriptions name, each about the entry the run wrote
    that it bets on (`aboutEntryId`), or about no entry when it bets on none of them.
    Every draft stands on its own step-3 invocation: a belief that

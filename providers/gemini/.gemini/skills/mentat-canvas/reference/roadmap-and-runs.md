@@ -94,7 +94,13 @@ is checkpointed without `founderAnswer`.
 
 The checkpoint of an `Experiment` operation's last own step answers the hand-over: "Hypothesise now",
 the "validated when" sentence, the operation's instruction, and its test orders — each `Open` with the
-entries to write hypotheses about, or waiting for an earlier order to hold. An order opens once every
+entries to write hypotheses about, or waiting for an earlier order to hold. A line hands over the first
+entries of a kind by rank (`EntryKind`), the entries of a kind the run chose (`ChosenEntries`), or the
+value proposition. The step that chooses sends them on its `checkpoint_run` as `chosenHypotheses`, each
+`entryId` with the hypothesis sentence as signed off; the hand-over carries that sentence on the entry as
+`signedOffSentence`, and an order whose lines pick nothing holds at once. Every checkpoint that sends
+`chosenHypotheses` sends the whole set: an entry left out is no longer chosen, one sent again takes its new
+sentence. An entry no line hands over (a job, a pain, another value proposition) is refused by name. An order opens once every
 entry of the orders before it has a validated hypothesis; `get_run` on the run answers the hand-over as
 the canvas stands. An operation that names no hand-over lines answers "Hypothesise now" and the
 "validated when" sentence with no test order: its hypotheses are the ones that sentence depends on,

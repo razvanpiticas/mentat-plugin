@@ -16,7 +16,7 @@ of what each part of the package is for, the exact escalation bodies, and the sh
 | `definition.explainer` (`text`, `webUrl`, `media[]`), `outputWebUrl` | The first message of a run in a session: what the operation is, the page where its video plays (`webUrl`), and where what the run writes is read (`outputWebUrl`). `media[]` says what each video or picture is: its `kind`, `alternativeText`, `caption`, and on a video its `durationInSeconds`. In short: a video's transcript is not here, the founder watches the video on `webUrl` and `get_operation_definition` answers it. Null when none is written |
 | `definition.founderInput` (`need`, `stepCodes`) | The operation's founder input in short: the strongest a step asks (`Always`, then `WhenInstructionsSay`, then `None`) and the codes of the steps that ask |
 | `revisits` | The operations this one may send the project back to, in order: the only ones `revisitOperationIds` may name |
-| `handOver` | On an `Experiment` operation: the entry kinds it hands to hypotheses, how many of each from the top, in test orders, and its instruction. The checkpoint of the last own step answers it resolved: the entries themselves. No lines: the checkpoint answers no test order, and Hypothesise works from the "validated when" sentence and the entries the run wrote |
+| `handOver` | On an `Experiment` operation: the entry kinds it hands to hypotheses, in test orders — by rank, how many of each from the top (`EntryKind`), or the entries the run chose (`ChosenEntries`), named on the `chosenHypotheses` of the step that chooses them — and its instruction. The checkpoint of the last own step answers it resolved: the entries themselves, each one the run chose with its `signedOffSentence`. No lines: the checkpoint answers no test order, and Hypothesise works from the "validated when" sentence and the entries the run wrote |
 | `sharedSteps` | On an `Experiment` operation: Hypothesise, Design the test, Learn from the evidence, Decide — each in short with the `procedureId` its checkpoint names and the code `get_procedure` reads it by |
 | `resolvedTargetSlots[]` (`blockCode`, `entryKindCode`, `entryKindStorage`, or the idea) | Where the steps write; an idea slot is written with the idea tools |
 | `ideation` | The project's idea, when a slot targets it: the starting point, the candidates, the statement in force |
@@ -68,7 +68,7 @@ and nothing else: the project id; this run's id and the canvas version you last 
 slug, position); the Hypothesise step's code, from `sharedSteps`; the hand-over exactly as the last
 own step's checkpoint answered it — "Hypothesise now", the "validated when" sentence, the operation's
 own instruction, and every test order with its status and, when it is open, its entries by id and
-code. A hand-over with no test order — the operation names no hand-over lines — adds two things: the
+code, each with the `signedOffSentence` it carries when the run chose it. A hand-over with no test order — the operation names no hand-over lines — adds two things: the
 target slots (`resolvedTargetSlots`, block code and entry kind code) and the entries the run's own
 steps wrote, the `writtenEntryIds` the checkpoint answered, by id and code; `mentat-hypothesis` then
 writes the hypotheses the "validated when" sentence depends on, about those entries. It hands back

@@ -1,6 +1,6 @@
 ---
 name: "mentat-canvas"
-description: "Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks and inside other entries, the customer segments' trees with their parts, end user and context profiles with their gaps and high-value jobs, personas, our product with its features and sub-features, value propositions with their value maps, fit and design — concept with the concepts set aside, use case with its barriers, the features tied to it, drawing, quantified value, brochure and promise — and our business as it is today, the Competitive Landscape's competitors of three models with their records and coverage rows, the Strategy Canvas of each profile and the Core, the project's idea, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows, the run tools, the method gates and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it."
+description: "Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks and inside other entries, the customer segments' trees with their parts, end user and context profiles with their gaps and high-value jobs, personas, our product with its features and sub-features, value propositions with their value maps, fit and design — concept with the concepts set aside, use case with its barriers, the features tied to it, drawing, quantified value, brochure, promise and landing page copy, with the landing page document compiled from it — and our business as it is today, the Competitive Landscape's competitors of three models with their records and coverage rows, the Strategy Canvas of each profile and the Core, the project's idea, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows, the run tools, the method gates and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it."
 ---
 
 # Mentat canvas
@@ -225,7 +225,12 @@ there: `write_concept` the concept chosen with its napkin sketch, what it goes a
 assessment, and the concepts set aside inside it, `write_use_case` the ten rows of its full life cycle
 use case, `draw_product` the drawing frame by frame, `quantify_value_proposition` the value
 quantified, `write_promise` the ad-libs, each opening with a feature, the final napkin sketch and the
-objections. Its brochure is a field of the value proposition, written with `update_entry`. A barrier to
+objections, `write_landing_page_copy` the landing page copy, from inside the run of `landing-page-copy`
+once the founder approved every part: one Markdown text (`markdown`), each part of the page under
+its own heading, exactly as the operation you run says; nothing checks them. Its brochure is a field of the value
+proposition, written with `update_entry`. The landing page document, `landing-page-{code}.md`, is never
+written by hand: `get_landing_page_document` compiles it from the copy and the method, in parts to read
+in order and join exactly; write it to the working directory under the `fileName` it answers. A barrier to
 adoption that is not the customer's own pain is a risk about the value proposition at a factor of its
 use case, `add_risk` with `valuePropositionId` and `arisesAtUseCaseFactor`; it is read on that factor,
 never a card. `get_value_proposition` reads only the `sections` named, at least one — `Promise` and
@@ -359,8 +364,9 @@ Each answers the plan in short from its first row with the version it produced; 
    Write what they produce with the canvas tools above — `add_entry`,
    `create_hypothesis`, `add_question` — each carrying `runId`, and keep the ids those writes answered.
 4. `checkpoint_run` after **each** procedure, naming the procedure and those ids, with the founder's
-   words as `founderAnswer` when the procedure asked them, and `revisitOperationIds` when it sends the
-   project back to earlier operations. A run interrupted between checkpoints resumes from the last
+   words as `founderAnswer` when the procedure asked them, `revisitOperationIds` when it sends the
+   project back to earlier operations, and `chosenHypotheses` — each entry chosen with its signed-off
+   sentence — on the procedure that chooses hypotheses. A run interrupted between checkpoints resumes from the last
    one; an uncheckpointed procedure is one somebody repeats. `observe_run` records what belongs to no
    procedure.
 5. `end_run` with `outcome: "Completed"` and a summary written for whoever reads this project later,

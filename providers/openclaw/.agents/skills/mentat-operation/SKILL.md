@@ -201,9 +201,13 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
      longer holds — the beachhead moved, the profile narrowed — the project goes back mid-way:
      [Going back](#going-back).
    - `checkpoint_run(projectId, runId, completedProcedureId: <the step's procedureId>,
-     writtenEntryIds, producedHypothesisIds, note, founderAnswer?, revisitOperationIds?)` after
-     **each** step. Empty lists when a step wrote none. `founderAnswer` only when the step asked the
-     founder in this session. `observe_run` for what belongs to no step.
+     writtenEntryIds, producedHypothesisIds, note, founderAnswer?, revisitOperationIds?,
+     chosenHypotheses?)` after **each** step. Empty lists when a step wrote none. `founderAnswer` only
+     when the step asked the founder in this session. `chosenHypotheses` only on the step that
+     chooses hypotheses: each entry chosen, by `entryId`, with the sentence as signed off — the
+     hand-over hands exactly these. When the founder changes the set later (an inbox answer), checkpoint
+     again with no step and the whole new set: what it leaves out is dropped. `observe_run` for what
+     belongs to no step.
 6. **End as the level says** — [Levels](#what-the-validation-level-decides). On an `Experiment`
    operation the last own step's checkpoint answers the hand-over, and the shared steps follow.
 7. **Type the links.** Invoke `mentat-linker` with the run before ending it.
@@ -272,7 +276,9 @@ they stand. A run that reached a conclusion the business did not like is `Comple
 **`Experiment`.** The operation's own steps write; then the checkpoint of the last of them answers
 the **hand-over** (`handOver`): "Hypothesise now", the operation's "validated when" and its own
 instruction, and its test orders — each `Open` with the entries to write hypotheses about, by id and
-code, or waiting for an earlier order to hold. An operation that names no hand-over lines answers
+code, each one the run chose with its `signedOffSentence`, or waiting for an earlier order to hold. A
+line of `ChosenEntries` hands exactly the entries the run's checkpoint named in `chosenHypotheses`,
+however many: none chosen, and the order holds at once. An operation that names no hand-over lines answers
 "Hypothesise now" and the "validated when" sentence with no test order. Then the four shared steps,
 read from the package's `sharedSteps` by name, each with the `procedureId` its checkpoint names:
 
