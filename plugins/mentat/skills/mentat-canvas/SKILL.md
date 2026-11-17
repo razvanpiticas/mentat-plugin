@@ -226,11 +226,12 @@ feature's sub-features, and with `blockId` the block's cards: our product first.
 there: `write_concept` the concept chosen with its napkin sketch, what it goes after and its
 assessment, and the concepts set aside inside it, `write_use_case` the ten rows of its full life cycle
 use case, `draw_product` the drawing frame by frame, `quantify_value_proposition` the value
-quantified, `write_promise` the ad-libs, each opening with a feature, the final napkin sketch and the
-objections, `write_landing_page_copy` the landing page copy, from inside the run of `landing-page-copy`
+quantified, `write_promise` the ad-libs, each the words of its slots and opening with a feature, the
+final napkin sketch and the objections, `write_landing_page_copy` the landing page copy, from inside the run of `landing-page-copy`
 once the founder approved every part: one Markdown text (`markdown`), each part of the page under
 its own heading, exactly as the operation you run says; nothing checks them. Its brochure is a field of the value
-proposition, written with `update_entry`. The landing page document, `landing-page-{code}.md`, is never
+proposition, written with `update_entry`: one object, never Markdown — why, the promise, how it works
+and one section per feature with its points. The landing page document, `landing-page-{code}.md`, is never
 written by hand: `get_landing_page_document` compiles it from the copy and the method, in parts to read
 in order and join exactly; write it to the working directory under the `fileName` it answers. A barrier to
 adoption that is not the customer's own pain is a risk about the value proposition at a factor of its
@@ -262,14 +263,18 @@ Its record is a list of facts appended one at a time with `record_competitor_obs
 the three, each with its `headline` — the fact in one line of at most 100 characters; for an ad, its
 hook — and the fact in full through the form of its type, which the kind read whole
 (`get_block` CL with `kindCode`) serves as `observationForms` with the models that keep it: a Competitive Position keeps every section, an
-indirect competitor the seven `what-they-use-today` writes, a named competitor who it is. A fact is
+indirect competitor the seven `what-they-use-today` writes, a named competitor who it is. Every number
+is a figure or a breakdown, never only in the text; each plan of each price list and each release is
+its own fact; a section looked into with nothing in it is a known zero (the figure 0 and where it was
+looked), and `Unknown` is only for what could not be read. A fact is
 never edited or deleted, and the one true on the latest day is its section's latest. `read_the_field`
 writes our reading: the threat to ours on all three; where it is going and what works for it on a
-Competitive Position only. An indirect or named competitor the founder chooses to research in full
+Competitive Position only, each a headline of a few words and a fact. An indirect or named competitor the founder chooses to research in full
 becomes a Competitive Position with `promote_to_competitive_position`: its facts, value propositions,
 segments, one line, threat and scores move to the new one, and the old one is retired as superseded.
 `get_competitor_record` reads a Competitive Position's or an indirect competitor's record whole, by
-section with history and the numbers worked out from its ads and test purchases.
+section with history and the numbers worked out from its ads and test purchases, with its record at a
+glance (`recordAtAGlance`) and what each band draws (`charts`).
 
 A Strategy Canvas (`CL.SC`) is one per profile the competitors are mapped against, always a card. The
 first `add_what_they_use_today` on a profile creates it with no factor; `update_entry` titles it.

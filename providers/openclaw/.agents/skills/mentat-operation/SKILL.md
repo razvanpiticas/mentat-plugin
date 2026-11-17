@@ -171,12 +171,15 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
      `write_gathering_places`, `describe_end_user`, `write_persona`, `connect_value_map_entry` and
      the rest; what they use today with `add_what_they_use_today`, its coverage rows with
      `write_top_item_coverages` once its value map is connected, and a competitor's facts with
-     `record_competitor_observation`, each with its headline; an indirect or named competitor the
+     `record_competitor_observation`, each with its headline, every number a figure or a breakdown
+     and a section found empty a known zero, our reading of each with `read_the_field`, where it
+     is going and what works for it each with its headline; an indirect or named competitor the
      founder chose to research in full with `promote_to_competitive_position`; a profile's gaps with
      `write_gaps`, the whole ranked list, after the coverage rows, and a job's high-value marks with
      `score_high_value_job`, after the gaps; our value proposition's design with `write_concept`,
-     `write_use_case`, `draw_product`, `quantify_value_proposition` and `write_promise`, each part
-     whole, and an existing business's current offer with `add_our_business_as_it_is_today`); the idea
+     `write_use_case`, `draw_product`, `quantify_value_proposition` and `write_promise` (each ad-lib
+     as the words of its slots), each part whole, its brochure as one object with `update_entry`,
+     never Markdown, and an existing business's current offer with `add_our_business_as_it_is_today`); the idea
      with the idea tools and `ideationVersion`, never as a block entry. What the step learns towards
      an open question — what customers value most, what the business does best — is appended to that
      question with `add_what_was_learned`, never written as its answer. Keep the ids the writes

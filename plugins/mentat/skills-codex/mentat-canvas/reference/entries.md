@@ -311,14 +311,24 @@ competitor's value propositions aim at. It answers the fact written, not the rec
   research it in full."
 - **How many use it** is a `HowManyUseIt` fact with its `users` or `customers` figure, 0 or more.
 - Read the form of each type from the kind's `observationForms` before writing (`get_block` CL with
-  `kindCode` of the competitor's kind): the figures it needs
+  `kindCode` of the competitor's kind): the band of the record it is drawn in (`Reach`, `Marketing`,
+  `HowItSells`, `TheCompany`, `ItsUsers`), the figures it needs
   under their labels ("price", "monthly visits") and the tags it needs, each written `name: value`
   ("plan: Pro", "month: 2026-10"). A fact that is not `Unknown` carries a citation with its link and the
   date it was seen. Each refusal names the type and what is missing: "Ad id is required for an Ad
-  fact.", "Order or invoice number is required for a Test purchase fact.", "A Financials fact needs its
-  revenue, profit or recurring revenue figure and the period it covers."
-- **What was looked for and not found** is an `Unknown` fact in its section, whose text says what was
-  looked for and why it is missing; it carries none of the figures and tags its type asks for.
+  fact. With no ad found, send its ads figure of 0 and its library tag instead.", "Order or invoice
+  number is required for a Test purchase fact.", "A Financials fact needs its revenue, profit or
+  recurring revenue figure and the period it covers."
+- **Every number is a figure or a breakdown**, never only in the fact's text: a number no figure holds
+  is not drawn. Each plan of each price list read is its own fact on the day it was true; each release
+  is its own fact on its release day, with its `place` tag. An `AiVisibility` fact names one of the five
+  engines (`ChatGPT`, `Perplexity`, `Google AI Overview`, `Claude`, `Gemini`) and `named: yes` or `no`.
+- **A known zero is a known fact.** A section looked into with nothing in it is `Confirmed` or
+  `Reported` with the figure 0 and where it was looked: an `Ad` fact with no ad, its `ads` figure of 0
+  and its `library` tag ("library: Meta"); a `ReviewCountAndRating` fact with its count 0 and its site.
+- **What was looked for and could not be read** is an `Unknown` fact in its section, whose text says
+  what was looked for and why it could not be read (a page behind sign-in, a tool outside the run's
+  budget); it carries none of the figures and tags its type asks for, so it is counted, never drawn.
 - Sent with the run's id, the fact is entered by the agent, and by the routine's collector in a
   routine's run; sent without one, it is the person's. Ad running days, orders per 30 days and growth
   are worked out by `get_competitor_record`, never typed; growth against ours needs the goal of ours
@@ -326,12 +336,20 @@ competitor's value propositions aim at. It answers the fact written, not the rec
   yet: pick the goal that counts our orders."
 
 `get_competitor_record` reads the record of a Competitive Position or an indirect competitor whole; a
-named competitor's facts are counted in its line under `competitiveLandscape`.
+named competitor's facts are counted in its line under `competitiveLandscape`. Beside the sections it
+answers `recordAtAGlance`, one row per section its model keeps with its band, how many facts were found
+and not found and its coverage (`AllFound`, `PartlyFound`, `NotFound`, `NotLookedFor`), and `charts`,
+what each band draws, worked out from the known facts and never typed: users over time, visits by
+domain, keyword places, post views, the five AI engines, the ad libraries, the price lists, country
+discounts, buyers and motions, releases and stated financials, each with the ids of the facts it was
+worked out from.
 
 **Our reading of it.** `read_the_field` replaces the last reading. On any of the three it writes the
 threat to ours (`Low`, `Medium` or `High`, with why). On a Competitive Position it also writes, and
-needs, where it is going and what works for it, each a fact with its citations; sent on another model
-they are refused: "<code> is not researched in full: only its threat is read. Promote it to a
+needs, where it is going and what works for it, each a `headline` of a few words, one line of at most
+100 characters, and a `fact`: the conclusion in one or two sentences with the facts it rests on as its
+citations. A reading without its headline is refused: "A fact needs its headline: the fact in one
+line." Sent on another model they are refused: "<code> is not researched in full: only its threat is read. Promote it to a
 Competitive Position to read where it is going and what works for it."
 
 **Becoming a Competitive Position.** `promote_to_competitive_position` takes a live indirect or named
