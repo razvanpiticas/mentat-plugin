@@ -1,29 +1,35 @@
 # Experiments and evidence
 
-An experiment is one run of a method card against one hypothesis. Its reference code is `T-<n>`; a
-bundle of evidence is `E-<n>`. The order below is the order BusinessIntelligence enforces; a call
+An experiment is one test of a method card against one or more hypotheses. Its reference code is
+`T-<n>`; a bundle of evidence is `E-<n>`. A **run** here is always the session it was written from
+(`runId`), never the experiment. The order below is the order BusinessIntelligence enforces; a call
 out of order is refused with the rule it broke.
 
 ## 1. Design — `design_experiment`
 
-One call plans the whole test card:
+One call plans the whole test card, and writes the experiment's work item on the board:
 
 | Argument | What it is |
 | --- | --- |
-| `hypothesisId`, `experimentDefinitionId` | The hypothesis and the card from its shortlist. The hypothesis must be scored (Prioritized). |
-| `testName`, `testDescription` | What will be done, to verify the hypothesis. |
+| `hypothesisIds`, `experimentDefinitionId` | Every hypothesis the experiment tests, one or more, and the card from their shortlist. Each hypothesis must be on the Assumptions Map — scored, `Prioritized` (or already `Testing`) — and the card must give evidence for every one's concern. Several share an experiment only when the same people, in the same sitting, answer each. |
+| `testName`, `testDescription` | What will be done, to verify the hypotheses. |
 | `assignedToUserId`, `deadline` (yyyy-MM-dd), `plannedDuration` (ISO 8601, `P3DT4H`) | Optional plan details. |
 | `metrics` | What we measure: `[{ "name": "Interviewees naming the pain unprompted", "unit": "out of 10" }]`. |
-| `criteria` | When we are right: `[{ "description": "At least 8 of 10 name it unprompted", "metricName": "Interviewees naming the pain unprompted" }]`. `metricName` must match one of the metrics; leave it out for a qualitative criterion. |
+| `criteria` | When we are right: `[{ "description": "At least 8 of 10 name it unprompted", "metricName": "Interviewees naming the pain unprompted", "hypothesisId": "…" }]`. One per hypothesis at least, each naming the hypothesis it judges; on an experiment that tests one hypothesis `hypothesisId` may be left out and the criterion judges that one. `metricName` must match one of the metrics; leave it out for a qualitative criterion. |
 
-The criteria come from the Design the test step and, inside an operation, from its "validated when" sentence; the
-`mentat-experiment` skill writes them. A run cannot start with no criterion. If a metric or criterion is
-refused after the experiment was created, the experiment exists with what came before it: read it
-with `get_experiment` and finish with `add_metric` and `add_criterion`.
+The criteria come from the procedure `design-the-experiments` and, inside an operation, from its
+"validated when" sentence; the `mentat-experiment` skill writes them. An experiment does not start
+while one of its hypotheses has no criterion. If a metric or criterion is refused after the
+experiment was created, the experiment exists with what came before it: read it with
+`get_experiment` and finish with `add_metric` and `add_criterion` (`hypothesisId` the same way).
+
+An experiment's hypotheses are fixed once it starts. While it is `Designed`, a person adds or takes
+one off on the experiment's page; no tool here does, and an experiment always tests at least one.
 
 ## 2. Run — `start_experiment`, `record_observation`, `judge_criterion`, `record_spend`
 
-`start_experiment` moves the run to Running and the hypothesis to Testing. As the run goes:
+`start_experiment` moves the experiment to Running and every hypothesis it tests to Testing. As it
+goes:
 
 - `record_observation` puts a reading on a metric: a number (`observedValue`), a word
   (`observedText`), or both. Metric ids come from the designed experiment.
@@ -38,6 +44,7 @@ One bundle per kind of signal gathered, recorded in one call:
 | Argument | Notes |
 | --- | --- |
 | `experimentId`, `kind`, `collectedAtUtc`, `summary` | Kinds: Quote, Behavior, ConversionRate, Order, Purchase, BidReceived, SearchVolume, RelatedQuery, PageSession, DropOff, AttentionSignal, FeatureRequest, Workaround, NearMissFeedback, SupportTicket, Other. |
+| `hypothesisIds` | The hypotheses of the experiment the bundle bears on. Left out, it bears on every hypothesis the experiment tests. A hypothesis's confidence counts only the bundles that bear on it. |
 | `strength` | 1 to 5. Leave it out to inherit the card's rating; override when what was gathered is worth more or less. |
 | `polarity`, `modality`, `setting`, `investmentSize` | The book's four axes: Opinion/Fact, Say/Do, Lab/RealWorld, Small/Large. Leave an axis out when it does not apply. |
 | `dataPoints` | The readings behind the bundle, each with `source` and a `textValue`, `numericValue` or `extra`. The confidence rollup weights the bundle by how many there are, so record every interviewee, every conversion. |
@@ -47,19 +54,21 @@ One bundle per kind of signal gathered, recorded in one call:
 
 ## 4. Complete — `complete_experiment`
 
-One call writes the learning card and ends the run:
+One call writes the learning card and ends the experiment:
 
 - Learning card: `insightName`, `learnedOn` (yyyy-MM-dd), `personResponsibleUserId`, `observation`
   ("We observed …"), `learningsAndInsights` ("From that we learned …"), optional
   `decisionsAndActions` ("Therefore we will …").
-- `verdict`: `Validated` needs every criterion met; `Invalidated` needs at least one missed;
-  `Inconclusive` needs `notes` saying why the run cannot be read.
+- `verdicts`: one per hypothesis, `[{ "hypothesisId": "…", "verdict": "Validated" }]`, each judged
+  by that hypothesis's own criteria alone: `Validated` needs every one of them met; `Invalidated`
+  needs at least one missed; `Inconclusive` needs `notes` saying why that part cannot be read. A
+  verdict a hypothesis's criteria contradict is refused, naming the hypothesis and the criterion.
 
-The hypothesis's confidence recomputes from the completed run. `abort_experiment` stops a run without
-a verdict and its evidence is no longer read; `delete_experiment` removes a designed run that never
-started.
+Each hypothesis's confidence recomputes from the completed experiment. The answer lists the goals the
+experiment serves as goals to review: what it showed may change them. `abort_experiment` stops an
+experiment without a verdict and its evidence is no longer read; `delete_experiment` removes one that
+never started, with its work item.
 
-## After the verdict
+## After the verdicts
 
-The hypothesis's confidence recomputes from the completed run, as above. The decision on the
-hypothesis is the person's; see hypotheses.md.
+The decision on each hypothesis is the person's; see hypotheses.md.

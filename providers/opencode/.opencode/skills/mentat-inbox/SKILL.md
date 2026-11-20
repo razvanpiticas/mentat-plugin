@@ -79,7 +79,8 @@ Name the row it is about (`subjectKind`, `subjectId`) when there is one; an esca
 alone when the question is about the run as a whole. Name the person when one person owns the
 answer. Send `raise_escalation(...)` with `runId`, record the `inboxItemId` it answers in the run
 (`observe_run`), then **hand back to the skill that called you: it pauses the run**. Raising does
-not stop the run by itself — except a step's question to the founder, below.
+not stop the run by itself — except a step's question to the founder and a verdict proposal, below.
+A goal to review pauses nothing: the run goes on with its next step.
 
 One escalation per question. A question you asked in a run that is now paused was asked once; the
 next firing reads the answer (below) and, finding none, leaves the run paused and asks nothing
@@ -93,9 +94,16 @@ first sentence when the whole runs past 200 characters — and the body `mentat-
 call, so nothing is observed and nothing is paused after it: hand the `inboxItemId` back and stop.
 The person answers it in their own words, never by a bare acknowledgement.
 
+**A verdict proposal** is the other escalation that pauses the run in the same call. At the end of an
+attempt at a `Checkpoint` operation in a run a routine fired, `mentat-operation` hands it to you: send
+`raise_escalation` with `proposedVerdict` — `Validated` or `Invalidated` — beside `runId`, the run as
+its subject, and the body its `reference/running-a-row.md` gives. The row's item then reads in
+review. Nothing is observed and nothing is paused after it: hand the `inboxItemId` back and stop.
+
 [reference/asks.md](reference/asks.md) has the body of each escalation a method skill raises under
-the unattended rule — a Checkpoint verdict, a start that spends, a hypothesis decision, a gate's
-pivot proposal, a gate failed on the pairs, a decision of the business, a missing key — so the same
+the unattended rule — a Checkpoint verdict, a goal to review, a start that spends, a hypothesis
+decision, a failed build check, a build row while the build is held, a decision of the business, a
+missing key — so the same
 question is always asked the same way.
 
 ## Reading the answer

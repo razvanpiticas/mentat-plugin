@@ -43,19 +43,28 @@ still writes the beliefs the sentence depends on.
 | --- | --- |
 | the hypotheses you wrote: code and id, each, with the entry it is about, when it is about one | the operation sends the ids as `producedHypothesisIds` on the Hypothesise checkpoint |
 | the ones you found already there and left alone: code, each | so the report does not count them as written |
-| the reason behind each score, per hypothesis | unattended nobody confirmed them, and this is where those reasons live: the run's owner puts them in the note and the report, because you never write a run note yourself |
+| the reason behind each score, per hypothesis | stored with the scores (`importanceReason`, `evidenceReason`); unattended nobody confirmed them, so the run's owner names them in the note and the report too, because you never write a run note yourself |
 | the shortlist per hypothesis: card slugs | the operation's report, and the next step when the person wants a test |
 | the canvas version you last held | the operation's next write |
 
 You never call checkpoint_run, observe_run, pause_run or end_run from here: the run is the
 operation's, and a checkpoint belongs to one of its steps.
 
+## From the mapping operation's gather step (in, and back)
+
+`mentat-operation`, at `gather-the-hypotheses` of `hypotheses-mapping-and-experiments-design`, hands
+over the project id, `runId`, `canvasVersion`, the row, and the beliefs the step found nobody wrote,
+each with its block and the entry it is about when there is one. Read the Hypothesise step yourself,
+for the form of a hypothesis. One `mentat-search` invocation per belief: a belief a hypothesis already
+says is not written again, and its code goes back so the run's note names it. Hand back as above: the
+hypotheses written, the ones found already there, the reasons, the shortlists and the version. No
+experiment is designed and none is started here: the operation's later steps map, choose and design.
+
 ## To `mentat-experiment` (on)
 
-Only on the person's word, attended. Pass the hypothesis (id, code), the card the person picked
-(id, slug), `runId` and `canvasVersion`, and — when the hypothesis came from an operation — that
-operation's `validatedWhen`, so the test's criteria are written against it. Unattended, **you** pass
-nothing on: the shortlist is what you hand back. The skill that owns the run hands it over instead —
-`mentat-operation` invokes `mentat-experiment` itself on the hypothesis your shortlist ranks first,
-with the same payload — and `mentat-experiment`'s own rule decides whether the card it designs
-starts or waits for the person.
+Only on the person's word, attended, for a single test they ask for now. Pass the hypothesis (id,
+code), the card the person picked (id, slug), `runId` and `canvasVersion`, and — when the hypothesis
+came from an operation — that operation's `validatedWhen`, so the test's criteria are written against
+it; `mentat-experiment` reads `design-the-experiments` first. Unattended, **you** pass nothing on: the
+shortlist is what you hand back, and the experiments are designed by the mapping operation, from every
+hypothesis on one map.

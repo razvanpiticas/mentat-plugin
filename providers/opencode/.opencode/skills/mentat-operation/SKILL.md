@@ -1,6 +1,6 @@
 ---
 name: "mentat-operation"
-description: "Run one operation of a Mentat project's plan end to end — read its package and what its description says to read first, follow its steps in order, ask the founder where a step asks them, write what the steps produce on the canvas or on the project's idea inside a run, checkpoint after every step, send the project back to earlier operations where a step or the ending says so, hand the entries an Experiment operation names to the hypothesis and experiment skills, end with a verdict only where the operation's level asks for one, and hand to the gate check when the tier's work is done. Use when the person names a row of the plan, says \"run the next one\" or \"run the next operation\", or asks for an operation of the method to be done; and when the heartbeat routine advances the plan. A person's request for a row reaches it through mentat-agent, which boots the agent the row's run is recorded under."
+description: "Run one operation of a Mentat project's plan end to end — read its package and what its description says to read first, follow its steps in order, ask the founder where a step asks them, write what the steps produce on the canvas or on the project's idea inside a run, checkpoint after every step, send the project back to earlier operations where a step or the ending says so, say which goals a step changed what they rest on and ask before proposing a change to them, hand the entries an Experiment operation names to the hypothesis skill, design the experiments of the mapping operation through the experiment skill, end with a verdict only where the operation's level asks for one, and hand to the gate check when the last row below the build is done. Use when the person names a row of the plan, says \"run the next one\" or \"run the next operation\", or asks for an operation of the method to be done; and when the heartbeat routine advances the plan. A person's request for a row reaches it through mentat-agent, which boots the agent the row's run is recorded under."
 ---
 
 # Mentat operation
@@ -105,9 +105,10 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
    before step 3. Why: an answer past 40,000 characters is not read whole. What each part of it is for is in [reference/running-a-row.md](reference/running-a-row.md): the definition and the theme
    question; the steps in order, each with what it asks the founder; the target slots — a block and a
    kind, or the project's idea, with the idea itself; the operations it goes back to (`revisits`), in
-   order; on an `Experiment` operation its hand-over to hypotheses (`handOver`) and the four steps
-   every such operation shares (`sharedSteps`); the prerequisites, the latest run, a resumable run and
-   the gate line. A `resumableRun` means somebody paused this row: go to [Resuming](#resuming).
+   order; on an `Experiment` operation its hand-over to hypotheses (`handOver`) and the one step
+   every such operation shares, Hypothesise (`sharedSteps`); the prerequisites, the latest run, a
+   resumable run and the build check line (`buildCheck`). A `resumableRun` means somebody paused this
+   row: go to [Resuming](#resuming).
 3. **Read first.** The description opens with "Read first:" and names what the operation reads, each
    with the tool that answers it — `get_project`, `get_ideation`, `get_block`, `get_customer_segment`,
    `get_value_proposition` with the sections it names, `get_product`, `get_entry`. Make every one of
@@ -123,8 +124,10 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
    session; on a revisit — a row whose `operation.revisitOfSlug` `get_roadmap` answers, in short or
    whole with its `itemId` — also `revisitOfRunId`, the run whose ending or
    checkpoint sent the project back here. Keep the run id: every write from here carries it as
-   `runId`. A refusal naming operations that have not run is the prerequisite check — see
-   [Refusals](#reading-a-refusal).
+   `runId`. The answer also names the row's item on the board, its id and its `W-` code: the server
+   moves it with this run, its steps as its sub-items, so you never transition it. A refusal naming
+   operations that have not run is the prerequisite check, and one saying the build is held is a
+   build row before the build check passed — see [Refusals](#reading-a-refusal).
 
    **Then tell the founder what this operation is, before its first step.** In a session, your first
    message of the run gives the operation's explainer from the package — `definition.explainer.text`,
@@ -185,15 +188,13 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
      question with `add_what_was_learned`, never written as its answer. Keep the ids the writes
      answered. A step that draws a picture: [Drawing a picture](#drawing-a-picture).
    - **It leaves work that outlives the run?** A task the step writes — a founder check on a
-     competitor, the Core kept in view — is `create_work_item` with `aboutKind: "BlockEntries"` and
-     `aboutId` the entry it is about, the three ratings and `runId`: written inside this run, it is
-     the agent's work and lands `Proposed` for a person to approve. `create_work_item` takes no
-     assignee, so a job the agent is to do — the Core kept in view — is then handed to it with
-     `update_work_item`: the job's whole text as `create_work_item` answered it, `assigneeAgentId` the
-     `agentId` this run was started with, and `runId`. Why: a job nobody is assigned to shows in
-     nobody's work, and the Core must stay in the agent's view while the later operations run. A
-     founder's check by hand is the founder's: leave it for the person to hand out on the board. The
-     open question beside it is
+     competitor, the Core kept in view — is `create_work_item` with `parentOperationId` this row's id,
+     so it is a sub-item of the operation's item and agreed as it is written, `aboutKind:
+     "BlockEntries"` and `aboutId` the entry it is about, the three ratings and `runId`. A task the
+     agent is to do — the Core kept in view — also carries `assigneeAgentId`, the `agentId` this run
+     was started with. Why: a task nobody is handed shows in nobody's work, and the Core must stay in
+     the agent's view while the later operations run. A founder's check by hand is the founder's:
+     leave it for the person to hand out on the board. The open question beside it is
      `add_question`, its text naming the entry's code as the entry carries it (`CL.MOAT-03`), never its
      title. Why: the service links a question to every code its text names, and that link is what shows
      the question as a row inside the entry's card. A question is never a card on the canvas: one that
@@ -210,26 +211,28 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
      chooses hypotheses: each entry chosen, by `entryId`, with the sentence as signed off — the
      hand-over hands exactly these. When the founder changes the set later (an inbox answer), checkpoint
      again with no step and the whole new set: what it leaves out is dropped. `observe_run` for what
-     belongs to no step.
+     belongs to no step. The answer's `goalsToReview` lists the goals resting on what the step
+     rewrote: [Goals to review](#goals-to-review), before the next step.
 6. **End as the level says** — [Levels](#what-the-validation-level-decides). On an `Experiment`
-   operation the last own step's checkpoint answers the hand-over, and the shared steps follow.
+   operation the last own step's checkpoint answers the hand-over, and the shared step follows.
 7. **Type the links.** Invoke `mentat-linker` with the run before ending it.
 8. **End the run.** `end_run(projectId, runId, outcome: "Completed", summary, verdict?,
    revisitOperationIds?, usage?)`. The summary is the paragraph the next run reads first: what was
    written, by code; what was decided; what waits. A run that could not be carried out at all —
    nothing written, the reason outside the canvas — is `outcome: "Failed"` with the reason, at any
    level.
-9. **Report, then the blockers.** The row's new status and the rows right after it
+9. **Report, then the blockers.** The row's new status and its item, the rows right after it
    (`get_roadmap` with the row's position as `fromPosition`), the codes written, the hypotheses
-   raised, the experiments designed, the rows the project goes back to, if any — each marked by its
-   `revisitOfSlug` — and where they stand. Then the blockers the run hit — what refused, what was missing, what misled — and ask
+   raised, the experiments designed, the goals sent to review, the rows the project goes back to, if
+   any — each marked by its `revisitOfSlug` — and where they stand. Then the blockers the run hit — what refused, what was missing, what misled — and ask
    whether any is worth recording as an insight: `record_operation_insight` (a pitfall, a niche it
    does not fit) or `record_procedure_insight` on the step that misled, on the person's word only.
    Read `list_insights` on the subject first; supersede a draft that already says it.
-10. **The gate.** When the package's `gate.isDue` was false and `get_gate_status` now says `isDue`,
-    say so and invoke `mentat-gate-check` — unless `mentat-advance` handed you the row: then say in
-    the summary that the gate is due and hand back; one row per firing, and the gate is the next
-    firing's.
+10. **The build check.** When the package's `buildCheck.isDue` was false and `get_gate_status` now
+    says `isDue` — this row was the last below the build — say so and invoke `mentat-gate-check` —
+    unless `mentat-advance` handed you the row: then say in the summary that the build check is due
+    and hand back; one row per firing, and the check is the next firing's. A row that finishes its
+    tier opens the next tier with no gate: nothing to check.
 
 ## Asking the founder
 
@@ -249,6 +252,29 @@ step's work before the answer: the answer is what the step is done from.
 - An `Always` step checkpointed without its answer is refused in a sentence that quotes the question:
   "Step choose-how-the-persona-is-made asks the founder: … Send their answer as founderAnswer." Ask it then; never invent
   the answer to get past the refusal.
+
+## Goals to review
+
+A goal may rest on entries and hypotheses. When a step rewrote one of them, its checkpoint answers
+the goal under `goalsToReview` — its code, its title and the reason, naming the entry and this
+operation — and the goals page marks it to review. Nothing changes on the goal by itself: a goal
+changes only through a decision a person accepts.
+
+- **In a session**, right after that step, say what changed — the entry, before and after — what the
+  goal's target now rests on (`list_goals`: its `restsOn`, its metric and latest reading), and ask
+  whether to keep the goal, change it, or add an objective, with one recommendation.
+  STOP and call the question tool to clarify. Then, on their word: keep it — say that "Stands as it is" on the goals page, with
+  their note, clears the mark; that act is the person's. Change it, add an objective or abandon it —
+  `propose_goal_change(projectId, kind: "Change" | "NewObjective" | "Abandon", goalId or parentGoalId,
+  title?, description?, metric?, deadline?, reason, figures, runId)`, the reason naming the entry and
+  the operation, each figure that moves as `label`, `was`, `becomes`. It lands as a proposed
+  decision, titled with the goal and the change; the goal reads as it did until the person accepts it
+  on the decisions tab. A goal counted in another unit is a new objective, never a changed unit.
+- **Unattended**, one escalation through `mentat-inbox` per goal ("A goal to review" in its
+  `reference/asks.md`): the goal, what changed, and the change you would propose. Record its
+  `inboxItemId` with `observe_run` and go on with the next step: the run is **not** paused for it.
+  No `propose_goal_change` in this run: the goal's review is the person's. An experiment of the
+  mapping operation that serves no goal is the same ask, the objective it would serve in its body.
 
 ## Going back
 
@@ -272,6 +298,8 @@ The package answers one of three levels. Read it before the run; the rule is enf
 **`Checkpoint`.** The steps write; then the run is judged against the definition's "validated when"
 sentence: read what the run wrote, say in two or three sentences whether the sentence is met, and
 propose `Validated` or `Invalidated`. In a session the person confirms; then `end_run(…, verdict)`.
+Unattended, the verdict is proposed through the inbox with `proposedVerdict`, which pauses the run
+([When a routine fired this run](#when-a-routine-fired-this-run)).
 `Invalidated` sends the project back ([Going back](#going-back)): report the rows it added and where
 they stand. A run that reached a conclusion the business did not like is `Completed` with
 `Invalidated`, never `Failed`.
@@ -282,8 +310,10 @@ instruction, and its test orders — each `Open` with the entries to write hypot
 code, each one the run chose with its `signedOffSentence`, or waiting for an earlier order to hold. A
 line of `ChosenEntries` hands exactly the entries the run's checkpoint named in `chosenHypotheses`,
 however many: none chosen, and the order holds at once. An operation that names no hand-over lines answers
-"Hypothesise now" and the "validated when" sentence with no test order. Then the four shared steps,
-read from the package's `sharedSteps` by name, each with the `procedureId` its checkpoint names:
+"Hypothesise now" and the "validated when" sentence with no test order. Then the one shared step,
+Hypothesise, read from the package's `sharedSteps` with the `procedureId` its checkpoint names. The
+run designs no experiment: the experiments are designed from every hypothesis on one map by the
+mapping operation, `hypotheses-mapping-and-experiments-design`, which runs later on the plan.
 
 1. **Hypothesise** — invoke `mentat-hypothesis` with the hand-over exactly as the checkpoint answered
    it, the Hypothesise step's code, the project id, this run's id and the canvas version you last
@@ -296,20 +326,15 @@ read from the package's `sharedSteps` by name, each with the `procedureId` its c
    ones it left alone, a shortlist per hypothesis and the canvas version. Checkpoint the Hypothesise
    step with the new ids as `producedHypothesisIds`. A waiting test order is not written now: it opens
    once every hypothesis of the orders before it is validated, and `get_run` on this run answers it
-   then.
-2. **Design the test** — in a session, `mentat-hypothesis` invokes `mentat-experiment` when the person
-   says test now, inside this run; afterwards read each new hypothesis (`get_hypothesis`): one with an
-   experiment designed in this run means the step is done — checkpoint it with the note "Designed
-   {experiment codes} on {hypothesis codes}"; none means it waits, and the summary says so.
-   Unattended, you invoke `mentat-experiment` yourself — see
-   [When a routine fired this run](#when-a-routine-fired-this-run).
-3. **Learn from the evidence** and 4. **Decide** are the experiment's: they run on the experiment's
-   own run, days later, through `mentat-experiment`, and are never checkpointed here.
+   then. The row's item holds one step sub-item for Hypothesise, after the operation's own steps.
+
+Learning from an experiment's evidence and deciding on a hypothesis are the experiment's own, on its
+own run, through `mentat-experiment`, and are never checkpointed here.
 
 Then `end_run` **without a verdict**, naming the operations to go back to only when what the run
 found already says the work before it does not hold; the summary names the hypotheses, the waiting
-test orders and the experiments that carry the rest. The row reads `Completed`: entries written,
-hypotheses under test.
+test orders, and that the mapping operation designs their tests. The row reads `Completed`: entries
+and hypotheses written.
 
 **A later test order, once it opens.** The row is worked again for it, and only the Hypothesise step
 runs: the own steps wrote their entries in the earlier run, and doing them again writes every job,
@@ -322,83 +347,27 @@ own step is checkpointed, so it is read from the earlier run instead:
 3. Invoke `mentat-hypothesis` with that hand-over, the Hypothesise step's code, this new run's id and
    the canvas version, as [Hypothesise](#what-the-validation-level-decides) above says.
 4. `checkpoint_run` with the Hypothesise step's `procedureId` from the package's `sharedSteps` and the
-   new ids as `producedHypothesisIds`; Design the test as above.
+   new ids as `producedHypothesisIds`.
 5. `end_run` without a verdict, the summary naming the order hypothesised and the earlier run.
 
 **`None`.** The steps write; `end_run` without a verdict.
 
+## The mapping operation
+
+`hypotheses-mapping-and-experiments-design` is a `Checkpoint` operation whose steps hand most of their
+writes to other skills — the beliefs nobody wrote to `mentat-hypothesis`, the experiments to
+`mentat-experiment` — and that asks the founder which hypotheses are tested now. Who writes what at
+each of its five steps is in [reference/running-a-row.md](reference/running-a-row.md), "The mapping
+operation"; read it before its first step.
+
 ## Drawing a picture
 
-Every picture a step draws goes the same way, whatever it shows: the persona's picture, a napkin
-sketch, a use case's visual, a product's diagram, a wireframe of one frame of the drawing, the sketch
-of a concept set aside. The step's instructions say what to draw from and in which style; this says
-where it goes and how it gets there. Each picture has a **slot**, and the slot sits on one **owner**:
-
-| Slot | Owner, sent as `ownerId` | What it is |
-| --- | --- | --- |
-| `PersonaPicture` | the end user profile whose persona it is | the persona's picture |
-| `IdeaSketch` | the idea | the sketch of an idea |
-| `ConceptNapkinSketch` | our value proposition | the napkin sketch of the concept chosen |
-| `ConceptSetAsideNapkinSketch` | our value proposition, with the concept set aside's `id` as `drawingFrameId` | the napkin sketch of a concept set aside |
-| `UseCaseVisual` | our value proposition | a diagram or flowchart of the use case's full life cycle |
-| `ProductDiagram` | our value proposition | the diagram of a hardware product |
-| `DrawingFrameWireframe` | our value proposition, with the frame as `drawingFrameId` | the wireframe of one frame, part or step of the product's drawing |
-| `PromiseNapkinSketch` | our value proposition | the final napkin sketch of the promise |
-
-Only the wireframe names its frame, and the sketch of a concept set aside its concept, each as `drawingFrameId`; every other slot is sent without one. An owner refuses a slot it
-does not hold.
-
-**1. The prompt first, always.** Build the one prompt the step's text says, and save it with the
-owner's own write before any picture: `write_persona` (`picturePrompt`) for the persona, `add_idea` or
-`update_idea` (`picturePrompt`) for an idea, and for our value proposition the write of the part the
-picture belongs to, as the step names it: `write_concept` (the sketch's `picturePrompt`, and each concept set aside's, its `id` then read from the concept it answers),
-`write_use_case` (`visualPrompt`), `draw_product` (`diagramPrompt`, and each frame's
-`wireframePrompt`, the frame's id then read from the drawing it answers) or `write_promise` (the final
-napkin sketch's `picturePrompt`). The prompt is what a person or another agent draws from
-when the picture is missing or wrong, and without a picture the step's own words carry what it shows.
-A real end user gets a picture only when what the person agreed to be kept includes one. Upload after
-the owner's last write in the step: a rewrite of the persona takes its picture off, and a rewrite of
-an idea or a part with another prompt drops the picture drawn from the old one.
-
-**2. The picture**, which depends on what this agent can do:
-
-OpenCode has no image tool here: write the picture yourself as an SVG, as below.
-
-**With no image tool, an SVG written from the prompt.** The same prompt, drawn in code. The file
-opens with `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">` — the root is `svg` in
-the SVG namespace, or it is not read as an image — with no DOCTYPE, flat shapes and gradients only,
-no text, no script, no event handler, no external link or font. Write it to a file named for what it
-shows, such as `persona.svg` or `promise-napkin-sketch.svg`.
-
-**3. Send the file to an upload link, never as text.** The picture's bytes never pass through the
-conversation: one wrong character copied by hand and the file is not an image, and a photo is
-millions of characters.
-
-1. Ask for the link: `request_picture_upload(projectId, canvasVersion, slot, ownerId,
-   drawingFrameId, fileName, runId)` — the slot and its owner from the table, `drawingFrameId` only
-   for `DrawingFrameWireframe` and `ConceptSetAsideNapkinSketch`, `fileName` the name it is kept under, such as `dana-whitfield.png`;
-   the `canvasVersion` the owner's write answered. The answer is `uploadUrl`, `expiresAtUtc` (fifteen
-   minutes on) and `maxBytes`. Asking does not move the canvas version.
-2. Send the file as the whole body of one PUT, with no token and nothing else:
-   `curl -sS -X PUT --data-binary @persona.png "<uploadUrl>"` — the same on Windows, macOS and Linux;
-   quote the address. The answer is `{"canvasVersion": N}`: the next write sends `N`.
-3. Report where the picture now shows: the Persona section, the idea, or the part of the value
-   proposition the slot belongs to.
-
-The link takes one picture, recorded as yours inside this run. A refused PUT leaves it usable until it
-expires: fix the file and send it to the same link. A picture sent to a slot that already holds one
-replaces it. `remove_picture` with the same slot, owner and frame takes a picture off and keeps its
-prompt; take one off only when the step or the person says so.
-
-A refusal says what to change: "The picture is 30.0 MB; the limit is 25 MB.", "A picture is a PNG,
-JPEG, WebP or SVG image.", "An SVG picture holds no script, event handler or external link." The
-second, on an `.svg`, means the file is not an SVG drawing: its root is not `svg`, or not in the
-`http://www.w3.org/2000/svg` namespace, or the XML is malformed or declares a DOCTYPE. A refusal
-naming the slot means the owner does not hold it, or the frame is missing or not wanted: send the
-owner and the frame the table says. A `CONFLICT` naming the canvas version means the canvas moved
-after the link was issued: ask for a new link at the version the refusal names and send the file
-again. A link that expired, or whose run ended, is refused the same way: ask for a new one, inside an
-open run. The prompt is already saved.
+A step that draws a picture — the persona's, a napkin sketch, a use case's visual, a product's
+diagram, a wireframe, the sketch of a concept set aside — saves the picture's prompt with the owner's
+own write first, then draws it and sends the file to an upload link, never as text. The slots and
+their owners, how this agent draws, the upload and its refusals are in
+[reference/drawing-a-picture.md](reference/drawing-a-picture.md): read it before the step's first
+write.
 
 ## When a routine fired this run
 
@@ -421,33 +390,21 @@ in the reply.
 - A prerequisite refusal on `start_run` is one escalation through `mentat-inbox` —
   `raise_escalation` with both ways forward — and then stop; never force, and never the refusal in
   the reply instead. No run was opened: nothing to `observe_run`, nothing to `pause_run`.
-- A `Checkpoint` verdict is a person's: after the last step is checkpointed, one escalation carrying
-  the pass sentence, what was written, the verdict you propose and, on `Invalidated`, the operations
-  it would send the project back to; then `observe_run` with the `inboxItemId` and `pause_run`. The
-  next firing reads the answer off the brief, `start_run(operationId, resumedFromRunId)` and
-  `end_run` with the answered verdict.
+- A `Checkpoint` verdict is a person's: after the last step is checkpointed, one verdict proposal
+  through `mentat-inbox` — `raise_escalation` with `proposedVerdict`, the body carrying the pass
+  sentence, what was written and, on `Invalidated`, the operations it would send the project back
+  to. The raise pauses the run and shows the row's item in review: no `observe_run`, no `pause_run`,
+  and nothing more is written in it. The next firing reads the answer off the brief,
+  `start_run(operationId, resumedFromRunId)` and `end_run` with the answered verdict.
 - Hypothesise is done unattended: the hypothesis skill writes without asking and hands back the new
-  hypotheses with a shortlist each, and the ones it found standing and left alone. Then Design the
-  test is yours to hand on, and **the card is the shortlist's, never a fresh pick**. Among the
-  hypotheses Hypothesise handed back that nothing tests yet — the ones it wrote and the ones it left
-  standing — take first one that already stood with a
-  shortlist before this run (a person or an earlier run chose its card), else the one
-  `mentat-hypothesis` ranked first; `get_hypothesis` it, and its card is the first of its
-  `recommendedDefinitionIds`, in their order. Invoke `mentat-experiment` with that hypothesis, that
-  card, this run's id and version, and the "validated when" sentence. A card that does not fit the
-  project goes to the next on the same shortlist; only a hypothesis whose shortlist is empty, or
-  holds nothing that fits, gets a card chosen now. The experiment skill designs the card it is
-  handed. A free digital test — run mode `Digital`, cost rating 1, no spend on the card — it starts
-  on its own and hands back the experiment id: checkpoint Design the test ("Designed {experiment
-  code} on {hypothesis code}; started") and end the run. Anything that spends or needs the person's
-  hands it escalates through `mentat-inbox` with the card and the cost and pauses the run: stop
-  there — the run is paused, nothing more can be written, and the report is the run's events. The
-  next firing resumes the row once the person has answered ([Resuming](#resuming)).
+  hypotheses with a shortlist each, and the ones it found standing and left alone. No test is
+  designed in this run: the mapping operation designs them later, from every hypothesis on one map.
+- A goal to review is one escalation that does not pause the run ([Goals to review](#goals-to-review)).
 - No insight is recorded. The blockers go in the summary, which is the run report the person reads
   in the morning.
-- The gate: when the tier's work is now done, invoke `mentat-gate-check`; it decides what a routine
-  may do there. Handed the row by `mentat-advance`, say it in the summary instead and hand back: the
-  gate is the next firing's.
+- The build check: when this row was the last below the build, invoke `mentat-gate-check`; it decides
+  what a routine may do there. Handed the row by `mentat-advance`, say it in the summary instead and
+  hand back: the check is the next firing's.
 - Handed the row by `mentat-advance`, you are handed the firing's run id too. Your `end_run`
   summary names it — "Worked for the Heartbeat firing <run id>." — so the row's run report and the
   firing's lead to each other; the firing's digest names your run the same way. A run you leave
@@ -482,14 +439,12 @@ repeat a checkpointed step: a repeated write is a duplicate on the canvas.
   answered in the inbox. The new run carries it: do the step from it, then checkpoint the step
   **without** `founderAnswer` — the run already holds it, and a second one is refused. No answer
   yet: leave the row alone and say so; ask nothing again.
-- **Paused on any other escalation:** it resumes only once the brief's "answered since the last run"
-  carries the answer, or `mentat-advance` hands you that answered line — it reads the brief before it
-  pauses the heartbeat's run for you, and once that run is paused the brief no longer carries the
-  line; without either, leave the row alone and say so.
-- **Paused by `mentat-experiment` on a start** (an `Experiment`-level row, unattended): invoke
-  `mentat-experiment` on that experiment — it reads the answer and starts it — then checkpoint Design
-  the test on the resumed run with "Designed {experiment code} on {hypothesis code}; started on the
-  person's answer", and end the run without a verdict.
+- **Paused on a verdict proposal, or on any other escalation:** it resumes only once the brief's
+  "answered since the last run" carries the answer, or `mentat-advance` hands you that answered line
+  — it reads the brief before it pauses the heartbeat's run for you, and once that run is paused the
+  brief no longer carries the line; without either, leave the row alone and say so. A verdict
+  proposal's answer — the note, or the proposed verdict when acknowledged without one — goes on
+  `end_run`.
 
 ## Reading a refusal
 
@@ -504,24 +459,20 @@ The `mentat` skill's table and `mentat-canvas`'s, plus:
   escalation is the whole act. "The prerequisites are not met, tell me whether to force past" written
   into the reply raises nothing, and nobody ever picks the row up. `forcePastPrerequisites: true` is
   sent only on the person's word.
+- `start_run` "'{slug}' is a build row and the build is held: … have not passed the build check. A
+  person may force the start.": the build check has not passed. In a session, say which gates and
+  ask whether to start anyway, which the run records as started while the build was held.
+  STOP and call the question tool to clarify. `forcePastTheBuildCheck: true` is sent only on the person's word. Unattended,
+  one escalation through `mentat-inbox` naming the gates and both ways forward — run what the build
+  check names, or force the start — then stop; no run was opened.
 - `start_run` "is skipped on the roadmap": say the reason and stop; include_roadmap_item is the
   person's call. Unattended, that reason reaches the person as a message through `mentat-inbox`, not
   only in the reply.
 - `start_run` "is already running on this roadmap row": another session holds it. `get_run` it and
   say so; never cancel it. Unattended, say it in a message through `mentat-inbox` as well.
 - `start_run` answering `CONFLICT` with "That name is already used in this organisation. Names are
-  unique here; choose another.": nothing was named, and `start_run` takes no name. It is the
-  one-running-run-per-agent refusal wearing the wrong sentence — the agent you booted as already
-  holds a run. `list_runs(portfolioId, projectId, status: "Running")` — both identifiers — and
-  `get_run` it: an attempt at this row is the run the agent opened for this work, so carry on inside
-  it; a run on the project itself with nothing written in it is closed with `end_run` and a one-line
-  summary, and then the attempt is opened. Never open a third and never abandon the row over it.
-  When it names none, the run is on a sibling project, because the agent is the portfolio's and not
-  this project's, and `list_runs` answers one project at a time: there is no call that finds it, and
-  it would not be yours to work in or to end if there were. Do not hunt for it project by project.
-  Unattended, that is one escalation through `mentat-inbox` naming the refusal verbatim, the row
-  left unworked and the proposal — end the agent's other run so the next firing takes the row — then
-  stop; in a session, say the same to the person.
+  unique here; choose another.": the agent you booted as already holds a run. What to do is in
+  [reference/running-a-row.md](reference/running-a-row.md), "The agent already holds a run".
 - `checkpoint_run` "Step {code} asks the founder: …": the step's question was not asked, or its
   answer not sent. Ask it ([Asking the founder](#asking-the-founder)); never write an answer of your
   own.
@@ -533,6 +484,10 @@ The `mentat` skill's table and `mentat-canvas`'s, plus:
 - `end_run` "A checkpoint operation ends with a verdict" or "A {level} operation carries no verdict":
   you read the level wrong; the run stays open — resend as the level says.
 - `checkpoint_run` "already recorded as completed": you repeated a step; nothing to do.
+- `propose_goal_change` refused saying to propose a new objective for the new unit: the goal holds
+  readings in its unit. Propose a new objective instead, with `kind: "NewObjective"`.
+- transition_work_item or update_work_item refused on the row's item, "an operation's item and
+  moves with its run": the item follows this run; leave it.
 - `CONFLICT` naming `runId`: the run was ended or paused — by a person, or by the step's question you
   raised. Nothing was written. Say so and stop; do not open another run on the row unasked.
 
@@ -551,6 +506,9 @@ The `mentat` skill's table and `mentat-canvas`'s, plus:
 - **`Invalidated` is a conclusion, `Failed` is an accident.** Do not soften one into the other.
 - **Going back is on the list, in order.** Never add a row to the plan yourself to send the project
   back: the revisits go on the checkpoint or the ending, and the server places them.
-- **A person decides the verdict, the force, the skip and the gate** in a session; unattended, each
-  is an escalation through `mentat-inbox`, never a guess and never a question put in the reply.
+- **A person decides the verdict, the force, the skip, the build check and a goal's change** in a
+  session; unattended, each is an escalation through `mentat-inbox`, never a guess and never a
+  question put in the reply.
+- **An `Experiment` operation designs no test.** Hypothesise is its one shared step; the experiments
+  are the mapping operation's.
 - **Report by code**, and report what the tools answered, not what you intended.

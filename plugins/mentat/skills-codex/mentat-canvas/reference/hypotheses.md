@@ -27,14 +27,14 @@ who bill by the hour lose at least two billable hours a week to tracking their t
 | --- | --- | --- |
 | Wording | `weBelieve`, `polarity`, `businessConcern` | Refused once the hypothesis is scored: rewrite before scoring. |
 | Quality | `isTestable`, `isPrecise`, `isDiscrete` | All three true is what allows scoring. |
-| Scores | `importance`, `evidence` | Refused while a quality check fails. |
+| Scores | `importance`, `importanceReason`, `evidence`, `evidenceReason` | All four or none: each score with its reason in one line. Refused while a quality check fails. |
 
 Both run −5 to 5, and the direction of each is fixed by the domain, not chosen by the sender:
 `importance` is −5 when the business model barely depends on the sentence and 5 when it rests on
 it; `evidence` is **−5 when there is no evidence at all, or what there is points against the
 hypothesis**, and **5 when there is strong, recent evidence for it**. A hypothesis nobody has
 found anything out about is scored −5 on evidence, never 5. The Hypothesise step says how to judge the two;
-this file says only which way the numbers run. Send the groups in one call when you have them
+this file says only which way the numbers run. A reason says where its number comes from — "three of five interviewees named it unprompted last week", "nothing on the canvas speaks to it" — and `get_hypothesis` answers both reasons beside the scores. Send the groups in one call when you have them
 all; the tool applies them in the order above.
 
 ## Shortlist a method
@@ -52,18 +52,20 @@ hypothesis's is refused.
 | --- | --- |
 | `Drafted` | `create_hypothesis`; `unpark_hypothesis` |
 | `Prioritized` | scoring through `update_hypothesis` |
-| `Testing` | `start_experiment` on a run designed against it |
+| `Testing` | `start_experiment` on an experiment that tests it |
 | `Validated` / `Invalidated` | completed experiments and the confidence they roll up |
-| `Parked` | `park_hypothesis` (refused while a run is in flight) |
+| `Parked` | `park_hypothesis` (refused while an experiment that tests it is running) |
 | `Retired` | `retire_hypothesis` with a reason (refused for a hypothesis under test) |
 
-Confidence is computed from the hypothesis's completed, non-inconclusive experiments: a weighted
-average of evidence strength by data-point count, plus a small bonus per extra experiment, on a 1 to
-5 scale. It is never written directly.
+Confidence is computed from the completed experiments that judged the hypothesis `Validated` or
+`Invalidated`, over the evidence bundles that bear on it: a weighted average of evidence strength by
+data-point count, plus a small bonus per extra experiment, on a 1 to 5 scale. Evidence an experiment
+recorded for another of its hypotheses only is not counted. It is never written directly, and a later
+score of the hypothesis never overwrites what its experiments showed.
 
 ## The decision is the founder's
 
 `decide_hypothesis` records `Persevere`, `Pivot`, `Kill` or `ContinueTesting` with the reasoning, and
-is refused until a run has started. It is the person's call across the experiments that ran. Lay out
+is refused until an experiment that tests it has started. It is the person's call across the experiments that ran. Lay out
 the learning cards and the confidence, ask, then record what they said — in their words for the
-reasoning.
+reasoning. `Pivot` or `Kill` sends every goal that rests on the hypothesis to review.

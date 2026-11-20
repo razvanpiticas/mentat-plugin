@@ -12,7 +12,7 @@ Then every "ask" above is one of two things.
 | the test card | the person confirms | written as drafted |
 | the start | the person starts | the three conditions in the skill's "Before the start", and the escalation "A start that spends, or needs the person's hands" when any of them fails — that rule is in the skill body, not here, because it is the one a run gets wrong |
 | observations, judged criteria, evidence, spend | recorded as they come | recorded when the data is there — a `Digital` card's readings you can take yourself; a person's readings wait for the next session |
-| the learning card and the verdict | the person confirms | written as drafted, the verdict the criteria support |
+| the learning card and the verdicts | the person confirms | written as drafted, for each hypothesis the verdict its criteria support |
 | the decision | the person decides | **the escalation "Hypothesis decision"** with the proposed call, then `pause_run` |
 | an abort | the person decides | never; escalate as a decision of the business |
 | adjusting a card | the person says yes to the copy and to the change | never; a message through `mentat-inbox` naming the card, what should change and why |

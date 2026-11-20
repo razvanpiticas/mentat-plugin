@@ -34,7 +34,15 @@ not overwrite this month's.
 
 **The source is the point.** "PrestaShop orders export 2026-09-01", "Finestore's filing", "the founder
 in conversation on 12 September" are all sources. "Estimated" is not, and neither is a number you
-worked out yourself. If you cannot name where a figure came from, you do not have a figure — ask.
+worked out yourself. If you cannot name where a figure came from, you do not have a figure — ask. A
+reading an experiment took names the experiment by its code: "T-07: 3 of 10 founders paid the tested
+price". The server does not copy an experiment's metric onto a goal; you record it.
+
+## Is the number met
+
+`list_goals` answers `isMet` on every goal with a metric: whether its latest reading meets its target
+in its direction. Read it rather than working it out; the goals page draws the goal from it — on
+paper until it is met, the plate once it is.
 
 ## Staleness
 
@@ -45,23 +53,57 @@ from three months ago probably is not.
 A stale number on a goal you own is the first thing to raise, before any proposal — a proposal made
 against a number nobody has checked is a guess with a reference code.
 
-## What serves a goal
+## What serves a goal, and what it rests on
 
-A hypothesis under test or an experiment being run is put behind a goal with `link_to_goal`, naming
-the item kind (`Hypotheses` or `Experiments`), the item, and the goal. `list_goals` then names the
-serving items on the goal, by code.
+`link_to_goal(projectId, itemKind, itemId, goalId, relation, runId)` draws an item to a goal in one of
+two ways:
+
+| `relation` | `itemKind` | What it says |
+| --- | --- | --- |
+| `ServedBy` | `Hypotheses`, `Experiments`, `RoadmapItems` | the work taken on to move the goal: a hypothesis under test, an experiment, a row of the plan |
+| `RestsOn` | `BlockEntries`, `Hypotheses` | what the goal's target is built on: the entry holding the total addressable market, the hypothesis that customers pay |
+
+`list_goals` answers both on the goal, by code: `servingItems`, each with its state (an experiment
+`Running` shows the goal being tested now), and `restsOn`.
 
 - One item may serve several goals. Send `link_to_goal` once per goal.
 - Drawing the same pair twice is refused with `CONFLICT`. That is the unique index, not a fault — the
   link is already there.
-- `unlink_from_goal` removes one. It does not touch the hypothesis or the experiment.
-- An entry of the canvas is the **model**, not an activity, and is refused. A goal serving a goal is
-  the tree, drawn by the parent and not by this word.
+- `unlink_from_goal` removes one, either relation. It does not touch the item.
+- Rests on with anything but an entry or a hypothesis is refused: "A goal rests on an entry or a
+  hypothesis, and {table} is neither." A task is never drawn to a goal. A goal serving a goal is the
+  tree, drawn by the parent and not by this word.
 
-A goal nothing serves is a goal nobody is working on. That is the second thing to raise.
+A goal nothing serves is a goal nobody is working on. That is a thing to raise.
+
+## To review
+
+A goal is marked to review, with the reason, when an entry or a hypothesis it rests on is rewritten in
+a run, when an experiment serving it completes, or when a hypothesis it rests on is decided `Pivot` or
+`Kill`. `list_goals` answers each open review in `reviews`: the reason, what changed (its table and
+id) and the run that changed it. The mark stays until a person accepts or rejects a proposed change, or
+says on the goals page that the goal stands as it is.
+
+## A change to a goal
+
+A goal changes only through a decision a person accepts. `propose_goal_change(projectId, kind,
+goalId?, parentGoalId?, title?, description?, metric?, deadline?, reason, figures, runId)`:
+
+| `kind` | Sends | Becomes, once accepted |
+| --- | --- | --- |
+| `Change` | `goalId`, what changes (`title`, `description`, `metric`, `deadline`), `figures` — each `{ label, was, becomes }` | the goal rewritten, the line kept in its history |
+| `NewObjective` | `parentGoalId`, `title`, `metric`, `deadline` | a new objective under that goal, `Planned` |
+| `Abandon` | `goalId` | the goal `Abandoned` |
+
+Every kind carries `reason`, naming what changed — the entry and the operation, the experiment, the
+hypothesis — and answers a decision, `Proposed`, titled with the goal and the change; the goal reads as
+it did until the person accepts it on the decisions tab, and a rejection leaves it as it is. Both clear
+the mark to review. A goal counted in another unit is not changed: propose a new objective for the new
+unit, which is what the refusal says when you try.
 
 ## What you may not do
 
-Creating a goal, editing a goal, assigning its owner and moving it along its status are the person's
-work on the goals screen, and those tools are not in your list. You read goals, you measure them, and
-you put work behind them.
+Creating a goal outside the planner's interview, editing one, assigning its owner and moving it along
+its status are the person's work on the goals screen; update_goal and set_goal_status are refused to
+an agent. Accepting a decision is the person's, your own proposal included. You read goals, you measure
+them, you put work behind them, you draw what they rest on, and you propose their changes.

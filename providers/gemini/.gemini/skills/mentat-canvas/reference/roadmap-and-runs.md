@@ -21,9 +21,24 @@ exact — send the member name, not the label:
 | `T7` | Build | Canvas validated, specification generated, the product developed |
 | `T8` | Live and scaling | The business runs, and distribution with it |
 
-A gate stands at each boundary. `get_roadmap` answers the project's tier and the gate line; the bands
-below it are where the rows sit, which is not the same thing — a plan may hold rows for tiers the
-project has not reached.
+No gate stands between two tiers below the build. The project stands at the lowest tier from `T0` to
+`T6` that holds an operation row neither finished nor skipped — `T6` when none does — and it moves there
+on its own as rows finish, and back when a row is sent back to an earlier tier: a tier with no row is
+passed over. The six gates are checked together, once, before the build: the **build check**, between
+`T6` and `T7`, due when every row below the build is finished or skipped. While it has not passed, the
+build is held: a build row (`T7`, `T8`) does not start unless a person forces it
+(`forcePastTheBuildCheck`). `get_roadmap` answers the build check line (`buildCheck`: `standing` —
+`Held`, `AwaitingUnlock`, `Unlocked` — `isDue` and `rowsLeftBeforeTheCheck`) and, per tier, its date and
+how many days it is past it while rows of it are left (`tiers`); the bands are where the rows sit, and
+a plan may hold rows for tiers the project has not reached.
+
+## Tier dates
+
+A tier needs no date. `set_roadmap_tier_date(projectId, roadmapVersion, tier, dueOn, runId)` gives one
+the day its work is due by (`dueOn`, yyyy-MM-dd), moves it, or takes it off with `dueOn` null; it
+answers the plan in short with the next `roadmapVersion`, as every change to the plan does. A tier
+with unfinished rows past its date reads overdue by that many days; a tier whose rows are all finished
+or skipped is never overdue.
 
 ## Row statuses
 
@@ -55,9 +70,8 @@ refused as firmly as omitting one where it does:
 | `Experiment` | **Send no verdict.** The hypothesis is tested by a real experiment, and the verdict lives on that experiment (`complete_experiment`), not on the run |
 | `None` | **Send no verdict.** The operation produces work rather than a conclusion |
 
-Of the forty-eight operations the method ships, thirty-two are `Checkpoint`, seven are `Experiment`
-and nine are `None` — so most rows take a verdict and a good few do not. Read the level from the
-package rather than assuming: a verdict on an `Experiment` or a `None` operation comes back
+Most operations the method ships are `Checkpoint`, a few are `Experiment` and some are `None` — so
+most rows take a verdict and a good few do not. Read the level from the package rather than assuming: a verdict on an `Experiment` or a `None` operation comes back
 "A `<level>` operation carries no verdict on its run. Pass null.", the run stays `Running`, and a
 missing verdict on a `Checkpoint` operation comes back "A checkpoint operation ends with a verdict".
 
@@ -104,10 +118,11 @@ sentence. An entry no line hands over (a job, a pain, another value proposition)
 entry of the orders before it has a validated hypothesis; `get_run` on the run answers the hand-over as
 the canvas stands. An operation that names no hand-over lines answers "Hypothesise now" and the
 "validated when" sentence with no test order: its hypotheses are the ones that sentence depends on,
-about the entries the run wrote. The four steps every `Experiment` operation shares — Hypothesise, Design the test,
-Learn from the evidence, Decide — are not among the operation's own steps: the package lists them in
-`sharedSteps`, each with the `procedureId` its checkpoint names, and a run of any other level refuses
-them.
+about the entries the run wrote. The one step every `Experiment` operation shares, Hypothesise, is
+not among the operation's own steps: the package lists it in `sharedSteps` with the `procedureId` its
+checkpoint names, and a run of any other level refuses it. An `Experiment` operation writes its
+hypotheses and designs no experiment: the mapping operation, `hypotheses-mapping-and-experiments-design`,
+maps every hypothesis on one map and designs the experiments from it.
 
 ## Prerequisites
 
@@ -117,7 +132,26 @@ An operation may wait on others, `Mandatory` or `Recommended`. `get_roadmap` and
 
 That refusal is not an error to work around. Report which operations it names and ask whether to run
 them first or to start anyway; `forcePastPrerequisites: true` is recorded on the run for whoever reads
-it later, which is why it is never yours to set.
+it later, which is why it is never yours to set. A build row is refused the same way while the build is
+held, naming the gates that have not passed the build check; `forcePastTheBuildCheck: true` starts it
+anyway, recorded on the run as started while the build was held, and is a person's too.
+
+## The work item a run moves
+
+Every operation row worked has its item on the board, of type `Operation`, and every experiment its
+item of type `Experiment`. The server writes them and moves them with their runs: `start_run` on a row
+answers the row's item, its id and code, and writes a sub-item per step; a checkpoint closes the step's
+sub-item; a step's question or a verdict proposal waiting in the inbox shows the item `Blocked` or in
+review; the ending puts it in `Done`. Nobody moves such an item by hand, and no run is opened on it as a
+task. A person or an agent may add a task under it — create_work_item with `parentOperationId` the
+row, even before it is started — and comment on it.
+
+## Goals to review
+
+A goal may rest on entries and hypotheses (link_to_goal with `relation: "RestsOn"`). When a step
+rewrites one of them, its `checkpoint_run` answers that goal under `goalsToReview`, with the entry and
+the operation as the reason, and the goals page marks it to review. Nothing changes on the goal: a
+change to it is a decision a person accepts (propose_goal_change, through `mentat-agent` or the operation that hit it), or the person says it stands.
 
 ## The checkpoint payload
 
@@ -137,14 +171,14 @@ The plan's row `customer-profile` is `NotStarted` at `T2`, and the project stand
 1. `get_operation_package(projectId, operationId)` → the definition with **validation level
    `Experiment`**, five own steps (`map-jobs`, `map-pains`, `map-gains`, `check-one-kind-of-people`,
    `rank-jobs-pains-and-gains`), target slots on `CS` (`CS.JOBS`, `CS.PAINS`, `CS.GAINS`, `CS.PROFILE`, `CS`),
-   its revisits `beachhead-selection`, `end-user-profile`, `beachhead-tam`, its hand-over and the four
-   shared steps, one mandatory prerequisite `beachhead-tam` in state `Met`, no resumable run. It is the
+   its revisits `beachhead-selection`, `end-user-profile`, `beachhead-tam`, its hand-over and the one
+   shared step, Hypothesise, one mandatory prerequisite `beachhead-tam` in state `Met`, no resumable run. It is the
    package in short: the steps by code without their instructions, and the description in one part
    (`descriptionParts: 1`); a description in two parts has its second read with `descriptionPart: 2`.
 2. The description's "Read first:" reads: `get_customer_segment` on the beachhead `CS-08` — its end
    user profile `CS.PROFILE-02` — and on the shortlisted segment it was split from; `get_ideation`.
 3. `start_run(projectId, operationId, forcePastPrerequisites: false)` → a run, status `Running`, with
-   the same package in short beside it.
+   the same package in short beside it, and the row's work item.
 4. `get_procedure(code: "map-jobs", runId)` → `procedure.instructions`, `instructionsPart: 1`,
    `instructionsParts: 1`; a step in two parts is read whole with `part: 2` before it is done.
    Do `map-jobs`: `add_entry` with the `CS.JOBS` kind for each job, `ownerId` the profile's

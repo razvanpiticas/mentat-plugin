@@ -1,6 +1,6 @@
 ---
 name: "mentat-canvas"
-description: "Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks and inside other entries, the customer segments' trees with their parts, end user and context profiles with their gaps and high-value jobs, personas, our product with its features and sub-features, value propositions with their value maps, fit and design — concept with the concepts set aside, use case with its barriers, the features tied to it, drawing, quantified value, brochure, promise and landing page copy, with the landing page document compiled from it — and our business as it is today, the Competitive Landscape's competitors of three models with their records and coverage rows, the Strategy Canvas of each profile and the Core, the project's idea, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows, the run tools, the method gates and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it."
+description: "Reads and writes a Mentat project's business model canvas through the Mentat MCP tools — entries on blocks and inside other entries, the customer segments' trees with their parts, end user and context profiles with their gaps and high-value jobs, personas, our product with its features and sub-features, value propositions with their value maps, fit and design — concept with the concepts set aside, use case with its barriers, the features tied to it, drawing, quantified value, brochure, promise and landing page copy, with the landing page document compiled from it — and our business as it is today, the Competitive Landscape's competitors of three models with their records and coverage rows, the Strategy Canvas of each profile and the Core, the project's idea, hypotheses, experiments, evidence, questions, risks, ideas, contradictions and project insights — and the mechanics of a project's roadmap and runs: the plan's rows and its tier dates, the run tools and the work items they move, the build check and pivots. The low-level skill every other Mentat skill reads and writes the canvas through: it knows the write loop, the versions, the run id and the refusals, and nothing of the method. Use it for any read or write by code on a canvas or a plan, whoever asks for it."
 ---
 
 # Mentat canvas
@@ -308,10 +308,11 @@ A hypothesis is one testable sentence, "We believe that …", on a block, option
 with a polarity and the business concern it belongs to (Desirability, Feasibility or Viability). Score it
 (importance and evidence, −5 to 5) and mark its quality checks with `update_hypothesis`; then
 `list_experiment_definitions` narrowed by its concern shows the method cards that can test it, and
-`recommend_experiment_definition` puts one on its shortlist. `design_experiment` plans a run in one
-call: test card, metrics and criteria. Start it, record observations and judge criteria as the run
-goes, `record_evidence` for each bundle gathered, then `complete_experiment` with the learning card
-and a verdict that agrees with the judged criteria. The details, the order BusinessIntelligence
+`recommend_experiment_definition` puts one on its shortlist. `design_experiment` plans an experiment
+in one call on one or more hypotheses: test card, metrics, and criteria, each naming the hypothesis it
+judges. Start it, record observations and judge criteria as it goes, `record_evidence` for each bundle
+gathered with the hypotheses it bears on, then `complete_experiment` with the learning card and a
+verdict per hypothesis that agrees with that hypothesis's judged criteria. The details, the order BusinessIntelligence
 enforces, and worked examples are in [reference/hypotheses.md](reference/hypotheses.md) and
 [reference/experiments-and-evidence.md](reference/experiments-and-evidence.md).
 
@@ -334,19 +335,20 @@ on blocks the canvas gates, which is the point. Verbs and states are in
 
 ## The roadmap and operation runs
 
-A project's **roadmap** is the plan it runs: forty-eight operations from the method, in order, banded
+A project's **roadmap** is the plan it runs: the operations of the method, in order, banded
 by tier, plus the moves it has decided to make. Start with `get_roadmap` — it answers the thesis, the
 rows in short (each with its id, tier, status, what it still waits on and the blocks it writes to) as
-many as fit from the first or from `fromPosition`, `rowsLeftOut` counting the rest, the gate line above
-the plan, and the `roadmapVersion` every change to the plan carries; with `itemId` it answers one row
+many as fit from the first or from `fromPosition`, `rowsLeftOut` counting the rest, each tier with its
+date (`tiers`), the build check line (`buildCheck`), and the `roadmapVersion` every change to the plan carries; with `itemId` it answers one row
 whole, with its skip reason, notes, latest run and prerequisites by kind. **That version is not the canvas version.** Changing the plan and
 writing on the canvas are two different aggregates with two different numbers; send each where it
 belongs.
 
 Changing the plan: `set_roadmap_thesis`, `place_roadmap_item` (one row to one position and one tier, in
 one call — every row after it is renumbered), `skip_roadmap_item` with a reason and
-`include_roadmap_item` to undo it, `annotate_roadmap_item`, `append_roadmap_operation`,
-`add_roadmap_move` for an idea a person has adopted, `remove_roadmap_move`.
+`include_roadmap_item` to undo it, `annotate_roadmap_item`, `append_roadmap_operation` (an operation
+the plan already holds may go on it again), `add_roadmap_move` for an idea a person has adopted,
+`remove_roadmap_move`, `set_roadmap_tier_date` to give a tier a date or take it off.
 Each answers the plan in short from its first row with the version it produced; carry that into the next change.
 
 **Running an operation** is `mentat-operation`'s loop; these are the calls it is made of:
@@ -390,13 +392,15 @@ A run is opened on other subjects too — an experiment, a job off the board, or
 by sending `experimentId`, `workItemId` or none of the three instead of `operationId`. Only an attempt
 at a row of the plan checkpoints; every other shape of run records its progress with `observe_run`.
 
-**Gates and pivots have a skill of their own.** `get_gate_status` answers what the gate would say now
-— the question, every checked block with the confidence it holds against the bar it must clear, and
-whether it would pass — and records nothing. `evaluate_gate` records an evaluation for life and moves
-the project as the outcome and its boundary policy say; `apply_pivot` sends it back a tier and appends
-the rows the pivot revisits. The `mentat-gate-check` skill is what calls them: in a session on the
-person's word, from a routine on the rule that skill carries. From here, present the numbers and hand
-over; never evaluate or pivot on your own judgement.
+**The build check and pivots have a skill of their own.** `get_gate_status` answers the build check
+as it would read now — the six gates checked together before the build, each with its question, every
+block it checks with the confidence it holds against the bar it must clear, whether it would pass, its
+weakest block and the operation to run — and records nothing. `evaluate_gate` records the build check
+for life, once every row below the build is done, and moves the project as the outcome and the policy
+at the build's boundary say; `apply_pivot` sends it back a tier and appends the rows the pivot
+revisits. The `mentat-gate-check` skill is what calls them: in a session on the person's word, from a
+routine on the rule that skill carries. From here, present the numbers and hand over; never check the
+gates or pivot on your own judgement.
 
 The exact tier names, row statuses, the verdict rule per validation level, the checkpoint payload
 convention and two worked runs are in [reference/roadmap-and-runs.md](reference/roadmap-and-runs.md).

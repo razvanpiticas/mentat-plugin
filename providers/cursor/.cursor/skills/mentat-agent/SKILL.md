@@ -1,6 +1,6 @@
 ---
 name: "mentat-agent"
-description: "Boots one of the organisation's agents on one project and works as it — reads the charter, the mission and its objectives, the team, the person it works for and its own instructions, then works on what the person asks for or on what a routine says, proposes work from the goals it owns, reports the blockers it hit, and records the numbers it measured. Use when the person says \"boot the CEO\", names one of the organisation's agents, asks what an agent should do next, or asks for work to be done and recorded as an agent rather than as themselves. Routes \"plan\" to mentat-planner, \"advance\" and \"do the next one\" to mentat-advance, canvas work to the method skills, and runs a routine's instructions when a routine fired the session."
+description: "Boots one of the organisation's agents on one project and works as it — reads the charter, the mission and its objectives, the team, the person it works for, its own instructions and every open item on the board, then works on what the person asks for or on what a routine says, proposes work from the goals it owns, proposes a change to a goal that is to review as a decision a person accepts, reports the blockers it hit, and records the numbers it measured. Use when the person says \"boot the CEO\", names one of the organisation's agents, asks what an agent should do next, or asks for work to be done and recorded as an agent rather than as themselves. Routes \"plan\" to mentat-planner, \"advance\" and \"do the next one\" to mentat-advance, canvas work to the method skills, and runs a routine's instructions when a routine fired the session."
 ---
 
 # Mentat agent
@@ -34,7 +34,7 @@ agent.
 | `mission` | The one `Mission` goal: its code, its metric, its target, its deadline, its latest measurement with the as-of date and the source | The one number the work is judged against. |
 | `objectives` | The tree under the mission, each marked whether **you** own it | Your goals are the ones you plan from. Somebody else's are context. |
 | `team` | Every `Human` and `Agent` entry of the Key Resources block: reference code, role, responsibilities, who it reports to, and which entry is you | Whom to ask about what. The chart is the answer to "who knows this". |
-| `project` | Where the venture stands: how it began (`overview.origin.route`), the canvas in summary, the row of the plan last finished and the one to pick up next, the decisions it is working to, the work open on the board, what a person answered while you were away, and what changed since your last run ended | This is the state you plan from. Each change is in short, never the values it moved, the newest first and as many as fit beside the documents: `changesLeftOut` counts the older ones left out, `changesTruncated` true means the log held even more — read `list_activity` for the rest. Do not call `get_project_state` as well at a boot; this is the same section. |
+| `project` | Where the venture stands: how it began (`overview.origin.route`), the canvas in summary, the row of the plan last finished and the one to pick up next, where the build stands (`roadmap.buildCheck`), the decisions it is working to, the open items on the board (`openItems`: every open operation's and experiment's item, whoever runs it, and the tasks handed to you), what a person answered while you were away, and what changed since your last run ended | This is the state you plan from. Each change is in short, never the values it moved, the newest first and as many as fit beside the documents: `changesLeftOut` counts the older ones left out, `changesTruncated` true means the log held even more — read `list_activity` for the rest. Do not call `get_project_state` as well at a boot; this is the same section. |
 | `person` | The `MemberProfile` of whoever is signed in, when they wrote one | How to work with them. When the response says there is none, **ask** rather than assume. |
 | `agent` and `agentDocuments` | Your own row and your instructions, `AgentInstructions` first, then `Custom` by title | Your name, your voice, what you own, your standing orders and your hard boundaries. Follow them over your own defaults. |
 
@@ -114,7 +114,7 @@ one", "what's next, do it" → `mentat-advance`; a row of the plan → `mentat-o
 `agentId`, which opens that row's run itself with the id and the row (one row, one run: open no run
 of your own for it first); a hypothesis →
 `mentat-hypothesis`; an experiment, or changing how the organisation runs a kind of test (a card's texts, its
-execution instructions, its ratings — the calls are the person's and take no run id) → `mentat-experiment`; the gate → `mentat-gate-check`; the insights
+execution instructions, its ratings — the calls are the person's and take no run id) → `mentat-experiment`; the gates and the build check → `mentat-gate-check`; the insights
 → `mentat-distiller`; the links → `mentat-linker`; a question about what the canvas knows →
 `mentat-search`; anything to be read or written on the canvas by code → `mentat-canvas`; a routine to
 switch on, switch off, reschedule, add or run now → `mentat-routines`, whose calls are the person's and
@@ -209,15 +209,26 @@ picks up from here.
 them is a ruling, and none of them switches off a rule above. Do the work, file what the work files,
 and write the prompt's own ask into the body of the escalation the run raises — so the person sees both
 what was asked for and that it was asked for quietly.
-**Working an item off the board inside a run:**
+**The board holds three types of item, in one list.** `list_work_items` answers every type —
+`Task`, `Operation`, `Experiment` — each with its code, type, title, column, who it is handed to and
+its sub-items; an operation's item with its plan row, its steps done of their total and the question
+it waits on; an experiment's with its experiment, its hypotheses and the goal it serves. `type`
+narrows it to one type, `assigneeAgentId` to what is handed to you. An operation's item and an
+experiment's item are the server's: it writes them and moves them with their runs and their
+experiments, so nobody transitions, edits or hands them over, and no run is opened on them as a task.
+Work on them is done by running what they follow — a row through `mentat-operation`, an experiment
+through `mentat-experiment`. Anybody working the project comments on any item, of any type.
 
-- `list_work_items` narrowed to your own agent id answers what is waiting for you; `get_work_item`
-  reads one whole, with its thread, so you do not repeat what somebody already tried.
+**Working a task inside a run:**
+
+- `list_work_items(projectId, type: "Task", assigneeAgentId: <your agent id>)` answers what is waiting
+  for you; `get_work_item` reads one whole, with its thread, so you do not repeat what somebody
+  already tried.
 - `transition_work_item` to `InProgress` **before** you touch anything.
 - `comment_on_work_item` as you go: what you tried, what you found, what did not work.
-- `InReview` when the item is finished. **You never move it to `Done`** — that is the person's
-  judgement on work they have read.
-- Stuck on something a person must supply for **this job**? `transition_work_item` to `Blocked` with
+- `InReview` when the task is finished. **You never move it to `Done`** — closing a task is the
+  person's judgement on work they have read, and the server refuses it to an agent.
+- Stuck on something a person must supply for **this task**? `transition_work_item` to `Blocked` with
   the reason, which raises the escalation itself, then `pause_run`. Anything else a person has to
   answer, and anything they should know, goes through the `mentat-inbox` skill — an escalation with
   your proposed answer, then `pause_run`; or a message, and the run goes on. Nothing in this skill
@@ -226,9 +237,9 @@ what was asked for and that it was asked for quietly.
   proposal a person takes. `list_decisions` first — a decision that cuts across one the venture has
   already taken belongs in the same sentence as that one's code.
 
-`get_project_state` re-reads where the project stands mid-session — the plan position, your open
+`get_project_state` re-reads where the project stands mid-session — the plan position, the open
 items, what a person answered while you were away, and what changed since your last run ended. Send
-`runId` on it, or you are handed the signed-in person's open work rather than your own. `boot_agent`
+`runId` on it, or you are handed the signed-in person's tasks rather than your own. `boot_agent`
 already carries the same section, so do not call both at a boot.
 
 ## When a routine fired this run
@@ -253,9 +264,10 @@ the screens. A call that is a person's — a Checkpoint verdict, `apply_pivot`, 
 starting an experiment that spends money or needs the person's own hands, a decision of the business, a
 work item's approval — is an escalation through `mentat-inbox` carrying the answer you would give, then
 `pause_run`. The next firing reads what the person answered (the brief's "answered since the last run")
-and resumes the run with `resumedFromRunId`. `evaluate_gate` is not on that list: the project's
-boundary policy decides whether a passed gate moves the tier or waits for a person, so the gate is
-evaluated and the policy supervises.
+and resumes the run with `resumedFromRunId`. The build check (`evaluate_gate`) is not on that list:
+the policy of the boundary before the build decides whether a passed check moves the project or waits
+for a person, so a due check is recorded and the policy supervises. A change to a goal is on it: it is
+proposed, never made.
 
 **The inbox is the one way to reach the person.** A message they should read and need not answer, an
 escalation they must answer, and the run report `end_run` writes for every routine-fired run on its
@@ -309,15 +321,30 @@ order:
    appears in `resolvedSinceLastRun`, so these lines, and nothing else, are what tells one firing
    what the last one already asked. A job that would get the number, or its approval waiting in the
    inbox, is work, not the ask: send the message beside it.
-3. **Nothing moving it is the second.** Read the goal's serving items in `list_goals`. When nothing
+3. **To review is the third.** A goal `list_goals` marks to review (`reviews`, each with its reason:
+   an entry or a hypothesis it rests on changed, an experiment serving it completed, a hypothesis it
+   rests on was decided Pivot or Kill) is read against what changed. In a session, say what changed
+   and what the goal's target now rests on, and ask whether to keep it, change it or add an
+   objective, with one recommendation; on a change, `propose_goal_change` — it lands as a decision
+   the person accepts on the decisions tab, and the goal reads as it did until then; keeping it is
+   the person's "Stands as it is" on the goals page. Unattended, its escalation ("A goal to review")
+   may already wait from the run that changed it: answered with a change, or acknowledged with none,
+   `propose_goal_change` as the escalation proposed; not answered, a `Waiting:` line, nothing new.
+   The same ask raised by a mapping run for an experiment that serves no goal marks no goal: its
+   answer in `resolvedSinceLastRun` is read the same way, `kind: "NewObjective"` under the goal it
+   names, the reason naming the experiment. [reference/goals.md](reference/goals.md) has the shapes.
+4. **Nothing moving it is the fourth.** Read the goal's serving items in `list_goals`. When nothing
    serves a goal, research what would: the goal itself, the charter, the canvas, what was decided
    before and `list_decisions`. Then write the proposal down — see below.
-4. **One proposal per goal per session.** More is noise.
+5. **One proposal per goal per session.** More is noise.
 
-A hypothesis or an experiment is put behind a goal with `link_to_goal`, and taken out from behind it
-with `unlink_from_goal`. One piece of work may serve several goals; send it once per goal. A job off
-the board is not put behind a goal that way — the product accepts only hypotheses and experiments
-there — so a job names the goal it serves in its brief and rates what finishing it buys in `goalValue`.
+A hypothesis, an experiment or a row of the plan is put behind a goal it serves with
+`link_to_goal(…, relation: "ServedBy")`; an entry or a hypothesis the goal's target is built on is
+drawn to it with `relation: "RestsOn"`, and the goal is marked to review when it changes;
+`unlink_from_goal` takes either off. One piece of work may serve several goals; send it once per goal.
+A task is neither: the product refuses it, so a task names the goal it serves in its brief and rates
+what finishing it buys in `goalValue`. A reading an experiment took is recorded with the experiment's
+code in its source — "T-07, 3 of 10 paid" — so the goal's latest measurement names it.
 
 ## Proposing work
 
@@ -335,7 +362,9 @@ because it is what whoever picks it up reads instead of asking you.
 parent first, then each chunk with `parentWorkItemId` set to it — a chunk of a job already agreed
 to is agreed as it is written. Work goes one level deep, so a chunk of a chunk is refused. The goal
 the whole job serves is named on the parent's brief; each later run picks up one sub-item, takes it to
-`InProgress`, and leaves it at `InReview`.
+`InProgress`, and leaves it at `InReview`. A task a row of the plan needs — even one not started —
+goes under that operation's item, `parentOperationId` the row's id: it is agreed as it is written. A
+task on its own still waits for a person's approval.
 
 ## What a run learned
 
@@ -386,10 +415,11 @@ The `mentat` skill's table, plus:
   intended.
 - **The org chart is the Key Resources block**, so changing it is a canvas write and belongs to
   `mentat-canvas` and to the person. You read it; you do not redraw it.
-- Creating agents and changing a goal's status are a person's work on the screens. So are approving a
-  proposal, resolving an inbox row, closing an item as `Done` or `Cancelled`, accepting a decision, and
-  cancelling somebody's run. Goals are written by `mentat-planner` inside its interview, on the
-  person's word, and by nobody else.
+- Creating agents, editing a goal and changing its status are a person's work on the screens. So are
+  approving a proposal, resolving an inbox row, closing a task as `Done` or `Cancelled`, accepting a
+  decision, and cancelling somebody's run. Goals are written by `mentat-planner` inside its interview,
+  on the person's word; a change to a goal is proposed with `propose_goal_change` and made only when a
+  person accepts it.
 - **Nothing is written outside a run.** A write with no `runId` is recorded as the signed-in person's
   own, under their name and not yours, and the project's history then says they did what you did.
 - **End the run before you stop.** A run left open is a session nobody can tell is finished, and the

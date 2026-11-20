@@ -1,6 +1,6 @@
 ---
 name: "mentat-hypothesis"
-description: "Propose hypotheses on a block of a Mentat canvas — write them in the testable form the method asks for, check and score them, shortlist the method cards that can test them — from the procedure and the block's definition it fetches at the moment of use, never from anything it remembers. Use when the person asks for a hypothesis on a block, an entry or a note, when an operation reaches the point where its beliefs are written down, or when the person asks what should be tested next. It writes through the mentat-canvas loop and hands the test itself to mentat-experiment."
+description: "Propose hypotheses on a block of a Mentat canvas — write them in the testable form the method asks for, check them, score them with the reason for each score, shortlist the method cards that can test them — from the procedure and the block's definition it fetches at the moment of use, never from anything it remembers. Use when the person asks for a hypothesis on a block, an entry or a note, when an operation reaches the point where its beliefs are written down, when the mapping operation gathers the beliefs nobody wrote, or when the person asks what should be tested next. It writes through the mentat-canvas loop and hands the test itself to mentat-experiment."
 argument-hint: "<project> <block code, entry code, or \"from the operation\">"
 allowed-tools: "mcp__mentat__get_project, mcp__mentat__get_block, mcp__mentat__get_hypothesis, mcp__mentat__get_procedure, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__create_hypothesis, mcp__mentat__update_hypothesis, mcp__mentat__recommend_experiment_definition, mcp__mentat__withdraw_experiment_definition, mcp__mentat__park_hypothesis, mcp__mentat__retire_hypothesis, mcp__mentat__link_to_goal, mcp__mentat__list_insights, mcp__mentat__record_procedure_insight, mcp__mentat__record_block_entry_definition_insight, mcp__mentat__list_operation_definitions, mcp__mentat__get_operation_definition, mcp__mentat__get_customer_segment, mcp__mentat__get_value_proposition, mcp__mentat__get_product"
 ---
@@ -8,9 +8,9 @@ allowed-tools: "mcp__mentat__get_project, mcp__mentat__get_block, mcp__mentat__g
 # Mentat hypothesis
 
 A hypothesis is one sentence the business is betting on, written so a test can settle it. This
-skill carries none of the method for writing one: the method is the Hypothesise step, the first of
-the four steps every `Experiment` operation shares, a procedure of the catalogue; what must be true
-for a block is in that block's definition. Both are fetched when you start and followed as read. What is here is the mechanics: which calls, in what order, what to ask,
+skill carries none of the method for writing one: the method is the Hypothesise step, the one step
+every `Experiment` operation shares, a procedure of the catalogue; what must be true for a block is in
+that block's definition. Both are fetched when you start and followed as read. What is here is the mechanics: which calls, in what order, what to ask,
 what to hand on.
 
 Every read and write goes through the `mentat-canvas` loop — read before you write, write with the
@@ -51,6 +51,12 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
   "validated when" sentence depends on, about the entries the run wrote, and the blocks are the target
   slots' blocks and those entries' blocks. Either way, at the end you hand back what you wrote instead
   of asking what to test.
+- **From the mapping operation**: `mentat-operation`, at the step `gather-the-hypotheses` of
+  `hypotheses-mapping-and-experiments-design`, hands over the run id, the canvas version, the row of
+  the plan and the beliefs that step found nobody wrote, each with its block and the entry it is
+  about, when it is about one. Everything below is the same, step 3's `mentat-search` invocation per
+  belief included: a belief a hypothesis already says is not written twice, and the hand-back names
+  that hypothesis by code, so the run's note can name it. No experiment is designed here.
 - **From a move's job**: `mentat-advance` hands over the run id, the block, the adopted idea by code
   and title, and the job's description. The beliefs are what the idea bets on; everything below is
   the same, and at the end you hand back what you wrote, found and shortlisted, so the job's comment
@@ -96,8 +102,8 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
    the person named a subject and not a code, the entries it is about are step 2's hits, on step 2's
    block.
 4. **Draft.** Follow the procedure: one sentence per belief in its form, the entry it is about, its
-   polarity, its concern, the three checks answered, the two scores with the reason for each, and
-   which you would test first. From an operation, the beliefs are the hand-over's: one hypothesis
+   polarity, its concern, the three checks answered, the two scores with the reason for each — one
+   line that says where the number comes from — and which you would test first. From an operation, the beliefs are the hand-over's: one hypothesis
    about each entry of an open test order, as the operation's instruction says, and none about an
    order that waits. An entry that carries a `signedOffSentence` is written with that sentence, its
    numbers as signed off: the founder signed it off when the operation chose it, so it is not
@@ -112,10 +118,13 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
    before this answer. Unattended, see below.
 6. **Write, one hypothesis at a time.** `create_hypothesis` with `weBelieve`, `polarity`,
    `businessConcern`, `aboutEntryId` when it is about one entry, `canvasVersion` and `runId`; then
-   `update_hypothesis` with the three checks and the two scores in the same call — the tool applies
-   wording, then checks, then scores, and refuses scores while a check is false, so a sentence that
-   failed a check is rewritten before it is scored, not scored anyway. Carry the version each
-   answer gives into the next write.
+   `update_hypothesis` with the three checks and the two scores, each with its reason
+   (`importance`, `importanceReason`, `evidence`, `evidenceReason` — all four or none), in the same
+   call — the tool applies wording, then checks, then scores, and refuses scores while a check is
+   false, so a sentence that failed a check is rewritten before it is scored, not scored anyway. The
+   reasons are stored with the scores: the person reads them on the hypothesis. Carry the version
+   each answer gives into the next write. **A hypothesis an experiment already tested keeps what the
+   experiment showed**: its confidence comes from that evidence, and a score never stands in for it.
    **Which way the two scores run is fixed and easy to send backwards.** `importance` is −5 when
    the business model barely depends on the sentence and 5 when it rests on it. `evidence` is −5
    when there is no evidence at all, or what there is points against the hypothesis, and 5 when
@@ -136,8 +145,9 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
    version, and stop — the operation checkpoints the Hypothesise step; you do not. Unattended: report and
    stop; the shortlist waits.
 
-A hypothesis that serves one of the project's goals is put behind it with `link_to_goal`, once per
-goal, on the person's word or when the operation's context names the goal.
+A hypothesis that serves one of the project's goals is put behind it with `link_to_goal(projectId,
+itemKind: "Hypotheses", itemId, goalId, relation: "ServedBy", runId)`, once per goal, on the person's
+word or when the operation's context names the goal.
 
 ## Unattended
 
@@ -151,10 +161,10 @@ an agent wrote them.
 Step 7 still runs: every hypothesis you wrote gets its shortlist, because choosing a card costs
 nothing and is what the person wakes up to. Nothing here is a person's call, so nothing escalates:
 decide_hypothesis is never yours, and **you** do not invoke `mentat-experiment` — that is what
-"the shortlist waits" means here. The skill that owns the run may: inside an operation's run,
-`mentat-operation` hands the first card of your shortlist on itself, and the start rule is
-`mentat-experiment`'s. Say in what you hand back which hypotheses are new and which card you ranked
-first, so the report can name them and the operation knows what to hand over.
+"the shortlist waits" means here. The experiments are designed later, from every hypothesis on one
+map, by the mapping operation, `hypotheses-mapping-and-experiments-design`, and it reads the
+shortlists then. Say in what you hand back which hypotheses are new and which card you ranked first,
+so the report can name them.
 
 ## After the run
 
@@ -176,8 +186,10 @@ and never unattended: the blockers go in the run report and the person decides i
   `list_experiment_definitions` narrowed to the right concern.
 - `CONFLICT` saying the wording cannot change — the hypothesis is scored. A different sentence is a
   different hypothesis: write a new one and retire the old with the reason.
-- `NOT_FOUND` on `get_procedure` for the Hypothesise step — the catalogue is missing the steps every
+- `NOT_FOUND` on `get_procedure` for the Hypothesise step — the catalogue is missing the step every
   `Experiment` operation shares; say so and stop. Do not write hypotheses from memory of the method.
+- `INVALID_ARGUMENT` naming the scores and their reasons — a score was sent without its reason, or
+  one of the four alone. Send the two scores with both reasons, each one line.
 
 ## Rules that are easy to get wrong
 

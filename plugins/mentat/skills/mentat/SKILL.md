@@ -49,7 +49,7 @@ missing ones waits until the task is done.
   hypothesis like this" — `mentat-agent` hands to `mentat-search` inside the booted session. Do not
   answer it here from `get_block` or the brief: which instrument answers is that skill's rule, and its
   answer names the one it used.
-- **Work that writes** — running a row of the plan, the plan and "advance", a gate check, the linker,
+- **Work that writes** — running a row of the plan, the plan and "advance", the build check, the linker,
   the distiller, a canvas write — `mentat-agent` invokes the skill that does the work; the run —
   opened by `mentat-agent`, or by `mentat-operation` for a row of the plan — carries the agent's id,
   every write carries the run's id, and the run ends with its links typed.
@@ -78,9 +78,10 @@ Seven steps, in this order, and every one of them reads before it says anything.
    are in [reference/front-door.md](reference/front-door.md):
    - where the venture stands: tier, status and overall confidence (`get_project`), the mission's
      latest number against its target and deadline, or "no measurement yet" (the brief);
-   - the plan: the row last finished, the one in flight or next, how many operations of this tier are
-     done out of how many and whether the gate would pass (`get_gate_status`), whether the gate is due
-     (the brief's plan position) or the project awaits a person's unlock (its status);
+   - the plan: the row last finished, the one in flight or next, where the build stands — held with
+     how many of the six gates would pass and how many rows are left before the build check
+     (`get_gate_status`), the check due (the brief's plan position) or the project awaiting a person's
+     unlock (its status);
    - what happened last: the changes since the CEO's last run, from the brief, in one sentence — who
      wrote what, by reference code — and the last three runs with their one-line summaries
      (`list_runs`, page size 3); `list_activity` only when the brief says its delta was truncated;
