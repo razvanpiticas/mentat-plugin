@@ -200,8 +200,15 @@ say, in any order and over as many sessions as it takes:
 - `record_observation` on a metric, a number or a text; `judge_criterion` for each criterion,
   from the observations and nothing else; `record_spend` when money or hours went out.
 - `record_evidence`, one bundle per kind of signal, rated on the four axes and with every data
-  point `P.V3` says to keep (fetch it before the first bundle), naming in `hypothesisIds` the
-  hypotheses the bundle bears on — left out, it bears on every one the experiment tests. Strength
+  point `P.V3` says to keep (fetch it before the first bundle), naming in `hypotheses` each
+  hypothesis the bundle bears on, once, with its `bearing`: `Supports` when what it found speaks
+  for the hypothesis (the person named the pain unprompted), `Contradicts` when it speaks against it
+  (they did not, or said they would never pay), `SaysNothingEitherWay` when it names the hypothesis
+  and settles nothing. Judge each hypothesis on its own: one conversation may support one and say
+  nothing about another. The bearings are fixed once recorded, and the experiment's page counts
+  them hypothesis by hypothesis as its "So far", so a bearing is never guessed to fill the count.
+  An empty list means every hypothesis, each saying nothing either way: only for a bundle that
+  settles nothing. Strength
   left out inherits the card's rating; override only when what was gathered is worth more or less,
   and say why in the summary.
 - The parts a person does — interviews, a landing page, a delivery — you cannot do. Say plainly

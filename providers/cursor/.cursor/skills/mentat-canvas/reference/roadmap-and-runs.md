@@ -93,6 +93,16 @@ only to beachhead-selection, end-user-profile or beachhead-tam; persona is not o
 is any revisit on a `Validated` ending: "A validated run sends the project back nowhere." A run of a
 revisit row is opened with `revisitOfRunId`, the run that sent the project back.
 
+## A step's outcome
+
+`checkpoint_run` takes `stepOutcome` with `completedProcedureId`: one line of at most 160 characters
+saying what came of the step it finishes ("Five researched in full; nothing left waiting on a fix."),
+kept on the step of the operation's item and shown under it once the step is done (the step's
+work item answers it as `step.stepOutcome`). Sent with no `completedProcedureId`, blank, over 160 characters or over one line,
+it is refused; so is one on a run worked under no item. The item's `statusHistory` says, on each
+spell the server moved the item into, why (`serverMoveReason`: "run again", "step 3 asks you",
+"Validated", a failed run's reason); null where a person or an agent moved it.
+
 ## The founder's answers
 
 Each step the package lists carries `founderInputNeeded` — `None`, `Always`, or `WhenInstructionsSay`,
@@ -100,7 +110,9 @@ when its instructions say when — and `founderInputPurpose`, the question in th
 answer goes on the step's checkpoint as `founderAnswer`. An `Always` step checkpointed without one is
 refused with its question: "Step choose-how-the-persona-is-made asks the founder: … Send their answer as founderAnswer." A
 step that asks nothing refuses an answer. A run a routine fired asks in the inbox instead:
-`raise_escalation` with the step's `procedureId` pauses the run, the person's answer becomes the step's
+`raise_escalation` with the step's `procedureId` and an `answerHint` — one line of at most 160
+characters saying what a good answer holds, shown in the empty answer field; refused on a verdict
+proposal and on a message — pauses the run, the person's answer becomes the step's
 answer on the run, `get_run` shows it under the step, and the run that resumes carries it, so the step
 is checkpointed without `founderAnswer`.
 
@@ -183,7 +195,8 @@ The plan's row `customer-profile` is `NotStarted` at `T2`, and the project stand
    `instructionsParts: 1`; a step in two parts is read whole with `part: 2` before it is done.
    Do `map-jobs`: `add_entry` with the `CS.JOBS` kind for each job, `ownerId` the profile's
    id. `checkpoint_run(runId, completedProcedureId: <the id of map-jobs>, writtenEntryIds:
-   [those ids], producedHypothesisIds: [], note: "Four jobs from the five transcripts.")`.
+   [those ids], producedHypothesisIds: [], note: "Four jobs from the five transcripts.",
+   stepOutcome: "Four jobs; getting to the gym before work is the one all five named.")`.
 5. Do `map-pains` from five interviews. `observe_run(runId, payload: {
    "interviews": 5 }, note: "Two people said the opposite of the third.")`, then `add_entry` with the
    `CS.PAINS` kind inside the profile and `checkpoint_run(runId, completedProcedureId: <the id of

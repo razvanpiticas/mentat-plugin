@@ -6,8 +6,12 @@ reference code is `H-<block code>-<n>`, such as `H-CS-002`.
 
 ## Write it well
 
-`create_hypothesis` takes `weBelieve`, `polarity`, `businessConcern` and optionally `aboutEntryId`.
+`create_hypothesis` takes `title`, `weBelieve`, `polarity`, `businessConcern` and optionally `aboutEntryId`.
 
+- **A short title**, sent as `title`: a name of a few words, at most 80 characters, on one line,
+  never the sentence. Every list, the opened item and the evidence rows show the hypothesis under it.
+  A blank, longer or multi-line title is refused. A hypothesis written before titles reads with
+  `title: null` and is named by its code until it gets one.
 - **One sentence, "We believe that …"**, sent as `weBelieve`.
 - **Polarity** — `Positive` or `Negative`.
 - **Business concern** — `Desirability`, `Feasibility` or `Viability`. It is a hard filter on which
@@ -16,16 +20,18 @@ reference code is `H-<block code>-<n>`, such as `H-CS-002`.
 What each of these means, and how a hypothesis is written, is the Hypothesise step the
 `mentat-hypothesis` skill fetches; this file says only what the call takes.
 
-Example: on CS, about the pain `CS.PAINS-04`, Desirability, Positive: "We believe that freelance designers
-who bill by the hour lose at least two billable hours a week to tracking their time by hand."
+Example: on CS, about the pain `CS.PAINS-04`, Desirability, Positive, titled "Hourly designers lose
+billable time to tracking": "We believe that freelance designers who bill by the hour lose at least
+two billable hours a week to tracking their time by hand."
 
 ## Score it and pass the quality checks
 
-`update_hypothesis` applies three groups, each sent whole:
+`update_hypothesis` applies four groups, each sent whole:
 
 | Group | Arguments | What BusinessIntelligence enforces |
 | --- | --- | --- |
-| Wording | `weBelieve`, `polarity`, `businessConcern` | Refused once the hypothesis is scored: rewrite before scoring. |
+| Wording | `title`, `weBelieve`, `polarity`, `businessConcern` | Refused once the hypothesis is scored: rewrite before scoring. |
+| Title alone | `title` | Renames the hypothesis at any status, scored and tested included: how a hypothesis with `title: null` gets one. |
 | Quality | `isTestable`, `isPrecise`, `isDiscrete` | All three true is what allows scoring. |
 | Scores | `importance`, `importanceReason`, `evidence`, `evidenceReason` | All four or none: each score with its reason in one line. Refused while a quality check fails. |
 
@@ -35,7 +41,8 @@ it; `evidence` is **−5 when there is no evidence at all, or what there is poin
 hypothesis**, and **5 when there is strong, recent evidence for it**. A hypothesis nobody has
 found anything out about is scored −5 on evidence, never 5. The Hypothesise step says how to judge the two;
 this file says only which way the numbers run. A reason says where its number comes from — "three of five interviewees named it unprompted last week", "nothing on the canvas speaks to it" — and `get_hypothesis` answers both reasons beside the scores. Send the groups in one call when you have them
-all; the tool applies them in the order above.
+all; the tool applies them in the order above. `get_hypothesis`, `get_block` and `get_experiment` answer
+`title` beside `weBelieve`.
 
 ## Shortlist a method
 

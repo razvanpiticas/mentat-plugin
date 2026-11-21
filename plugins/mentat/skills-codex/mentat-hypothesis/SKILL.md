@@ -99,8 +99,8 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
    is what this step reports. A yes is not written again: name the hit by code and move on. When
    the person named a subject and not a code, the entries it is about are step 2's hits, on step 2's
    block.
-4. **Draft.** Follow the procedure: one sentence per belief in its form, the entry it is about, its
-   polarity, its concern, the three checks answered, the two scores with the reason for each — one
+4. **Draft.** Follow the procedure: one sentence per belief in its form, its short title, the entry
+   it is about, its polarity, its concern, the three checks answered, the two scores with the reason for each — one
    line that says where the number comes from — and which you would test first. From an operation, the beliefs are the hand-over's: one hypothesis
    about each entry of an open test order, as the operation's instruction says, and none about an
    order that waits. An entry that carries a `signedOffSentence` is written with that sentence, its
@@ -110,18 +110,27 @@ Here the run is handed to you when `mentat-agent`, `mentat-operation`, `mentat-g
    that it bets on (`aboutEntryId`), or about no entry when it bets on none of them.
    Every draft stands on its own step-3 invocation: a belief that
    comes up while drafting goes back through `mentat-search` before it joins the list, and "none
-   of them exists yet" is said only of beliefs that were searched. Put the drafts in front of the person as a list — the sentence, the
-   concern, the scores and why, one line each — with your recommendation, not a menu.
+   of them exists yet" is said only of beliefs that were searched. Put the drafts in front of the person as a list — the title, the
+   sentence, the concern, the scores and why, one line each — with your recommendation, not a menu.
+   **Every hypothesis gets a title: a name of a few words, at most 80 characters, never the
+   sentence.** It is what every list, the opened item and the evidence rows show the hypothesis
+   under; the sentence sits under it. "Founders pay for a second opinion" names the hypothesis
+   "We believe that at least 6 of 10 solo founders pay for a second opinion before they launch".
+   Never a clause cut off the sentence, never "We believe…", never a code. A hand-over's
+   `signedOffSentence` still gets its own title; the sentence is not redrafted.
 5. **Ask.** The person confirms, edits or drops each draft. STOP and use Codex's structured user-input tool when available; if it is unavailable, ask directly in chat to clarify. Nothing is written
    before this answer. Unattended, see below.
-6. **Write, one hypothesis at a time.** `create_hypothesis` with `weBelieve`, `polarity`,
+6. **Write, one hypothesis at a time.** `create_hypothesis` with `title`, `weBelieve`, `polarity`,
    `businessConcern`, `aboutEntryId` when it is about one entry, `canvasVersion` and `runId`; then
    `update_hypothesis` with the three checks and the two scores, each with its reason
    (`importance`, `importanceReason`, `evidence`, `evidenceReason` — all four or none), in the same
    call — the tool applies wording, then checks, then scores, and refuses scores while a check is
    false, so a sentence that failed a check is rewritten before it is scored, not scored anyway. The
    reasons are stored with the scores: the person reads them on the hypothesis. Carry the version
-   each answer gives into the next write. **A hypothesis an experiment already tested keeps what the
+   each answer gives into the next write. A hypothesis that reads with a null `title` was written
+   before titles; when you work on one, give it a title with `update_hypothesis` sending `title`
+   alone, which renames it whatever its status. A rewrite of the wording sends `title`, `weBelieve`,
+   `polarity` and `businessConcern` together. **A hypothesis an experiment already tested keeps what the
    experiment showed**: its confidence comes from that evidence, and a score never stands in for it.
    **Which way the two scores run is fixed and easy to send backwards.** `importance` is −5 when
    the business model barely depends on the sentence and 5 when it rests on it. `evidence` is −5
@@ -188,6 +197,8 @@ and never unattended: the blockers go in the run report and the person decides i
   `Experiment` operation shares; say so and stop. Do not write hypotheses from memory of the method.
 - `INVALID_ARGUMENT` naming the scores and their reasons — a score was sent without its reason, or
   one of the four alone. Send the two scores with both reasons, each one line.
+- `INVALID_ARGUMENT` naming `title` — it is blank, over 80 characters or over one line. Name the
+  hypothesis in a few words; the sentence goes in `weBelieve`.
 
 ## Rules that are easy to get wrong
 
@@ -200,3 +211,5 @@ and never unattended: the blockers go in the run report and the person decides i
 - **Write the entry you are about first.** A hypothesis about a segment nobody has written is a
   hypothesis about nothing; `mentat-canvas` writes the entry, then you write the hypothesis.
 - **Report by code**: `H-CS-004`, `T-3`. What the tool answered, not what you meant.
+- **A title is a name, never the sentence.** At most 80 characters, on one line; a hypothesis with
+  no title is named by its code until you give it one, never by its sentence cut short.

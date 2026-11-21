@@ -44,10 +44,13 @@ One bundle per kind of signal gathered, recorded in one call:
 | Argument | Notes |
 | --- | --- |
 | `experimentId`, `kind`, `collectedAtUtc`, `summary` | Kinds: Quote, Behavior, ConversionRate, Order, Purchase, BidReceived, SearchVolume, RelatedQuery, PageSession, DropOff, AttentionSignal, FeatureRequest, Workaround, NearMissFeedback, SupportTicket, Other. |
-| `hypothesisIds` | The hypotheses of the experiment the bundle bears on. Left out, it bears on every hypothesis the experiment tests. A hypothesis's confidence counts only the bundles that bear on it. |
+| `hypotheses` | Required. Each hypothesis of the experiment the bundle bears on, once, as `{ hypothesisId, bearing }`: `bearing` is `Supports`, `Contradicts` or `SaysNothingEitherWay`, fixed once recorded. An empty list means every hypothesis the experiment tests, each `SaysNothingEitherWay`. A hypothesis named twice, or one the experiment does not test, is refused. A hypothesis's confidence counts only the bundles that bear on it, and the experiment's page counts the bearings as each hypothesis's "So far": `Supports` a yes, `Contradicts` a no, the third neither. |
 | `strength` | 1 to 5. Leave it out to inherit the card's rating; override when what was gathered is worth more or less. |
 | `polarity`, `modality`, `setting`, `investmentSize` | The book's four axes: Opinion/Fact, Say/Do, Lab/RealWorld, Small/Large. Leave an axis out when it does not apply. |
 | `dataPoints` | The readings behind the bundle, each with `source` and a `textValue`, `numericValue` or `extra`. The confidence rollup weights the bundle by how many there are, so record every interviewee, every conversion. |
+
+A bundle answers `hypotheses` the same way, each with its bearing; a bundle recorded before bearings were
+written reads `SaysNothingEitherWay` on each. `update_evidence` does not change a bearing.
 
 `update_evidence` re-rates, re-characterises or re-summarises; `add_data_point` appends a reading;
 `delete_evidence` is for a bundle recorded by mistake, not for a weak one.

@@ -205,9 +205,14 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
      longer holds — the beachhead moved, the profile narrowed — the project goes back mid-way:
      [Going back](#going-back).
    - `checkpoint_run(projectId, runId, completedProcedureId: <the step's procedureId>,
-     writtenEntryIds, producedHypothesisIds, note, founderAnswer?, revisitOperationIds?,
-     chosenHypotheses?)` after **each** step. Empty lists when a step wrote none. `founderAnswer` only
-     when the step asked the founder in this session. `chosenHypotheses` only on the step that
+     writtenEntryIds, producedHypothesisIds, note, stepOutcome, founderAnswer?, revisitOperationIds?,
+     chosenHypotheses?)` after **each** step. Empty lists when a step wrote none. `stepOutcome` on
+     every checkpoint that finishes a step: one line of at most 160 characters saying what came of
+     it — the finding, with its numbers ("Five researched in full; nothing left waiting on a fix."),
+     never the action ("Wrote the segments") and never the codes, which the canvas already shows. The
+     operation's item shows it under the step once the step is done; a step finished without one
+     reads as done with nothing to say. A checkpoint with no `completedProcedureId` sends none.
+     `founderAnswer` only when the step asked the founder in this session. `chosenHypotheses` only on the step that
      chooses hypotheses: each entry chosen, by `entryId`, with the sentence as signed off — the
      hand-over hands exactly these. When the founder changes the set later (an inbox answer), checkpoint
      again with no step and the whole new set: what it leaves out is dropped. `observe_run` for what
@@ -244,8 +249,11 @@ step's work before the answer: the answer is what the step is done from.
   Ask the user directly to clarify what you cannot infer. Do the step from the answer, and send their words as `founderAnswer` on the
   step's checkpoint, so the run shows "Founder's answer: …" under the step.
 - **Unattended**, invoke `mentat-inbox` with the step's question: `raise_escalation` carrying the
-  step's `procedureId` and the run's `runId`, the purpose as the title, and in the body what the run
-  has written so far, by code, the options and the one you recommend. The raise pauses the run: no
+  step's `procedureId` and the run's `runId`, the purpose as the title, in the body what the run
+  has written so far, by code, the options and the one you recommend, and an `answerHint`: one line
+  of at most 160 characters saying what a good answer holds ("Which checks, on which competitors,
+  and what each costs."), drawn from what the step's instructions need to go on. The person reads it
+  in the empty answer field. The raise pauses the run: no
   `observe_run`, no `pause_run`, and nothing more is written in it. Say in the reply what was asked,
   then stop. The person answers in the inbox; the answer becomes the step's answer on the run, and
   the next firing resumes it ([Resuming](#resuming)).

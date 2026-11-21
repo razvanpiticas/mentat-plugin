@@ -31,6 +31,7 @@ instructions give to a person, say three things, attended in the chat and unatte
 notes and the escalation's body: what they do, what they bring back, and in which shape — "ten
 interview notes, one file each, the quotes marked", "the ad account's click and cost export for the
 week". When they bring it, record it: `record_observation` per metric, `record_evidence` per kind
-of signal with a data point per interviewee, per conversion, per order, `record_spend` for the
+of signal with a data point per interviewee, per conversion, per order, and its bearing on each
+hypothesis it names (`Supports`, `Contradicts` or `SaysNothingEitherWay`), `record_spend` for the
 money and the hours. The run stays Running in between; a run nobody has touched for longer than its
 planned duration is worth a message through `mentat-inbox` — once.

@@ -50,9 +50,10 @@ For each of the operation's own steps, in `executionOrder`:
 5. In a session: show the draft, ask, write. Unattended: write.
 6. Write through `mentat-canvas`, each call with `runId`; a nested kind with its owner's id as
    `ownerId`; keep the ids answered.
-7. `checkpoint_run` with the step's `procedureId`, the ids, one line of note, the founder's words as
-   `founderAnswer` when the step asked them in the chat, and `revisitOperationIds` when the step
-   sends the project back.
+7. `checkpoint_run` with the step's `procedureId`, the ids, one line of note, the `stepOutcome` —
+   one line of at most 160 characters saying what came of the step, its finding and numbers, never
+   the action — the founder's words as `founderAnswer` when the step asked them in the chat, and
+   `revisitOperationIds` when the step sends the project back.
 
 A step whose text says to interview, to search the web, to compute from data the canvas does not hold:
 do what can be done from what is in hand and say in the checkpoint note what was not; unattended,
@@ -166,7 +167,10 @@ Their rows — who raises, the subject, the body's order, the proposed answer �
 held". The bodies this skill writes, through `mentat-inbox`, `raise_escalation`, `runId` set:
 
 **A step that asks the founder** — `procedureId` the step's, no subject. Title: the step's
-`founderInputPurpose`, cut at the end of its first sentence when it runs past 200 characters. Body:
+`founderInputPurpose`, cut at the end of its first sentence when it runs past 200 characters.
+`answerHint`: one line of at most 160 characters saying what a good answer holds, from what the
+step's instructions need to go on ("Which checks, on which competitors, and what each costs."), never
+the question again. Body:
 > {the step's founderInputPurpose, whole} Asked at {step code} {step name} of {slug}, run {run id}.
 > Written so far: {entry codes, or "nothing yet"}. The ways to answer: {the options the step's
 > instructions give, one line each}. Write your answer here; the next firing goes on from it. I

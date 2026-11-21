@@ -78,7 +78,10 @@ without anybody asking you back:
   without it.
 
 Name the row it is about (`subjectKind`, `subjectId`) when there is one; an escalation may stand
-alone when the question is about the run as a whole. Name the person when one person owns the
+alone when the question is about the run as a whole. Send `answerHint` with every question: one line
+of at most 160 characters saying what a good answer holds ("Which checks, on which competitors, and
+what each costs."), shown in the empty answer field; never the question again, and never on a
+verdict proposal, which is confirmed rather than answered. Name the person when one person owns the
 answer. Send `raise_escalation(...)` with `runId`, record the `inboxItemId` it answers in the run
 (`observe_run`), then **hand back to the skill that called you: it pauses the run**. Raising does
 not stop the run by itself — except a step's question to the founder and a verdict proposal, below.
@@ -91,7 +94,7 @@ again.
 **A step's question to the founder** is the one escalation that names the step it is asked at.
 `mentat-operation` hands it to you when a step's founder input applies in a run a routine fired: send
 `raise_escalation` with the step's `procedureId` beside `runId`, the step's question as the title — its
-first sentence when the whole runs past 200 characters — and the body `mentat-operation`'s
+first sentence when the whole runs past 200 characters — the `answerHint` it hands you, and the body `mentat-operation`'s
 `reference/running-a-row.md` gives, its recommendation last. The server pauses the run in the same
 call, so nothing is observed and nothing is paused after it: hand the `inboxItemId` back and stop.
 The person answers it in their own words, never by a bare acknowledgement.
