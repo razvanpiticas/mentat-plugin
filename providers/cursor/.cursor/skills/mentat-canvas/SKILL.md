@@ -310,7 +310,7 @@ with a polarity and the business concern it belongs to (Desirability, Feasibilit
 `list_experiment_definitions` narrowed by its concern shows the method cards that can test it, and
 `recommend_experiment_definition` puts one on its shortlist. `design_experiment` plans an experiment
 in one call on one or more hypotheses: test card, metrics, and criteria, each naming the hypothesis it
-judges. Start it, record observations and judge criteria as it goes, `record_evidence` for each bundle
+judges; `rewrite_test_card` rewrites its plan whole while it is designed. Start it, record observations and judge criteria as it goes, `record_evidence` for each bundle
 gathered with the hypotheses it bears on, then `complete_experiment` with the learning card and a
 verdict per hypothesis that agrees with that hypothesis's judged criteria. The details, the order BusinessIntelligence
 enforces, and worked examples are in [reference/hypotheses.md](reference/hypotheses.md) and

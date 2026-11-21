@@ -217,12 +217,13 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
      hand-over hands exactly these. When the founder changes the set later (an inbox answer), checkpoint
      again with no step and the whole new set: what it leaves out is dropped. `observe_run` for what
      belongs to no step. The answer's `goalsToReview` lists the goals resting on what the step
-     rewrote: [Goals to review](#goals-to-review), before the next step.
+     rewrote: [Goals to review](#goals-to-review), before the next step. The last checkpoint (or
+     `end_run`) carries `inShortReadings`: [The In short](reference/running-a-row.md#the-in-short).
 6. **End as the level says** — [Levels](#what-the-validation-level-decides). On an `Experiment`
    operation the last own step's checkpoint answers the hand-over, and the shared step follows.
 7. **Type the links.** Invoke `mentat-linker` with the run before ending it.
 8. **End the run.** `end_run(projectId, runId, outcome: "Completed", summary, verdict?,
-   revisitOperationIds?, usage?)`. The summary is the paragraph the next run reads first: what was
+   revisitOperationIds?, usage?, inShortReadings?)`. The summary is the paragraph the next run reads first: what was
    written, by code; what was decided; what waits. A run that could not be carried out at all —
    nothing written, the reason outside the canvas — is `outcome: "Failed"` with the reason, at any
    level.
@@ -241,15 +242,16 @@ same `overview`. A procedure whose instructions start "Existing business:" is do
 
 ## Asking the founder
 
-A step's `founderInputPurpose` is the question, in the words the founder reads. Its instructions say
-which answers are possible and which to recommend. Never answer for the founder, and never write the
+A step's `founderQuestion` is the question as the founder reads it, written to them: ask it in those
+words. `founderInputPurpose` is why the step asks, for you; ask in its words only when
+`founderQuestion` is null. Its instructions say which answers are possible and which to recommend. Never answer for the founder, and never write the
 step's work before the answer: the answer is what the step is done from.
 
 - **In a session**, ask it in the chat, with the options and your recommendation.
   STOP and use Codex's structured user-input tool when available; if it is unavailable, ask directly in chat to clarify. Do the step from the answer, and send their words as `founderAnswer` on the
   step's checkpoint, so the run shows "Founder's answer: …" under the step.
 - **Unattended**, invoke `mentat-inbox` with the step's question: `raise_escalation` carrying the
-  step's `procedureId` and the run's `runId`, the purpose as the title, in the body what the run
+  step's `procedureId` and the run's `runId`, the `founderQuestion` as the title, in the body what the run
   has written so far, by code, the options and the one you recommend, and an `answerHint`: one line
   of at most 160 characters saying what a good answer holds ("Which checks, on which competitors,
   and what each costs."), drawn from what the step's instructions need to go on. The person reads it
@@ -265,7 +267,11 @@ step's work before the answer: the answer is what the step is done from.
 
 A goal may rest on entries and hypotheses. When a step rewrote one of them, its checkpoint answers
 the goal under `goalsToReview` — its code, its title and the reason, naming the entry and this
-operation — and the goals page marks it to review. Nothing changes on the goal by itself: a goal
+operation — and the goals page marks it to review. A write that moves a figure a goal rests on carries `whatChanged`
+("1,330 developers became 25,000"), which the goal's reason quotes: `update_entry`,
+`rate_customer_segment`, `write_customers_today`, `write_total_addressable_market`,
+`score_high_value_job`, `quantify_value_proposition`, `draw_strategy_canvas` and
+`correct_strategy_canvas_score`. Nothing changes on the goal by itself: a goal
 changes only through a decision a person accepts.
 
 - **In a session**, right after that step, say what changed — the entry, before and after — what the
@@ -286,18 +292,9 @@ changes only through a decision a person accepts.
 
 ## Going back
 
-The package's `revisits` are the earlier operations this one may send the project back to, in order.
-`revisitOperationIds` on `checkpoint_run` or `end_run` names the ones to run again, in the order to
-run them, each one of that list; the server puts them on the plan right after this row, each marked
-"Revisit, from <this slug>", ahead of every row that was next.
-
-- **Mid-way**, on the checkpoint of the step whose instructions send the project back, and then go on
-  with the steps: what comes after is still this run's work.
-- **At the end**, on `end_run`: an `Invalidated` verdict that names none goes back to the first on
-  the list; an `Experiment` run names the ones its "if not" sentence gives for what the run found; a
-  `Validated` run names none — "A validated run sends the project back nowhere."
-- One the list does not hold is refused: "customer-profile goes back only to beachhead-selection,
-  end-user-profile or beachhead-tam; persona is not one of them." Send one the list holds, or none.
+`revisitOperationIds`, on the checkpoint of the step that sends the project back or on `end_run`, names
+the operations to run again, each one of the package's `revisits`. When, which, and the refusal:
+[reference/running-a-row.md](reference/running-a-row.md), "Going back".
 
 ## What the validation level decides
 
@@ -371,11 +368,9 @@ operation"; read it before its first step.
 ## Drawing a picture
 
 A step that draws a picture — the persona's, a napkin sketch, a use case's visual, a product's
-diagram, a wireframe, the sketch of a concept set aside — saves the picture's prompt with the owner's
-own write first, then draws it and sends the file to an upload link, never as text. The slots and
-their owners, how this agent draws, the upload and its refusals are in
-[reference/drawing-a-picture.md](reference/drawing-a-picture.md): read it before the step's first
-write.
+diagram, a wireframe, a concept set aside — saves its prompt with the owner's own write first, then
+draws it and sends the file to an upload link, never as text. Read
+[reference/drawing-a-picture.md](reference/drawing-a-picture.md) before the step's first write.
 
 ## When a routine fired this run
 

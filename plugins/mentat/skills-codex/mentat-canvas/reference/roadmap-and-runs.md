@@ -103,11 +103,27 @@ it is refused; so is one on a run worked under no item. The item's `statusHistor
 spell the server moved the item into, why (`serverMoveReason`: "run again", "step 3 asks you",
 "Validated", a failed run's reason); null where a person or an agent moved it.
 
+## An operation's own In short
+
+`checkpoint_run` and `end_run` take `inShortReadings`: one to four boxes of what the operation found,
+each `{ label, value, note?, isWarning? }` — a label of at most 40 characters, a value of at most
+60, a note of at most 160, each on one line, each label once; `isWarning` true on a box that says
+something still waits that should not ("Founder checks" / "None run yet"), drawn in the warning ink,
+false when left out. The latest set sent replaces the set the
+operation's item holds, whole; left out, the set is kept. The operation's item answers it as
+`inShortReadings`, empty until a run writes one, when the item's page shows general readings.
+Refused on a run that is not an attempt at a row of the plan ("… has no In short of its own"),
+and on a run worked under no item; four readings or more, or a label twice, are refused before
+anything is sent.
+
 ## The founder's answers
 
 Each step the package lists carries `founderInputNeeded` — `None`, `Always`, or `WhenInstructionsSay`,
-when its instructions say when — and `founderInputPurpose`, the question in the founder's words. The
-answer goes on the step's checkpoint as `founderAnswer`. An `Always` step checkpointed without one is
+when its instructions say when — `founderInputPurpose`, why it asks, written for the agent, and
+`founderQuestion`, the question in the founder's own words, second person, which is what the agent
+asks and what the step shows under "It asked you" (null on a step that asks nothing, and on one
+whose founder-facing words were never written: ask in the purpose's words then). `get_procedure`
+answers both. The answer goes on the step's checkpoint as `founderAnswer`. An `Always` step checkpointed without one is
 refused with its question: "Step choose-how-the-persona-is-made asks the founder: … Send their answer as founderAnswer." A
 step that asks nothing refuses an answer. A run a routine fired asks in the inbox instead:
 `raise_escalation` with the step's `procedureId` and an `answerHint` — one line of at most 160

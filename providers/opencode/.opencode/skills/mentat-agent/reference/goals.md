@@ -64,7 +64,8 @@ two ways:
 | `RestsOn` | `BlockEntries`, `Hypotheses` | what the goal's target is built on: the entry holding the total addressable market, the hypothesis that customers pay |
 
 `list_goals` answers both on the goal, by code: `servingItems`, each with its state (an experiment
-`Running` shows the goal being tested now), and `restsOn`.
+`Running` shows the goal being tested now), and `restsOn`, a hypothesis there with its `evidenceCount`,
+the bundles of evidence bearing on it.
 
 - One item may serve several goals. Send `link_to_goal` once per goal.
 - Drawing the same pair twice is refused with `CONFLICT`. That is the unique index, not a fault — the
@@ -81,7 +82,10 @@ A goal nothing serves is a goal nobody is working on. That is a thing to raise.
 A goal is marked to review, with the reason, when an entry or a hypothesis it rests on is rewritten in
 a run, when an experiment serving it completes, or when a hypothesis it rests on is decided `Pivot` or
 `Kill`. `list_goals` answers each open review in `reviews`: the reason, what changed (its table and
-id) and the run that changed it. The mark stays until a person accepts or rejects a proposed change, or
+id) and the run that changed it. A rewrite that moves a figure carries the line of what changed
+(`whatChanged`, written by the operation that rewrote it, on the entry's rewrite and on every write
+of a segment's, a job's, a value proposition's or a Strategy Canvas's figures), and the reason then says it: "Total addressable market of the
+beachhead changed: 1,330 developers became 25,000." The mark stays until a person accepts or rejects a proposed change, or
 says on the goals page that the goal stands as it is.
 
 ## A change to a goal
@@ -93,7 +97,7 @@ goalId?, parentGoalId?, title?, description?, metric?, deadline?, reason, figure
 | --- | --- | --- |
 | `Change` | `goalId`, what changes (`title`, `description`, `metric`, `deadline`), `figures` — each `{ label, was, becomes }` | the goal rewritten, the line kept in its history |
 | `NewObjective` | `parentGoalId`, `title`, `metric`, `deadline` | a new objective under that goal, `Planned` |
-| `Abandon` | `goalId` | the goal `Abandoned` |
+| `Abandon` | `goalId`, `reason` | the goal `Abandoned`, its card reading the day and the reason; the only way a goal is abandoned |
 
 Every kind carries `reason`, naming what changed — the entry and the operation, the experiment, the
 hypothesis — and answers a decision, `Proposed`, titled with the goal and the change; the goal reads as
@@ -105,5 +109,5 @@ unit, which is what the refusal says when you try.
 
 Creating a goal outside the planner's interview, editing one, assigning its owner and moving it along
 its status are the person's work on the goals screen; update_goal and set_goal_status are refused to
-an agent. Accepting a decision is the person's, your own proposal included. You read goals, you measure
+an agent, and set_goal_status refuses `Abandoned` to everybody. Accepting a decision is the person's, your own proposal included. You read goals, you measure
 them, you put work behind them, you draw what they rest on, and you propose their changes.

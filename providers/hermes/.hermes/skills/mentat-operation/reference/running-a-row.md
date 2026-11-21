@@ -14,7 +14,7 @@ what to do when the agent already holds a run, and the shape of the report.
 | `definition.descriptionPart`, `descriptionParts` | Which part of the description `description` holds, of how many. Above 1: read every other part, in order, with `get_operation_package` and `descriptionPart`, before the run starts; the parts joined are the description exactly, and the rest of the package is the same in each |
 | `definition.summary.validationLevel` | Which ending: verdict, hand-over, or neither |
 | `definition.validatedWhen`, `ifNot` | The Checkpoint judgement; the pass sentence the hand-over repeats; which operations an ending goes back to |
-| `definition.procedures[]` (`stepId`, `procedureId`, `code`, `name`, `executionOrder`, `founderInputNeeded`, `founderInputPurpose`) | The operation's own steps in short, in order; `procedureId` is what `checkpoint_run` names; a step's founder input says whether it asks the founder and what. A step's instructions, book, version and explainer are not here: `get_procedure` reads them by its code when the step starts |
+| `definition.procedures[]` (`stepId`, `procedureId`, `code`, `name`, `executionOrder`, `founderInputNeeded`, `founderInputPurpose`, `founderQuestion`) | The operation's own steps in short, in order; `procedureId` is what `checkpoint_run` names; a step's founder input says whether it asks the founder, why (`founderInputPurpose`, for you) and what, in the founder's own words (`founderQuestion`, what you ask). A step's instructions, book, version and explainer are not here: `get_procedure` reads them by its code when the step starts |
 | `definition.explainer` (`text`, `webUrl`, `media[]`), `outputWebUrl` | The first message of a run in a session: what the operation is, the page where its video plays (`webUrl`), and where what the run writes is read (`outputWebUrl`). `media[]` says what each video or picture is: its `kind`, `alternativeText`, `caption`, and on a video its `durationInSeconds`. In short: a video's transcript is not here, the founder watches the video on `webUrl` and `get_operation_definition` answers it. Null when none is written |
 | `definition.founderInput` (`need`, `stepCodes`) | The operation's founder input in short: the strongest a step asks (`Always`, then `WhenInstructionsSay`, then `None`) and the codes of the steps that ask |
 | `revisits` | The operations this one may send the project back to, in order: the only ones `revisitOperationIds` may name |
@@ -53,7 +53,22 @@ For each of the operation's own steps, in `executionOrder`:
 7. `checkpoint_run` with the step's `procedureId`, the ids, one line of note, the `stepOutcome` —
    one line of at most 160 characters saying what came of the step, its finding and numbers, never
    the action — the founder's words as `founderAnswer` when the step asked them in the chat, and
-   `revisitOperationIds` when the step sends the project back.
+   `revisitOperationIds` when the step sends the project back. On the last step, the In short
+   (below).
+
+## The In short
+
+The operation's item opens on its "In short": up to four boxes saying what the operation found, in
+its own terms. The run writes them as `inShortReadings` on its last checkpoint or on `end_run` —
+one to four, each a `label` (at most 40 characters, "Researched in full"), a `value` (at most 60,
+"5 competitors") and an optional one-line `note` (at most 160, "2 more wait, each with why"),
+each label once. Send `isWarning: true` on a box that says something still waits that should not
+("Founder checks" / "None run yet"): the item draws its value in the warning ink. Draw them from what the run wrote and its numbers: the count of what it found, the
+strongest one by name, what still waits; never the codes, never a sentence of the canvas. The
+latest set sent replaces the item's set whole, so a later run of the row sends the set again when
+what it found moved; leaving it out keeps the set. Without any, the item shows general readings.
+Example, competitor-research: "Researched in full" / "5 competitors" / "2 more wait, each with
+why"; "Strongest threat" / "Notion" / "High threat: same buyer, lower price".
 
 A step whose text says to interview, to search the web, to compute from data the canvas does not hold:
 do what can be done from what is in hand and say in the checkpoint note what was not; unattended,
@@ -167,11 +182,12 @@ Their rows — who raises, the subject, the body's order, the proposed answer �
 held". The bodies this skill writes, through `mentat-inbox`, `raise_escalation`, `runId` set:
 
 **A step that asks the founder** — `procedureId` the step's, no subject. Title: the step's
-`founderInputPurpose`, cut at the end of its first sentence when it runs past 200 characters.
+`founderQuestion` (its `founderInputPurpose` when that is null), cut at the end of its first
+sentence when it runs past 200 characters.
 `answerHint`: one line of at most 160 characters saying what a good answer holds, from what the
 step's instructions need to go on ("Which checks, on which competitors, and what each costs."), never
 the question again. Body:
-> {the step's founderInputPurpose, whole} Asked at {step code} {step name} of {slug}, run {run id}.
+> {the step's founderQuestion, whole, else its founderInputPurpose} Asked at {step code} {step name} of {slug}, run {run id}.
 > Written so far: {entry codes, or "nothing yet"}. The ways to answer: {the options the step's
 > instructions give, one line each}. Write your answer here; the next firing goes on from it. I
 > would {the option the instructions recommend for this project, and why, in one sentence}.
@@ -260,6 +276,21 @@ would not be yours to work in or to end if there were. Do not hunt for it projec
 Unattended, that is one escalation through `mentat-inbox` naming the refusal verbatim, the row left
 unworked and the proposal — end the agent's other run so the next firing takes the row — then stop;
 in a session, say the same to the person.
+
+## Going back
+
+The package's `revisits` are the earlier operations this one may send the project back to, in order.
+`revisitOperationIds` on `checkpoint_run` or `end_run` names the ones to run again, in the order to
+run them, each one of that list; the server puts them on the plan right after this row, each marked
+"Revisit, from <this slug>", ahead of every row that was next.
+
+- **Mid-way**, on the checkpoint of the step whose instructions send the project back, and then go on
+  with the steps: what comes after is still this run's work.
+- **At the end**, on `end_run`: an `Invalidated` verdict that names none goes back to the first on
+  the list; an `Experiment` run names the ones its "if not" sentence gives for what the run found; a
+  `Validated` run names none — "A validated run sends the project back nowhere."
+- One the list does not hold is refused: "customer-profile goes back only to beachhead-selection,
+  end-user-profile or beachhead-tam; persona is not one of them." Send one the list holds, or none.
 
 ## The report
 

@@ -2,7 +2,7 @@
 name: "mentat-experiment"
 description: "Design or run an experiment against one or more hypotheses of a Mentat canvas — the test card from the method card and the procedure design-the-experiments, a success criterion for each hypothesis, the experiment with its observations, judged criteria, spend and evidence naming the hypotheses it bears on, the learning card and a verdict per hypothesis that agrees with its criteria, and the decision laid out for the person — from the card and the procedures it fetches at the moment of use. Use when the person wants to test a hypothesis, design a test card, record what a test showed, or close a test; when they want to change how the organisation runs a kind of test (a card's texts, its execution instructions, its ratings); from mentat-operation at the mapping operation's step that designs the experiments; and from mentat-hypothesis when the person says to test now. It writes through the mentat-canvas loop; the decision on the hypothesis is the person's."
 argument-hint: "<project> <hypothesis code> [card slug] | <experiment code> | <test name to adjust>"
-allowed-tools: "mcp__mentat__get_project, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__get_block, mcp__mentat__get_run, mcp__mentat__get_procedure, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__recommend_experiment_definition, mcp__mentat__design_experiment, mcp__mentat__add_metric, mcp__mentat__add_criterion, mcp__mentat__start_experiment, mcp__mentat__record_observation, mcp__mentat__judge_criterion, mcp__mentat__record_spend, mcp__mentat__record_evidence, mcp__mentat__update_evidence, mcp__mentat__add_data_point, mcp__mentat__complete_experiment, mcp__mentat__abort_experiment, mcp__mentat__decide_hypothesis, mcp__mentat__get_value_proposition, mcp__mentat__get_landing_page_document, mcp__mentat__get_customer_segment, mcp__mentat__reach_fit, mcp__mentat__list_goals, mcp__mentat__link_to_goal, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__list_insights, mcp__mentat__record_experiment_definition_insight, mcp__mentat__record_procedure_insight, mcp__mentat__customise_experiment_definition, mcp__mentat__update_experiment_definition, mcp__mentat__list_operation_definitions, mcp__mentat__get_operation_definition"
+allowed-tools: "mcp__mentat__get_project, mcp__mentat__get_hypothesis, mcp__mentat__get_experiment, mcp__mentat__get_block, mcp__mentat__get_run, mcp__mentat__get_procedure, mcp__mentat__list_experiment_definitions, mcp__mentat__get_experiment_definition, mcp__mentat__recommend_experiment_definition, mcp__mentat__design_experiment, mcp__mentat__rewrite_test_card, mcp__mentat__add_metric, mcp__mentat__add_criterion, mcp__mentat__start_experiment, mcp__mentat__record_observation, mcp__mentat__judge_criterion, mcp__mentat__record_spend, mcp__mentat__record_evidence, mcp__mentat__update_evidence, mcp__mentat__add_data_point, mcp__mentat__complete_experiment, mcp__mentat__abort_experiment, mcp__mentat__decide_hypothesis, mcp__mentat__get_value_proposition, mcp__mentat__get_landing_page_document, mcp__mentat__get_customer_segment, mcp__mentat__reach_fit, mcp__mentat__list_goals, mcp__mentat__link_to_goal, mcp__mentat__observe_run, mcp__mentat__pause_run, mcp__mentat__list_insights, mcp__mentat__record_experiment_definition_insight, mcp__mentat__record_procedure_insight, mcp__mentat__customise_experiment_definition, mcp__mentat__update_experiment_definition, mcp__mentat__list_operation_definitions, mcp__mentat__get_operation_definition"
 ---
 
 # Mentat experiment
@@ -115,17 +115,30 @@ you, and every `design_experiment`, `start_experiment` and write after them carr
 6. **Draft the test card** by the procedure: each hypothesis unchanged; what will be done, precise
    on who, where and what; the metrics with units; **one success criterion for each hypothesis**, a
    number its metric must reach or a qualitative line, written **before** any observation — from the
-   operation's "validated when" when the hypotheses came from one; a name, an owner, a deadline, a
-   planned duration, and what it costs in money, in the founder's hours and whose hands it needs. When
+   operation's "validated when" when the hypotheses came from one; for each criterion the few words
+   a bundle reads on it when it says yes and when it says no ("named it" / "did not", at most 40
+   characters each), which the experiment's page prints on each evidence row and in its "So far";
+   a name, an owner, a deadline, a planned duration; the plan's two sentences, **who does it** ("You
+   hold the conversations. Ian writes each one down the same day.") and **what is measured** ("How
+   many name getting paying users, unprompted."); **how many bundles of evidence it gathers**, with
+   what one is and what several are (10, "conversation", "conversations": one bundle per
+   conversation, per landing page week, per order — whatever the test counts); and what it costs in
+   money, in the founder's hours and whose hands it needs. When
    a card already ran against a hypothesis, the card says what differs from that experiment — other
    keywords, another audience, another channel — and why, from its learning card; the same test again
    is not a new test. Show the card with its cost; the person confirms or edits.
    STOP and call the AskUserQuestion tool to clarify.
 7. **Write it**: one `design_experiment` with `hypothesisIds` — every hypothesis it tests — the card,
-   the metrics and the criteria, each criterion with the `hypothesisId` it judges (left out only on an
-   experiment that tests one), `canvasVersion`, `runId`. It writes the experiment's work item, in To
+   `whoDoesIt`, `whatIsMeasured`, `plannedEvidenceCount` with `evidenceUnitSingular` and
+   `evidenceUnitPlural` (the three together), the metrics and the criteria, each criterion with the
+   `hypothesisId` it judges (left out only on an experiment that tests one) and its `saysYesWords`
+   with `saysNoWords`, `canvasVersion`, `runId`. The board reads "5 of 10 conversations" from the
+   count, and the experiment's page draws the bundles not gathered yet. It writes the experiment's work item, in To
    do. A part refused after the experiment was created: `get_experiment`, then `add_metric` or
-   `add_criterion` — never a second design.
+   `add_criterion` — never a second design. A plan to change while the experiment is still `Designed`
+   — one designed without who does it, what is measured or the planned count among them — is
+   `rewrite_test_card`: the whole plan, every part of `testCard` that stays sent again, since a part
+   left out is cleared.
 8. **The goal it serves.** `list_goals`: the objective the experiment moves. Put it behind that goal
    with `link_to_goal(projectId, itemKind: "Experiments", itemId: <the experiment>, goalId,
    relation: "ServedBy", runId)`. No goal covers it: say so by the experiment's code, with the
@@ -199,7 +212,11 @@ say, in any order and over as many sessions as it takes:
 
 - `record_observation` on a metric, a number or a text; `judge_criterion` for each criterion,
   from the observations and nothing else; `record_spend` when money or hours went out.
-- `record_evidence`, one bundle per kind of signal, rated on the four axes and with every data
+- `record_evidence`, one bundle per unit the plan counts — one per conversation of "10
+  conversations" — or, on a plan that counts none, one per kind of signal; each under a short
+  `title` naming it, at most 80 characters, never what it found: "Conversation 1 · video call",
+  "Landing page week 2". The experiment's page lists the bundle under it and counts the bundles
+  against the plan. Each is rated on the four axes and carries every data
   point `P.V3` says to keep (fetch it before the first bundle), naming in `hypotheses` each
   hypothesis the bundle bears on, once, with its `bearing`: `Supports` when what it found speaks
   for the hypothesis (the person named the pain unprompted), `Contradicts` when it speaks against it
@@ -210,7 +227,8 @@ say, in any order and over as many sessions as it takes:
   An empty list means every hypothesis, each saying nothing either way: only for a bundle that
   settles nothing. Strength
   left out inherits the card's rating; override only when what was gathered is worth more or less,
-  and say why in the summary.
+  and say why in the summary. A bundle recorded without a title gets one with `update_evidence`
+  and `title` alone.
 - The parts a person does — interviews, a landing page, a delivery — you cannot do. Say plainly
   which they are, what to bring back, and in which shape; record what they bring back when they
   bring it. The experiment stays Running between sessions.
