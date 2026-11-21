@@ -342,7 +342,8 @@ order:
 
 A hypothesis, an experiment or a row of the plan is put behind a goal it serves with
 `link_to_goal(…, relation: "ServedBy")`; an entry or a hypothesis the goal's target is built on is
-drawn to it with `relation: "RestsOn"`, and the goal is marked to review when it changes;
+drawn to it with `relation: "RestsOn"`, an entry the target is reached through, such as the price, with
+the figure it uses (`figure`, [reference/goals.md](reference/goals.md)), and the goal is marked to review when it changes;
 `unlink_from_goal` takes either off. One piece of work may serve several goals; send it once per goal.
 A task is neither: the product refuses it, so a task names the goal it serves in its brief and rates
 what finishing it buys in `goalValue`. A reading an experiment took is recorded with the experiment's

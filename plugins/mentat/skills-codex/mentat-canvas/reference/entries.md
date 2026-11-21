@@ -118,7 +118,7 @@ part is sent in `fields`.
 | the comparison | `write_comparison` | on a shortlisted segment, a beachhead or a beachhead's adjacent market; a row of the founder's own is named once. Where they gather is not a row: it is the segment's gathering places |
 | the gathering places | `write_gathering_places` | the whole list; each name once; every measurement a kept place had is sent again; a place the persona uses stays |
 | customers today | `write_customers_today` | marks the segment served |
-| the TAM | `write_total_addressable_market` | on a beachhead only |
+| the TAM | `write_total_addressable_market` | on a beachhead only; `endUsersAreCalled`, the plural noun its end users are called ("developers"), sent on every write, the one written before when it does not change; left out, the screens say "end users" |
 | the beachhead part | `choose_beachhead` | on a leaf; why not on every other shortlisted segment; offers to try first is at least 1 |
 | the segments it turns away | `write_turned_away_segments` | on a beachhead, the whole list |
 | its adjacent markets, once it is accepted | `write_adjacent_markets` | on an accepted beachhead, the whole list in order; never `choose_beachhead` again |

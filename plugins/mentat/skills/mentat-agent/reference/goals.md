@@ -55,7 +55,7 @@ against a number nobody has checked is a guess with a reference code.
 
 ## What serves a goal, and what it rests on
 
-`link_to_goal(projectId, itemKind, itemId, goalId, relation, runId)` draws an item to a goal in one of
+`link_to_goal(projectId, itemKind, itemId, goalId, relation, figure, runId)` draws an item to a goal in one of
 two ways:
 
 | `relation` | `itemKind` | What it says |
@@ -66,6 +66,16 @@ two ways:
 `list_goals` answers both on the goal, by code: `servingItems`, each with its state (an experiment
 `Running` shows the goal being tested now), and `restsOn`, a hypothesis there with its `evidenceCount`,
 the bundles of evidence bearing on it.
+
+An entry the goal's target is reached through — revenue through the price — is drawn with the figure
+the target uses of it: `figure: { magnitude: 39, unit: "USD a month", meaning: "the launch price" }`,
+the number above zero in the target's own period, and on `RestsOn` to an entry only (anything else is
+refused). `meaning` names which figure it is: the launch price and the founding price are two figures,
+and the target uses the one the founder says it is reached at. `restsOn` answers it as the entry's `figureUsed`, and `worksOutTo` what the target
+works out to beside each beachhead TAM the goal rests on: `customersNeeded` (target ÷ figure, rounded
+up) and `shareOfEndUsers` (of 1) of the market's `endUsers`, called `endUsersAreCalled` — "Works out
+to 129 customers at $39 a month · 0.5% of the beachhead". No figure, no target or no market: no line.
+A link already drawn without its figure is taken off with `unlink_from_goal` and drawn again with it.
 
 - One item may serve several goals. Send `link_to_goal` once per goal.
 - Drawing the same pair twice is refused with `CONFLICT`. That is the unique index, not a fault — the
@@ -82,10 +92,11 @@ A goal nothing serves is a goal nobody is working on. That is a thing to raise.
 A goal is marked to review, with the reason, when an entry or a hypothesis it rests on is rewritten in
 a run, when an experiment serving it completes, or when a hypothesis it rests on is decided `Pivot` or
 `Kill`. `list_goals` answers each open review in `reviews`: the reason, what changed (its table and
-id) and the run that changed it. A rewrite that moves a figure carries the line of what changed
-(`whatChanged`, written by the operation that rewrote it, on the entry's rewrite and on every write
+id) and the run that changed it. A rewrite that moves a figure carries what changed
+(`whatChanged: { from: "1,330 developers", to: "25,000" }`, written by the operation that rewrote it, on the entry's rewrite and on every write
 of a segment's, a job's, a value proposition's or a Strategy Canvas's figures), and the reason then says it: "Total addressable market of the
-beachhead changed: 1,330 developers became 25,000." The mark stays until a person accepts or rejects a proposed change, or
+beachhead changed: 1,330 developers became 25,000." The review keeps the two apart (`changedFrom`, `changedTo`), and the
+row under the goal's Rests on reads "Changed on 31 Oct: it was 1,330 developers." The mark stays until a person accepts or rejects a proposed change, or
 says on the goals page that the goal stands as it is.
 
 ## A change to a goal

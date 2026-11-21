@@ -270,8 +270,8 @@ step's work before the answer: the answer is what the step is done from.
 A goal may rest on entries and hypotheses. When a step rewrote one of them, its checkpoint answers
 the goal under `goalsToReview` — its code, its title and the reason, naming the entry and this
 operation — and the goals page marks it to review. A write that moves a figure a goal rests on carries `whatChanged`
-("1,330 developers became 25,000"), which the goal's reason quotes: `update_entry`,
-`rate_customer_segment`, `write_customers_today`, `write_total_addressable_market`,
+(`{ from: "1,330 developers", to: "25,000" }`, each one line), which the goal's reason quotes: `update_entry`,
+`rate_customer_segment`, `write_customers_today`, `write_total_addressable_market` (its `endUsersAreCalled`, "developers", on every write),
 `score_high_value_job`, `quantify_value_proposition`, `draw_strategy_canvas` and
 `correct_strategy_canvas_score`. Nothing changes on the goal by itself: a goal
 changes only through a decision a person accepts.

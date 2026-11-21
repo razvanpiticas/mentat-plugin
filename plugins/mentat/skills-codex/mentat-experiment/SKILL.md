@@ -116,7 +116,8 @@ you, and every `design_experiment`, `start_experiment` and write after them carr
    operation's "validated when" when the hypotheses came from one; for each criterion the few words
    a bundle reads on it when it says yes and when it says no ("named it" / "did not", at most 40
    characters each), which the experiment's page prints on each evidence row and in its "So far";
-   a name, an owner, a deadline, a planned duration; the plan's two sentences, **who does it** ("You
+   a name, an owner, a deadline, a planned duration as a span (`P7D`) and as the founder says it ("one
+   week of evenings"); the plan's two sentences, **who does it** ("You
    hold the conversations. Ian writes each one down the same day.") and **what is measured** ("How
    many name getting paying users, unprompted."); **how many bundles of evidence it gathers**, with
    what one is and what several are (10, "conversation", "conversations": one bundle per
@@ -127,11 +128,11 @@ you, and every `design_experiment`, `start_experiment` and write after them carr
    is not a new test. Show the card with its cost; the person confirms or edits.
    STOP and use Codex's structured user-input tool when available; if it is unavailable, ask directly in chat to clarify.
 7. **Write it**: one `design_experiment` with `hypothesisIds` — every hypothesis it tests — the card,
-   `whoDoesIt`, `whatIsMeasured`, `plannedEvidenceCount` with `evidenceUnitSingular` and
+   `plannedDuration` with `plannedDurationInWords`, `whoDoesIt`, `whatIsMeasured`, `plannedEvidenceCount` with `evidenceUnitSingular` and
    `evidenceUnitPlural` (the three together), the metrics and the criteria, each criterion with the
    `hypothesisId` it judges (left out only on an experiment that tests one) and its `saysYesWords`
    with `saysNoWords`, `canvasVersion`, `runId`. The board reads "5 of 10 conversations" from the
-   count, and the experiment's page draws the bundles not gathered yet. It writes the experiment's work item, in To
+   count and "Designed · 10 developers, one week of evenings" from the words, and the experiment's page draws the bundles not gathered yet. It writes the experiment's work item, in To
    do. A part refused after the experiment was created: `get_experiment`, then `add_metric` or
    `add_criterion` — never a second design. A plan to change while the experiment is still `Designed`
    — one designed without who does it, what is measured or the planned count among them — is

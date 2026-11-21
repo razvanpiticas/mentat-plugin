@@ -176,9 +176,22 @@ row, even before it is started — and comment on it.
 
 ## Goals to review
 
-A goal may rest on entries and hypotheses (link_to_goal with `relation: "RestsOn"`). When a step
-rewrites one of them, its `checkpoint_run` answers that goal under `goalsToReview`, with the entry and
-the operation as the reason, and the goals page marks it to review. Nothing changes on the goal: a
+A goal may rest on entries and hypotheses (link_to_goal with `relation: "RestsOn"`). An entry the
+goal's target is reached through — revenue through the price — is drawn with the figure the target
+uses of it: `figure: { magnitude: 39, unit: "USD a month", meaning: "the launch price" }`. The number is
+above zero; the unit is the goal's own, character for character, the period with it; `meaning` names
+which figure it is, the launch price or the founding price, as the founder says the target is reached.
+A figure is refused on `ServedBy`, on a hypothesis, on a goal with no target and in any other unit.
+list_goals answers it as the entry's `figureUsed` under `restsOn`, and `worksOutTo` what the target
+works out to beside each beachhead TAM the goal rests on: "Works out to 129 customers at $39 a month ·
+0.5% of the beachhead". No figure, no target or no market: no line. A link drawn without its figure is
+taken off with unlink_from_goal and drawn again with it.
+
+When a step rewrites an entry or a hypothesis a goal rests on, its `checkpoint_run` answers that goal under `goalsToReview`, with the entry and
+the operation as the reason, and the goals page marks it to review. A write that moves a figure there
+sends `whatChanged: { from: "1,330 developers", to: "25,000" }`, each one line: the reason reads
+"… changed: 1,330 developers became 25,000." and the row under Rests on "Changed on 31 Oct: it was 1,330
+developers." Nothing changes on the goal: a
 change to it is a decision a person accepts (propose_goal_change, through `mentat-agent` or the operation that hit it), or the person says it stands.
 
 ## The checkpoint payload
